@@ -238,10 +238,14 @@ export const markConversationRead = createServerFn({ method: "POST" })
 // matches/reports need explicit deletes (reported_user_id has no FK).
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireAuth])
-  .handler(async ({ context }) => {
+  .handler(async ({ context }): Promise<{ ok: true; error?: string } | { ok: false; error: string }> => {
     const { db, userId } = context;
-    await db.prepare("DELETE FROM matches WHERE user_a_id = ? OR user_b_id = ?").bind(userId, userId).run();
-    await db.prepare("DELETE FROM reports WHERE reporter_id = ? OR reported_user_id = ?").bind(userId, userId).run();
-    await db.prepare("DELETE FROM users WHERE id = ?").bind(userId).run();
-    return { ok: true as const };
+    try {
+      await db.prepare("DELETE FROM matches WHERE user_a_id = ? OR user_b_id = ?").bind(userId, userId).run();
+      await db.prepare("DELETE FROM reports WHERE reporter_id = ? OR reported_user_id = ?").bind(userId, userId).run();
+      await db.prepare("DELETE FROM users WHERE id = ?").bind(userId).run();
+    } catch {
+      return { ok: false, error: "Couldn't delete account. Try again." };
+    }
+    return { ok: true };
   });

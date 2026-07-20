@@ -48,9 +48,14 @@ Lovable project `crush100` (a0b29d2b-...) is the ORIGIN, being left behind.
       Architecture: SINGLE Worker (TanStack app + server fns + bindings), not
       the Attentify two-worker split — SSR app is already a Worker; no CORS,
       one deploy. DO namespaces get added to config when the chat DO is written.
-- [ ] Port schema: 27 Supabase migrations -> one D1 `schema.sql` (SQLite dialect;
-      drop RLS — authorization moves into server functions).
-- [ ] Auth: Better Auth (or session JWT) on the Worker; users table in D1.
+- [x] Schema ported: `db/schema.sql` (22 tables incl. users/sessions for auth).
+      Validated on local D1, APPLIED TO REMOTE crush-db 2026-07-19.
+      Conventions: uuid->TEXT (app-side randomUUID), timestamptz->ISO TEXT,
+      bool->INTEGER, jsonb/text[]->JSON TEXT. All RLS/trigger/RPC semantics
+      documented in the file header — they move to server fns.
+- [ ] Auth: hand-rolled sessions (PBKDF2-SHA256 via WebCrypto, opaque token,
+      SHA-256 stored) — users/sessions tables already in schema. No Better
+      Auth dependency needed.
 - [ ] Rewrite data access: all Supabase client calls -> server fns hitting D1.
       Mutual-match detection must be transactional in the server fn (no triggers).
 - [ ] Realtime: Durable Object per match/group chat + per-user notification DO

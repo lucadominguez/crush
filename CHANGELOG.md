@@ -3,6 +3,23 @@
 All notable changes. Versions follow semver; app version lives in package.json.
 
 ## [Unreleased]
+### Added
+- Complete D1 server layer under `src/server/`: session auth (PBKDF2 +
+  HttpOnly cookie), crush/match/message domain with full PG-trigger parity
+  (mutual detect, slot limit, expiry, notification fan-out, send idempotency),
+  profile/IG verify, polls (feed visibility, vote, create), onboarding/quiz/
+  icebreakers, growth (invites, referral slot awards, hints, superlative),
+  groups (atomic create, previews, read cursors), payments on direct Stripe.
+- `db/schema.sql` gained quiz_answers + streak/onboarded columns (remote
+  applied).
+### Changed
+- `src/lib/*.functions.ts` are now re-export shims over `src/server/*` —
+  the Supabase data path for ALL server functions is gone.
+- Stripe no longer routes through Lovable's connector gateway.
+- Referral codes generate UPPERCASE (PG parity).
+### Pending
+- Client store/groups rewrite (auth + data + polling), 3 components,
+  api routes, dependency removal, first Cloudflare deploy.
 
 ## [0.1.0] — 2026-07-19
 Off-Lovable migration begins ("Phase A").

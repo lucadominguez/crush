@@ -64,22 +64,35 @@ Lovable project `crush100` (a0b29d2b-...) is the ORIGIN, being left behind.
       `crush_session`), `rows.ts` (row types), `crush.functions.ts` (crushes/
       matches/messages/notifications/school-stats/streak, full trigger-chain
       port). tsc clean at each step.
-      REMAINING (port from these files, keep their exact result shapes):
-      - [ ] groups (src/lib/groups.ts client calls + create_group_atomic RPC)
-      - [ ] polls (polls.functions.ts + get_polls_feed/cast_poll_vote/create_poll
-            RPC semantics + poll share/pending questions)
-      - [ ] profile.functions.ts (claim_handle, setDob w/ 13+ check, school/city,
-            avatar -> R2, IG verify, latest_*_previews, mark_conversation_read)
-      - [ ] onboarding/quiz/phase5 (hints, admirer stats, referrals claim)
-      - [ ] payments.functions.ts (strip Lovable gateway; keep stub-friendly)
-      - [ ] instagram.functions.ts (HikerAPI — unchanged except env)
-      - [ ] api.* routes (webhook sig verify stays; hooks get CRON_SECRET)
-      - [ ] CLIENT: rewrite src/lib/store.ts + groups.ts internals to call the
-            new fns (keep SWR cache/hook shapes + optimistic logic); replace
-            supabase realtime with 4-5s polling on open surfaces FIRST (works
-            everywhere), Durable Object websockets as the upgrade AFTER first
-            live deploy is verified.
-      - [ ] Delete src/integrations/supabase + lovable, drop deps.
+      DONE: ALL server fn domains ported to src/server/*: crush.functions
+      (also phase1), profile.functions (+claim_handle/mark_conversation_read),
+      polls.functions (feed/vote/create RPC parity), onboarding.functions
+      (+quiz+icebreakers), growth.functions (invites/referrals/hints/
+      superlative), groups.functions (atomic create/messages/previews/read
+      cursors), payments.functions + stripe.server (DIRECT api.stripe.com,
+      gateway shim dead, all products still available:false safe-mode).
+      src/lib/*.functions.ts are now thin re-export shims (component imports
+      unchanged). instagram.functions.ts needed no port (no supabase).
+      tsc = 0 errors.
+      REMAINING:
+      - [ ] CLIENT: rewrite src/lib/store.ts (1090 ln) + groups.ts (335) +
+            phase1.hooks.ts internals: auth via signUpFn/signInFn/signOutFn/
+            getMeFn (cookie session; no more supabase.auth), data via the
+            listMyCrushes/addCrushFn/listMyMatches/listMessages/sendMessageFn
+            + groups equivalents. KEEP the SWR cache/hook shapes + optimistic
+            reconcile (client_id). Replace supabase realtime channels with
+            4-5s polling while chat/notification surface is open; DO websocket
+            upgrade AFTER first verified live deploy.
+      - [ ] Components w/ direct supabase: AvatarUpload.tsx (-> R2 upload server
+            fn, add uploadAvatar to profile.functions), CreateGroupSheet.tsx,
+            LandingTicker.tsx, app.settings.tsx.
+      - [ ] api.* routes: payments.webhook (use src/server/stripe.server verify
+            + D1 record_purchase_and_grant port), match-expiry + weekly-
+            superlative hooks (D1 + CRON_SECRET), wire CF Cron Triggers.
+      - [ ] Delete src/integrations/supabase + lovable dirs; remove
+            @supabase/supabase-js + @lovable.dev/cloud-auth-js deps; remove
+            auth-attacher from src/start.ts.
+      - [ ] npm run build; deploy workers.dev; drive core loop live.
 - [ ] Realtime upgrade: Durable Object per match/group chat + per-user
       notification DO (WebSocket hibernation) — after polling version verified
       live.

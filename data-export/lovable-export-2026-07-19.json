@@ -1,0 +1,19 @@
+{
+  "exported_at": "2026-07-19",
+  "source": "Lovable Cloud project a0b29d2b-b63e-48bc-8250-6331b651ad2b (crush100)",
+  "note": "Read-only export before leaving Lovable. profiles excludes email/birthday (PII; blocked and not needed). instagram_avatar is an expiring IG CDN URL.",
+  "profiles": [
+    { "id": "429cafff-9d5a-4ef5-ba67-4bdc18a77fad", "handle": "jeff", "name": "james", "school": null, "instagram_handle": null, "instagram_name": null, "instagram_avatar": null, "instagram_followers": null, "created_at": "2026-05-28 16:53:26.2226+00" },
+    { "id": "49c80d80-933a-498e-adf9-d54539cdeeb1", "handle": "efesa", "name": "fewrf", "school": null, "instagram_handle": null, "instagram_name": null, "instagram_avatar": null, "instagram_followers": null, "created_at": "2026-05-29 06:55:28.142332+00" },
+    { "id": "0cc58617-7df8-44f7-bcf6-4f71da4b4b1c", "handle": "ludomi2502", "name": "Luca Dominguez", "school": null, "instagram_handle": "luca.d0", "instagram_name": "Luca", "instagram_avatar": "<expired IG CDN url, omitted>", "instagram_followers": 361, "created_at": "2026-05-25 05:36:43.42689+00" }
+  ],
+  "crushes": [
+    { "id": "04b21bfa-5b4e-462b-b54c-18ad6b0a2e5c", "owner_id": "49754961-0090-4cc4-9859-59aaa1ec0a4c", "target_handle": "taylorswift", "created_at": "2026-05-26 04:51:30.466527+00" },
+    { "id": "ba7a8cb1-2c55-4c87-b539-3bb1d7ad93a4", "owner_id": "49754961-0090-4cc4-9859-59aaa1ec0a4c", "target_handle": "jeff", "created_at": "2026-05-28 16:54:21.017403+00" },
+    { "id": "d3be3a2d-1387-4429-a7c4-e03d6a45cb66", "owner_id": "a9712584-83a1-40e3-a7c6-2778ebe98b11", "target_handle": "luca.d0", "created_at": "2026-05-28 16:54:47.951894+00" },
+    { "id": "19b1c72b-f7b0-4d4a-95f0-cfef7bc0d6ad", "owner_id": "a9712584-83a1-40e3-a7c6-2778ebe98b11", "target_handle": "jameskibs___", "created_at": "2026-05-28 16:55:18.393904+00" },
+    { "id": "465da6fc-3d00-4874-b560-dfc6cdaeec2c", "owner_id": "a9712584-83a1-40e3-a7c6-2778ebe98b11", "target_handle": "jamesmcnairmusic", "created_at": "2026-05-28 16:55:19.024076+00" },
+    { "id": "3eccd3e7-fee2-4b48-b222-dc189f1f6a7c", "owner_id": "49754961-0090-4cc4-9859-59aaa1ec0a4c", "target_handle": "luca.d0", "created_at": "2026-06-03 04:40:11.957677+00" }
+  ],
+  "verdict": "No valuable production data. Fresh D1 start approved by data volume: 3 profiles, 1 IG-cached (owner's own), 0 purchases."
+}

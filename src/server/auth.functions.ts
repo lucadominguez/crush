@@ -86,7 +86,9 @@ export const signUpFn = createServerFn({ method: "POST" })
             .bind(userId, data.email, passwordHash),
           db
             .prepare(
-              "INSERT INTO profiles (id, user_id, name, handle, referral_code) VALUES (?, ?, ?, ?, ?)",
+              // trust_score explicit: the deployed table kept an old DEFAULT 50;
+              // schema.sql says 0 (PG parity). Recompute overwrites it anyway.
+              "INSERT INTO profiles (id, user_id, name, handle, referral_code, trust_score) VALUES (?, ?, ?, ?, ?, 0)",
             )
             .bind(profileId, userId, data.name, handle, code),
         ]);

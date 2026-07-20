@@ -36,6 +36,9 @@ export type ProfileRow = {
   god_mode_expires_at: string | null;
   trust_score: number;
   push_enabled: number;
+  streak_count: number;
+  streak_last_open: string | null;
+  onboarded_at: string | null;
   created_at: string;
   updated_at: string;
 };

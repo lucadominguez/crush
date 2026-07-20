@@ -66,8 +66,11 @@ CREATE TABLE IF NOT EXISTS profiles (
   crush_slots            INTEGER NOT NULL DEFAULT 3,  -- cap 8 via referral awards
   hint_credits           INTEGER NOT NULL DEFAULT 0,
   god_mode_expires_at    TEXT,
-  trust_score            INTEGER NOT NULL DEFAULT 50, -- 0-100, refreshed server-side
+  trust_score            INTEGER NOT NULL DEFAULT 0,  -- 0-100, refreshed server-side
   push_enabled           INTEGER NOT NULL DEFAULT 0,
+  streak_count           INTEGER NOT NULL DEFAULT 0,
+  streak_last_open       TEXT,                        -- ISO date
+  onboarded_at           TEXT,
   created_at             TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   updated_at             TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );

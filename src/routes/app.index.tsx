@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Search, BadgeCheck, Loader2, Lock, ArrowLeft, Bell, Crown, Plus, X, Send, Sparkles, Check } from "lucide-react";
 import { useMyNotifications } from "@/lib/phase1.hooks";
 
+import { SomeonePickedYouBanner } from "@/components/SomeonePickedYouBanner";
 import { InviteFriendsSheet } from "@/components/InviteFriendsSheet";
 import { useEffect, useState } from "react";
 import { getIG, removeCrush, useMyCrushes, useMyMatches, useMyProfile, addCrush, rememberIG } from "@/lib/store";
@@ -130,6 +131,16 @@ function CrushesPage() {
           </Link>
         </div>
       </header>
+
+      {/* "Someone picked you" — the highest-intent moment in the product.
+          Sits above the fold, before the status card, so it is the first thing
+          seen when a pick lands (including picks that were waiting in escrow
+          before this account existed). */}
+      {!initialLoading && (
+        <div className="-mx-5">
+          <SomeonePickedYouBanner slotsFilled={slotsFilled} slotsTotal={slotsTotal} />
+        </div>
+      )}
 
       {/* Primary status card — playful gradient accent */}
       {initialLoading ? (

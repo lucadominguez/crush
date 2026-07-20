@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { requireAuth } from "./auth-middleware";
 import { normHandle } from "./auth.functions";
+import { backfillEscrowClaims } from "./crush.functions";
 import type { ProfileRow } from "./rows";
 import { nowIso, uuid } from "./rows";
 
@@ -90,6 +91,7 @@ export const claimHandle = createServerFn({ method: "POST" })
     } catch {
       return { ok: false, error: HANDLE_ERRORS.handle_taken };
     }
+    try { await backfillEscrowClaims(db, userId); } catch {}
     return { ok: true, handle: v.handle };
   });
 

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Search, BadgeCheck, Loader2, Lock, Check } from "lucide-react";
+import { ArrowLeft, Search, BadgeCheck, Loader2, Lock, Check, AtSign } from "lucide-react";
 import { ScreenHeader } from "@/components/MobileShell";
 import { addCrush, rememberIG, useMyCrushes } from "@/lib/store";
 import type { IGSearchResult } from "@/lib/instagram.functions";
@@ -21,6 +21,14 @@ function AddPage() {
   const [pending, setPending] = useState<string | null>(null);
   const [justAdded, setJustAdded] = useState<Set<string>>(new Set());
   const [celebrate, setCelebrate] = useState<string | null>(null);
+
+  // A handle typed by hand — Instagram search can miss private, renamed, or
+  // brand-new accounts, and the person may not be on Crush at all. Picking one
+  // is the escrow case: the pick waits until they arrive.
+  const typed = q.trim().replace(/^@/, "").toLowerCase();
+  const typedIsValid = /^[a-z0-9._]{2,30}$/.test(typed);
+  const typedInResults = results.some((r) => r.handle === typed);
+  const showAddAnyway = typedIsValid && !typedInResults && !loading;
 
   async function pick(u: IGSearchResult) {
     if (pending) return;
@@ -77,7 +85,32 @@ function AddPage() {
             </p>
           )}
           {err && <div className="surface p-3 text-[13px] text-destructive">{err}</div>}
-          {!loading && !err && q.trim().length >= 2 && results.length === 0 && (
+          {showAddAnyway && (
+            <button
+              onClick={() => pick({ handle: typed, name: `@${typed}`, avatar: null, verified: false, isPrivate: false })}
+              disabled={owned.has(typed) || justAdded.has(typed) || !!pending}
+              className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-muted disabled:cursor-not-allowed min-h-11 ${celebrate === typed ? "animate-pop-in" : ""}`}
+            >
+              <div className="relative size-9 rounded-full grid place-items-center text-sm font-semibold shrink-0 border border-dashed border-foreground/30" style={{ color: "var(--muted-foreground)" }}>
+                <AtSign className="size-4" />
+                {celebrate === typed && (
+                  <span aria-hidden className="absolute inset-0 rounded-full animate-ring-burst pointer-events-none" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-[14px] truncate">@{typed}</p>
+                <p className="text-[12px] text-muted-foreground truncate">
+                  {results.length ? "not the one you meant? pick this exact @" : "not on crush yet — we'll hold your pick"}
+                </p>
+              </div>
+              <span className="text-[11px] text-muted-foreground shrink-0 inline-flex items-center gap-1">
+                {pending === typed ? (<><Loader2 className="size-3 animate-spin" /> adding</>)
+                  : (owned.has(typed) || justAdded.has(typed)) ? (<><Check className="size-3.5 text-primary" /> added</>)
+                  : "pick"}
+              </span>
+            </button>
+          )}
+          {!loading && !err && q.trim().length >= 2 && results.length === 0 && !typedIsValid && (
             <div className="surface p-4 text-center text-[13px] text-muted-foreground">no one found for "{q}"</div>
           )}
           {results.map((a) => {

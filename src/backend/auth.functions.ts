@@ -20,6 +20,7 @@ import {
   verifyPassword,
 } from "./auth";
 import { optionalAuth } from "./auth-middleware";
+import { backfillEscrowClaims } from "./crush.functions";
 
 export const HANDLE_RE = /^[a-z0-9._]{2,30}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,6 +103,10 @@ export const signUpFn = createServerFn({ method: "POST" })
         throw e;
       }
     }
+
+    // Picks made on this handle before the account existed become
+    // "someone picked you" the moment they arrive.
+    try { await backfillEscrowClaims(db, userId); } catch { /* never block signup */ }
 
     await startSession(userId);
     return { ok: true as const, userId };

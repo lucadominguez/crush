@@ -42,15 +42,17 @@ export function SomeonePickedYouBanner({ slotsFilled, slotsTotal }: { slotsFille
         {pulse && <span aria-hidden className="absolute inset-0 rounded-full animate-ring-burst pointer-events-none" />}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-black truncate">
+        {/* No truncation: at 390px "someone just picked you" clipped mid-word,
+            which read as a rendering bug on the app's highest-intent surface. */}
+        <p className="font-black leading-tight text-[15px]">
           {unreadCrushCount === 1
-            ? "someone just picked you 👀"
+            ? "someone picked you 👀"
             : `${unreadCrushCount} people picked you 👀`}
         </p>
-        <p className="text-xs font-medium opacity-80 truncate">{cta}</p>
+        <p className="text-xs font-medium opacity-80 leading-tight mt-0.5">{cta}</p>
       </div>
-      <span className="text-xs font-black px-3 py-1.5 rounded-full bg-foreground text-background">
-        pick →
+      <span className="shrink-0 text-xs font-black px-3 py-1.5 rounded-full bg-foreground text-background">
+        pick
       </span>
     </Link>
   );

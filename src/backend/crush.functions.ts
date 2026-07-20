@@ -47,6 +47,65 @@ export async function insertNotification(
     .run();
 }
 
+/**
+ * Escrow claim backfill.
+ *
+ * A crush can target a handle nobody has claimed yet (the whole point of the
+ * escrow loop: you pick someone who isn't on Crush, and the pick waits). Those
+ * picks produce no notification at insert time because there is no user to
+ * notify. When that person later joins — or claims the Instagram handle that
+ * was picked — this replays the waiting picks into `crush_received`
+ * notifications so the "someone picked you" surface lights up on arrival.
+ *
+ * Idempotent: each backfilled notification carries its crush_id, and we skip
+ * any crush that already has one. Never reveals who picked them.
+ */
+export async function backfillEscrowClaims(db: D1Database, userId: string): Promise<number> {
+  const me = await db
+    .prepare("SELECT handle, instagram_handle FROM profiles WHERE user_id = ?")
+    .bind(userId)
+    .first<Pick<ProfileRow, "handle" | "instagram_handle">>();
+  if (!me) return 0;
+
+  const handles = [me.handle, me.instagram_handle].filter((h): h is string => !!h);
+  if (!handles.length) return 0;
+  const ph = handles.map(() => "?").join(",");
+
+  const { results: waiting } = await db
+    .prepare(`SELECT id FROM crushes WHERE target_handle IN (${ph}) AND owner_id <> ?`)
+    .bind(...handles, userId)
+    .all<{ id: string }>();
+  if (!waiting.length) return 0;
+
+  const { results: existing } = await db
+    .prepare(
+      "SELECT json_extract(payload,'$.crush_id') AS crush_id FROM notifications WHERE user_id = ? AND type = 'crush_received' AND json_extract(payload,'$.crush_id') IS NOT NULL",
+    )
+    .bind(userId)
+    .all<{ crush_id: string | null }>();
+  const already = new Set(existing.map((r) => r.crush_id).filter(Boolean));
+
+  const fresh = waiting.filter((c) => !already.has(c.id));
+  if (!fresh.length) return 0;
+
+  await db.batch(
+    fresh.map((c) =>
+      db
+        .prepare("INSERT INTO notifications (id, user_id, type, payload) VALUES (?, ?, 'crush_received', ?)")
+        .bind(uuid(), userId, JSON.stringify({ crush_id: c.id, backfill: 1 })),
+    ),
+  );
+  return fresh.length;
+}
+
+/** Replays waiting picks for the caller (safe to call on app open). */
+export const claimWaitingPicks = createServerFn({ method: "POST" })
+  .middleware([requireAuth])
+  .handler(async ({ context }) => {
+    const claimed = await backfillEscrowClaims(context.db, context.userId);
+    return { ok: true as const, claimed };
+  });
+
 // --- Crushes ---------------------------------------------------------------
 
 export const listMyCrushes = createServerFn({ method: "GET" })

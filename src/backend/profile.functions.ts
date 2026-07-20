@@ -8,6 +8,7 @@ import { z } from "zod";
 import { optionalAuth, requireAuth } from "./auth-middleware";
 import { HANDLE_RE, normHandle } from "./auth.functions";
 import { getAvatarsBucket, getSecret } from "./bindings";
+import { backfillEscrowClaims } from "./crush.functions";
 import type { ProfileRow } from "./rows";
 import { nowIso, uuid } from "./rows";
 
@@ -54,6 +55,7 @@ export const claimHandleFn = createServerFn({ method: "POST" })
       .prepare("UPDATE profiles SET handle = ?, handle_confirmed_at = ?, updated_at = ? WHERE user_id = ?")
       .bind(handle, nowIso(), nowIso(), context.userId)
       .run();
+    try { await backfillEscrowClaims(context.db, context.userId); } catch {}
     return { ok: true as const, handle };
   });
 
@@ -77,6 +79,8 @@ export const claimInstagramHandle = createServerFn({ method: "POST" })
       )
       .bind(handle, ig?.full_name ?? null, ig?.profile_pic_url ?? null, ig?.follower_count ?? null, nowIso(), context.userId)
       .run();
+    // Picks aimed at this Instagram handle may have been waiting for it.
+    try { await backfillEscrowClaims(context.db, context.userId); } catch {}
     return { ok: true };
   });
 

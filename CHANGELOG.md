@@ -10,7 +10,7 @@ Off Lovable and Supabase entirely; running on own Cloudflare infra.
   Worker). Core loop verified in real browsers: signup, mutual match, chat.
 
 ### Added
-- Complete D1 server layer under `src/server/`: session auth (PBKDF2 +
+- Complete D1 server layer under `src/backend/`: session auth (PBKDF2 +
   HttpOnly cookie), crush/match/message domain with full PG-trigger parity
   (mutual detect, slot limit, expiry, notification fan-out, send idempotency),
   profile/IG verify, polls (feed visibility, vote, create), onboarding/quiz/
@@ -19,7 +19,7 @@ Off Lovable and Supabase entirely; running on own Cloudflare infra.
 - `db/schema.sql` gained quiz_answers + streak/onboarded columns (remote
   applied).
 ### Changed
-- `src/lib/*.functions.ts` are now re-export shims over `src/server/*` —
+- `src/lib/*.functions.ts` are now re-export shims over `src/backend/*` —
   the Supabase data path for ALL server functions is gone.
 - Stripe no longer routes through Lovable's connector gateway.
 - Referral codes generate UPPERCASE (PG parity).

@@ -20,12 +20,17 @@ chats, referrals, God Mode monetization on top. Formerly Lovable project
   truth; SQLite conventions documented in its header).
 - R2 `crush-avatars` (binding `AVATARS`). Durable Objects for chat/notifications
   realtime (replacing Supabase channels) — added when written.
-- Auth: hand-rolled sessions (PBKDF2-SHA256 WebCrypto, HttpOnly cookie),
-  `users`/`sessions` tables. All authorization lives in server functions
-  (D1 has no RLS) — every server fn must check ownership/participation itself.
+- Auth: hand-rolled sessions (PBKDF2-SHA256 WebCrypto, HttpOnly cookie
+  `crush_session`), `users`/`sessions` tables. All authorization lives in server
+  functions (D1 has no RLS) — every server fn must check ownership itself.
+- Server code lives in `src/backend/` — NOT `src/server/`: TanStack Start's
+  import-protection denies client imports matching `**/server/**`.
+  `src/lib/*.functions.ts` are thin re-export shims over it.
+- Realtime is visibility-aware polling (chat 4s, previews 8s, notifications
+  10s). Durable Object websockets are the planned upgrade.
 - Capacitor shells for iOS/Android wrap the deployed web app.
-- Legacy: `src/integrations/supabase/*`, `@lovable.dev/*` packages, Stripe
-  gateway shim in `src/lib/stripe.server.ts` — being removed by the port.
+- Supabase/Lovable auth are GONE. The only Lovable tie left is the build-time
+  `@lovable.dev/vite-tanstack-config` wrapper (blocks nitro task config).
 
 ## Commands (all verified)
 - `npm run dev` — vite dev server
@@ -36,6 +41,14 @@ chats, referrals, God Mode monetization on top. Formerly Lovable project
 - `npx wrangler d1 execute crush-db --local|--remote --file db/schema.sql`
 - Deploy: `npx nitro deploy --prebuilt` after build (or wrangler deploy on
   `.output/server`)
+
+## Runtime traps (cost a deploy each — do not regress)
+- **nitro owns the Worker entry.** It ignores `main` and invokes the entry
+  without `env`, so `src/server.ts` cannot capture bindings. Read them from
+  `globalThis.__env__` via `src/backend/bindings.ts`; secrets via `getSecret()`.
+- **Workers caps PBKDF2 at 100_000 iterations** — above that it throws.
+- A green `npm run build` proves nothing: both bugs above built clean and only
+  surfaced when the deployed app was driven in a browser.
 
 ## Invariants — don't break these
 - **Never touch Attentify prod**: worker `attentify-cloud`, D1 `pd-cloud`,
@@ -58,4 +71,5 @@ chats, referrals, God Mode monetization on top. Formerly Lovable project
 - UI changes are unverified until looked at (screenshot/driven render).
 - Product-grade polish; no debug noise in user-facing surfaces.
 
-Context verified against commit d4e18c1 on 2026-07-19.
+Live: https://crush-connect.ludomi2502.workers.dev
+Context verified against commit 7b9aefb on 2026-07-20.

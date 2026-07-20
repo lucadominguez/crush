@@ -61,9 +61,29 @@ Lovable project `crush100` (a0b29d2b-...) is the ORIGIN, being left behind.
 ## Features (Phase B, after port) — user-approved list
 
 - [ ] Crush-link outreach (value-in-escrow): crush on a non-user generates a
-      claim link + anonymous notification. Channel decision pending.
+      claim record + anonymous server-sent SMS (Twilio). NO Instagram DMs ever
+      (bot-ban treadmill). Delivery resolution order: sender-provided number ->
+      contact-graph resolution -> sender-confirmed match -> escrow.
 - [ ] Poll claim loop: non-users can be poll candidates; "you were voted X by
       N people at [school]" claimable on signup.
+- [ ] Landing "check your @" mode: anyone types their own IG handle, sees
+      claim count ("1 person picked you"), signup to reveal. Zero-channel
+      delivery surface.
+- [ ] CONTACT GRAPH (user-directed 2026-07-19):
+      - Import: Capacitor Contacts (native), Contact Picker API (Android web),
+        manual fallback. E.164 normalization.
+      - One person-node per phone number; edges (owner, phone, name-as-saved).
+      - Identity resolution: name-variant clustering (nicknames, edit distance,
+        token overlap), attribute inference from the crowd (school), IG-handle
+        linkage from signups + sender confirmations + HikerAPI name match.
+      - Centrality scoring: rank invite suggestions by how many address books
+        contain the node (popular kids first).
+      - Share-app: select-contacts or all-contacts via user's own SMS composer
+        (personal invites); anonymous notices always server-side via Twilio.
+      - Guardrails (v1, non-negotiable): import consent screen, 1 crush-SMS
+        per target until response (+1 reminder max), global opt-out list,
+        numbers encrypted + hashed match index, "who uploaded you" never
+        revealed, purge on request. Teen product = zero press-cycle margin.
 - [ ] Push notifications backend: push_tokens in D1, FCM/APNs from Worker
       (native via Capacitor) + Web Push for browsers/PWA.
 - [ ] Two-sided referral incentives (PayPal model, app currency both sides).
@@ -79,7 +99,8 @@ Lovable project `crush100` (a0b29d2b-...) is the ORIGIN, being left behind.
 
 - HikerAPI key (lives only in Lovable env today) — Phase A deploy.
 - Stripe sandbox keys from their own account — Phase A deploy.
-- Twilio decision if SMS channel confirmed — Phase B.
+- Twilio: APPROVED 2026-07-19. User must create account + start A2P 10DLC
+      registration EARLY (1-2 week lead time) — prompt them during Phase A.
 - Domain name — whenever; workers.dev until then.
 
 ## Session log

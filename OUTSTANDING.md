@@ -92,11 +92,17 @@ Live: **https://crush-connect.ludomi2502.workers.dev**
       secret. Hooks work today when called manually.
 - [ ] Google OAuth is stubbed with a friendly message (needs own OAuth client
       + domain). Email/password works.
-- [ ] Secrets still to set when the user provides them: HIKER_API_KEY (blocks
-      the whole add-crush UI — it is Instagram-search-only), STRIPE_SANDBOX_API_KEY,
-      PAYMENTS_SANDBOX_WEBHOOK_SECRET, PUBLIC_APP_ORIGIN.
+- [x] HIKER_API_KEY set as a Worker secret 2026-07-20; Instagram search
+      VERIFIED live (10 real results for "zendaya", pick registered, home shows
+      1/3 picks + avatars proxying). **User should rotate this key** — it was
+      pasted into a chat transcript.
+- [ ] Secrets still to set: STRIPE_SANDBOX_API_KEY, PAYMENTS_SANDBOX_WEBHOOK_SECRET,
+      PUBLIC_APP_ORIGIN.
 - [ ] Durable Object websocket upgrade to replace polling.
-- [ ] Push to a private GitHub repo `crush-connect` (local git only so far).
+- [ ] Push to a private GitHub repo `crush-connect`. `gh` CLI v2.96 is now
+      INSTALLED (winget, at `C:\Program Files\GitHub CLI`) but not logged in —
+      needs an interactive `gh auth login` from the user, then:
+      `gh repo create crush-connect --private --source=. --push`.
 
 ### Product gap found while testing (feeds Phase B)
 `/app/add` can ONLY add people returned by Instagram search. There is no

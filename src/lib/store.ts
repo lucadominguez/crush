@@ -224,6 +224,11 @@ if (typeof window !== "undefined") {
   });
 }
 
+/** Synchronous read of the signed-in user id (null when logged out). */
+export function getSessionUserId(): string | null {
+  return _session?.user.id ?? null;
+}
+
 export function useSession(): { session: Session | null; loading: boolean } {
   const [s, setS] = useState<Session | null>(_session);
   const [loaded, setLoaded] = useState(_sessionLoaded);

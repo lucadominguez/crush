@@ -109,6 +109,76 @@ Live: **https://crush-connect.ludomi2502.workers.dev**
 "add @handle anyway" path, so crushing on someone not in IG search results is
 impossible — the escrow/claim virality loop depends on that path existing.
 
+## RESUME HERE (state saved 2026-07-20, mid Phase B)
+
+Live: https://crush-connect.ludomi2502.workers.dev — everything below is
+DEPLOYED and verified unless marked WIP.
+
+### Shipped since the port
+- **Escrow loop is LIVE and verified.** `/app/add` has an "add @handle anyway"
+  row (handles IG search can't return); `backfillEscrowClaims()` in
+  `src/backend/crush.functions.ts` replays waiting picks into `crush_received`
+  notifications on signup / handle claim / IG claim (idempotent via payload
+  crush_id). Verified: A picks a nonexistent handle -> B signs up with it ->
+  B sees "someone picked you" -> B picks back -> mutual match.
+- **Fixed: `SomeonePickedYouBanner` was rendered NOWHERE** (dead code). Now on
+  the home screen above the fold; title no longer truncates at 390px.
+- HIKER_API_KEY set; Instagram search verified live (10 real results).
+
+### Worker secrets already set (do NOT regenerate)
+`HIKER_API_KEY`, `CRON_SECRET`, `VAPID_PUBLIC`, `VAPID_PRIVATE`, `CONTACT_KEY`.
+The VAPID public key is readable server-side via `getSecret("VAPID_PUBLIC")` —
+expose it to the client through a server fn, don't hardcode it.
+NOTE: the local scratch copy of these keys is gone after the PC restart; they
+live only in Cloudflare now, which is correct. Rotating `CONTACT_KEY`
+invalidates all contact matching AND delivery (deliberate kill switch).
+
+### Phase B schema: APPLIED (local + remote, 30 tables)
+`db/patch-002-phaseb.sql`, folded into `db/schema.sql`. New tables:
+`push_subscriptions`, `contact_edges`, `person_nodes`, `handle_phone_links`,
+`outreach_sends`, `outreach_optouts`, `moderation_actions`; plus
+`profiles.suspended_at`.
+
+### WIP — exactly where I stopped
+- `src/backend/contacts.ts` is WRITTEN and typechecks: E.164 normalization,
+  HMAC `phoneHash()`, AES-GCM `encryptPhone()`/`decryptPhone()`, nickname map,
+  `cleanContactName()`, `nameSimilarity()`, `canonicalName()`. It is NOT yet
+  imported by anything.
+- NEXT FILE TO WRITE: `src/backend/contacts.functions.ts` — server fns:
+  `importContacts` (batch of {phone, name} -> contact_edges + upsert
+  person_nodes with degree/canonical_name/school_guess), `getInviteTargets`
+  (person_nodes ordered by degree DESC, excluding existing users),
+  `resolveHandleToPhone` (handle_phone_links + name match against IG profile),
+  `confirmContactMatch` (sender-confirmed link, confidence 1.0).
+  Then wire an import UI + consent screen.
+
+### Still to do in Phase B (unstarted)
+- Push delivery: Web Push (VAPID keys ready) + `push_subscriptions` writes,
+  service worker, and a `sendPush()` used by the notification fan-out.
+- Landing "check your @" claim surface. DECISION MADE: do NOT return admirer
+  counts for arbitrary handles pre-signup (that leaks "does @X have admirers"
+  to anyone). Show the teaser, gate the real count behind signup, where the
+  escrow backfill already reveals it truthfully.
+- School + individual standings. `/app/standings` is ALREADY the polls page —
+  use a new route (`/app/leaderboard`). Individual ranking must use positive
+  activity only (poll wins, streaks, invites), NEVER admirer counts.
+- Weekly recap card + Sunday send.
+- Twilio SMS outreach (needs the user's Twilio account + A2P registration).
+  Build behind a pluggable sender that records to `outreach_sends` and marks
+  `suppressed` when Twilio isn't configured.
+- Moderation: report review page, chat word blocklist, suspension enforcement
+  in `requireAuth` via `profiles.suspended_at`.
+- UI overhaul: NOT STARTED.
+
+### Blocked on the user
+- **GitHub push is denied by the permission classifier.** Remote is set to
+  `https://github.com/lucadominguez/crush.git`, branch `main`, all commits
+  local. User must run `git push -u origin main --tags` themselves or approve it.
+- **Stripe: user supplied an `rk_live_` LIVE key — deliberately NOT wired.**
+  Payments stay in safe mode (every product `available:false`). Need an
+  `rk_test_`/`sk_test_` key for sandbox. The live key was never written to any
+  file or secret; it should be rotated since it was pasted into chat.
+
 ## Features (Phase B, after port) — user-approved list
 
 - [ ] Crush-link outreach (value-in-escrow): crush on a non-user generates a

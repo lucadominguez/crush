@@ -56,10 +56,33 @@ Lovable project `crush100` (a0b29d2b-...) is the ORIGIN, being left behind.
 - [ ] Auth: hand-rolled sessions (PBKDF2-SHA256 via WebCrypto, opaque token,
       SHA-256 stored) — users/sessions tables already in schema. No Better
       Auth dependency needed.
-- [ ] Rewrite data access: all Supabase client calls -> server fns hitting D1.
-      Mutual-match detection must be transactional in the server fn (no triggers).
-- [ ] Realtime: Durable Object per match/group chat + per-user notification DO
-      (WebSocket hibernation). Replaces `postgres_changes` channels.
+- [~] Rewrite data access: Supabase -> server fns on D1. DONE so far:
+      `src/server/bindings.ts` (env capture in server.ts fetch; structural D1/R2
+      types — do NOT install @cloudflare/workers-types, its globals clash with
+      lib.dom), `auth.ts` + `auth-middleware.ts` (requireAuth/optionalAuth give
+      {userId, db}), `auth.functions.ts` (signUp/signIn/signOut/getMe, cookie
+      `crush_session`), `rows.ts` (row types), `crush.functions.ts` (crushes/
+      matches/messages/notifications/school-stats/streak, full trigger-chain
+      port). tsc clean at each step.
+      REMAINING (port from these files, keep their exact result shapes):
+      - [ ] groups (src/lib/groups.ts client calls + create_group_atomic RPC)
+      - [ ] polls (polls.functions.ts + get_polls_feed/cast_poll_vote/create_poll
+            RPC semantics + poll share/pending questions)
+      - [ ] profile.functions.ts (claim_handle, setDob w/ 13+ check, school/city,
+            avatar -> R2, IG verify, latest_*_previews, mark_conversation_read)
+      - [ ] onboarding/quiz/phase5 (hints, admirer stats, referrals claim)
+      - [ ] payments.functions.ts (strip Lovable gateway; keep stub-friendly)
+      - [ ] instagram.functions.ts (HikerAPI — unchanged except env)
+      - [ ] api.* routes (webhook sig verify stays; hooks get CRON_SECRET)
+      - [ ] CLIENT: rewrite src/lib/store.ts + groups.ts internals to call the
+            new fns (keep SWR cache/hook shapes + optimistic logic); replace
+            supabase realtime with 4-5s polling on open surfaces FIRST (works
+            everywhere), Durable Object websockets as the upgrade AFTER first
+            live deploy is verified.
+      - [ ] Delete src/integrations/supabase + lovable, drop deps.
+- [ ] Realtime upgrade: Durable Object per match/group chat + per-user
+      notification DO (WebSocket hibernation) — after polling version verified
+      live.
 - [ ] Storage: avatar upload -> R2.
 - [ ] Stripe: delete Lovable gateway shim, direct api.stripe.com, sandbox keys.
 - [ ] Cron: 3 jobs (daily poll, hourly match-expiry, weekly superlative) ->

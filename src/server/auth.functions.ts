@@ -29,7 +29,8 @@ export function normHandle(h: string): string {
 }
 
 function newReferralCode(): string {
-  const alphabet = "abcdefghjkmnpqrstuvwxyz23456789"; // no confusable 0/o/1/l/i
+  // UPPERCASE to match the PG generator; claim_referral uppercases input.
+  const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // no confusable 0/O/1/L/I
   const bytes = crypto.getRandomValues(new Uint8Array(6));
   return [...bytes].map((b) => alphabet[b % alphabet.length]).join("");
 }

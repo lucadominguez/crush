@@ -5,8 +5,10 @@
 
 import Stripe from "stripe";
 
+import { getSecret } from "./bindings";
+
 const getEnv = (key: string): string => {
-  const value = process.env[key];
+  const value = getSecret(key);
   if (!value) throw new Error(`${key} is not configured`);
   return value;
 };

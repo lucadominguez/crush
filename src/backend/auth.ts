@@ -5,7 +5,10 @@
 
 import { getDb } from "./bindings";
 
-const PBKDF2_ITERATIONS = 210_000;
+// 100k is the hard ceiling the Workers runtime allows for PBKDF2 (higher
+// throws "iteration counts above 100000 are not supported"). Stored hashes
+// carry their own iteration count, so this can be raised if the cap ever is.
+const PBKDF2_ITERATIONS = 100_000;
 const SESSION_TTL_DAYS = 60;
 export const SESSION_COOKIE = "crush_session";
 

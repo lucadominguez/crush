@@ -50,13 +50,32 @@ export type WorkerEnv = {
 
 let workerEnv: WorkerEnv | undefined;
 
+/** Kept for the (unused) custom entry path; nitro is the real entry. */
 export function setWorkerEnv(env: unknown): void {
   workerEnv = env as WorkerEnv;
 }
 
+// IMPORTANT: nitro's cloudflare preset generates its OWN worker entry and
+// ignores `main` in wrangler.jsonc, so src/server.ts never runs in production.
+// Nitro's handler sets `globalThis.__env__ = env` on every fetch/scheduled
+// invocation (see nitro/dist/presets/cloudflare/runtime/_module-handler.mjs),
+// which is the entry-independent way to reach bindings.
 export function getWorkerEnv(): WorkerEnv {
-  if (!workerEnv) throw new Error("Worker env not captured yet (server.ts sets it per fetch)");
-  return workerEnv;
+  const fromNitro = (globalThis as { __env__?: WorkerEnv }).__env__;
+  const env = fromNitro ?? workerEnv;
+  if (!env) throw new Error("Worker env unavailable (no globalThis.__env__)");
+  return env;
+}
+
+/**
+ * Read a secret/var. Cloudflare secrets arrive on the env object; nitro also
+ * mirrors many into process.env. Check both so local dev and prod agree.
+ */
+export function getSecret(name: string): string | undefined {
+  const fromProcess = typeof process !== "undefined" ? process.env?.[name] : undefined;
+  if (fromProcess) return fromProcess;
+  const value = (globalThis as { __env__?: Record<string, unknown> }).__env__?.[name];
+  return typeof value === "string" ? value : undefined;
 }
 
 export function getDb(): D1Database {

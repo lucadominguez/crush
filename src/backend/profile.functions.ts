@@ -7,14 +7,14 @@ import { z } from "zod";
 
 import { optionalAuth, requireAuth } from "./auth-middleware";
 import { HANDLE_RE, normHandle } from "./auth.functions";
-import { getAvatarsBucket } from "./bindings";
+import { getAvatarsBucket, getSecret } from "./bindings";
 import type { ProfileRow } from "./rows";
 import { nowIso, uuid } from "./rows";
 
 const HIKER = "https://api.hikerapi.com";
 
 async function fetchIGProfile(handle: string) {
-  const key = process.env.HIKER_API_KEY;
+  const key = getSecret("HIKER_API_KEY");
   if (!key) throw new Error("HIKER_API_KEY is not configured");
   const h = normHandle(handle);
   const res = await fetch(`${HIKER}/v1/user/by/username?username=${encodeURIComponent(h)}`, {

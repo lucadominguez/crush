@@ -12,7 +12,7 @@ import { sha256Hex } from "./auth";
 import { insertNotification } from "./crush.functions";
 import type { ProfileRow, WeeklySuperlativeRow } from "./rows";
 import { uuid } from "./rows";
-import type { D1Database } from "./bindings";
+import { getSecret, type D1Database } from "./bindings";
 
 // ---------------- Invites --------------------------------------------------
 
@@ -54,7 +54,7 @@ export const getMyInviteText = createServerFn({ method: "POST" })
     const code = prof?.referral_code ?? "";
     const rawOrigin = (data.origin ?? "").replace(/\/+$/, "");
     const clientOrigin = rawOrigin && /^https?:\/\//.test(rawOrigin) ? rawOrigin : "";
-    const fallback = (process.env.PUBLIC_APP_ORIGIN ?? "").replace(/\/+$/, "") || "https://crush-connect.ludomi2502.workers.dev";
+    const fallback = (getSecret("PUBLIC_APP_ORIGIN") ?? "").replace(/\/+$/, "") || "https://crush-connect.ludomi2502.workers.dev";
     const origin = clientOrigin || fallback;
     const url = code ? `${origin}/?ref=${code}` : origin;
     return {

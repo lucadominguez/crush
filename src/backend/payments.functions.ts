@@ -8,6 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireAuth } from "./auth-middleware";
+import { getSecret } from "./bindings";
 import { createStripeClient } from "./stripe.server";
 import type { ProfileRow, PurchaseRow } from "./rows";
 
@@ -59,10 +60,10 @@ const CAPABILITIES: Record<CatalogKey, Capability> = {
 };
 
 function resolveEnv(): "sandbox" | "live" | null {
-  const liveOn = process.env.PAYMENTS_LIVE_ENABLED === "1";
-  const hasLive = !!process.env.STRIPE_LIVE_API_KEY;
+  const liveOn = getSecret("PAYMENTS_LIVE_ENABLED") === "1";
+  const hasLive = !!getSecret("STRIPE_LIVE_API_KEY");
   if (liveOn && hasLive) return "live";
-  if (process.env.STRIPE_SANDBOX_API_KEY) return "sandbox";
+  if (getSecret("STRIPE_SANDBOX_API_KEY")) return "sandbox";
   return null;
 }
 
@@ -174,8 +175,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       const isRecurring = price.type === "recurring";
 
       const origin =
-        process.env.PUBLIC_APP_ORIGIN ||
-        process.env.PUBLIC_ORIGIN ||
+        getSecret("PUBLIC_APP_ORIGIN") ||
+        getSecret("PUBLIC_ORIGIN") ||
         "https://crush-connect.ludomi2502.workers.dev";
       const returnUrl = `${origin.replace(/\/$/, "")}${RETURN_PATHS[data.returnTo]}`;
 

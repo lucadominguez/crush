@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { Camera, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useMyProfile } from "@/lib/store";
+import { uploadAvatarFromFile, useMyProfile } from "@/lib/store";
 import { toast } from "sonner";
 
 export function AvatarUpload() {
@@ -22,21 +21,8 @@ export function AvatarUpload() {
     }
     setUploading(true);
     try {
-      const { data: sess } = await supabase.auth.getUser();
-      const uid = sess.user?.id;
-      if (!uid) throw new Error("Not signed in");
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${uid}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage
-        .from("avatars")
-        .upload(path, file, { upsert: true, contentType: file.type });
-      if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-      const { error: updErr } = await supabase
-        .from("profiles")
-        .update({ avatar_url: pub.publicUrl })
-        .eq("user_id", uid);
-      if (updErr) throw updErr;
+      const res = await uploadAvatarFromFile(file);
+      if (res.error) throw new Error(res.error);
       toast.success("Profile picture updated");
       await refresh();
     } catch (err: any) {

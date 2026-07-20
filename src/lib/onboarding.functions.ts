@@ -5,4 +5,4 @@ export {
   setDob,
   setDisplayName,
   completeOnboarding,
-} from "@/server/onboarding.functions";
+} from "@/backend/onboarding.functions";

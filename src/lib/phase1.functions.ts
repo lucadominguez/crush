@@ -4,4 +4,4 @@ export {
   markNotificationsRead,
   getSchoolStats,
   touchStreak,
-} from "@/server/crush.functions";
+} from "@/backend/crush.functions";

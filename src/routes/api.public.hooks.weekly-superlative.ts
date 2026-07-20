@@ -1,31 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-// Weekly "Crush of the week" cron — runs Sundays 17:00 UTC.
+import { getDb } from "@/backend/bindings";
+import { requireCronAuth } from "@/backend/cron-auth";
+import { uuid } from "@/backend/rows";
+import type { PollRow } from "@/backend/rows";
+
+// Weekly "Crush of the week" cron — runs Sundays 17:00 UTC via Cron Trigger.
 // For each school cohort, picks the most-voted-for handle in the last 7 days
 // of polls and records it as the week's anonymous superlative.
 export const Route = createFileRoute("/api/public/hooks/weekly-superlative")({
   server: {
     handlers: {
-      POST: async () => {
-        const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        // load last week's polls and their votes
-        const { data: polls, error: pErr } = await supabaseAdmin
-          .from("polls")
-          .select("id, school, question, question_id, created_at")
-          .gte("created_at", since);
-        if (pErr) return Response.json({ error: pErr.message }, { status: 500 });
-        if (!polls?.length) return Response.json({ created: 0 });
+      POST: async ({ request }) => {
+        const denied = requireCronAuth(request);
+        if (denied) return denied;
 
-        const pollIds = polls.map((p) => p.id);
-        const { data: votes, error: vErr } = await supabaseAdmin
-          .from("poll_votes")
-          .select("poll_id, voted_handle")
-          .in("poll_id", pollIds);
-        if (vErr) return Response.json({ error: vErr.message }, { status: 500 });
+        const db = getDb();
+        const since = new Date(Date.now() - 7 * 86_400_000).toISOString();
 
-        // group by school: pick the (handle, question) pair with the most votes
-        type Tally = Map<string, number>; // key: handle::questionId → votes
+        const { results: polls } = await db
+          .prepare("SELECT id, school, question, question_id, created_at FROM polls WHERE created_at >= ?")
+          .bind(since)
+          .all<Pick<PollRow, "id" | "school" | "question" | "question_id" | "created_at">>();
+        if (!polls.length) return Response.json({ created: 0 });
+
+        const ph = polls.map(() => "?").join(",");
+        const { results: votes } = await db
+          .prepare(`SELECT poll_id, voted_handle FROM poll_votes WHERE poll_id IN (${ph})`)
+          .bind(...polls.map((p) => p.id))
+          .all<{ poll_id: string; voted_handle: string }>();
+
+        type Tally = Map<string, number>; // handle::questionId → votes
         const byCohort = new Map<string, { tally: Tally; pollMeta: typeof polls }>();
         const pollById = new Map(polls.map((p) => [p.id, p]));
         for (const p of polls) {
@@ -33,11 +38,10 @@ export const Route = createFileRoute("/api/public/hooks/weekly-superlative")({
           if (!byCohort.has(k)) byCohort.set(k, { tally: new Map(), pollMeta: [] });
           byCohort.get(k)!.pollMeta.push(p);
         }
-        for (const v of votes ?? []) {
+        for (const v of votes) {
           const p = pollById.get(v.poll_id);
           if (!p) continue;
-          const k = p.school ?? "unknown";
-          const bucket = byCohort.get(k);
+          const bucket = byCohort.get(p.school ?? "unknown");
           if (!bucket) continue;
           const key = `${v.voted_handle}::${p.question_id ?? p.id}`;
           bucket.tally.set(key, (bucket.tally.get(key) ?? 0) + 1);
@@ -63,21 +67,27 @@ export const Route = createFileRoute("/api/public/hooks/weekly-superlative")({
           }
           if (!bestKey) continue;
           const [handle, questionKey] = bestKey.split("::");
-          const meta = pollMeta.find(
-            (p) => (p.question_id ?? p.id) === questionKey,
-          );
+          const meta = pollMeta.find((p) => (p.question_id ?? p.id) === questionKey);
           if (!meta) continue;
-          const { error } = await supabaseAdmin
-            .from("weekly_superlatives")
-            .insert({
-              school: cohort === "unknown" ? null : cohort,
-              week_start: weekStart,
-              question_id: meta.question_id,
-              question: meta.question,
-              winner_handle: handle,
-              votes: bestVotes,
-            });
-          if (!error) created++;
+          try {
+            await db
+              .prepare(
+                "INSERT INTO weekly_superlatives (id, school, week_start, question_id, question, winner_handle, votes) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              )
+              .bind(
+                uuid(),
+                cohort === "unknown" ? null : cohort,
+                weekStart,
+                meta.question_id,
+                meta.question,
+                handle,
+                bestVotes,
+              )
+              .run();
+            created++;
+          } catch {
+            // unique (school, week_start, question_id) — already recorded
+          }
         }
 
         return Response.json({ created });

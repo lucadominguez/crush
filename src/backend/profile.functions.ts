@@ -5,8 +5,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { requireAuth } from "./auth-middleware";
+import { optionalAuth, requireAuth } from "./auth-middleware";
 import { HANDLE_RE, normHandle } from "./auth.functions";
+import { getAvatarsBucket } from "./bindings";
 import type { ProfileRow } from "./rows";
 import { nowIso, uuid } from "./rows";
 
@@ -231,6 +232,71 @@ export const markConversationRead = createServerFn({ method: "POST" })
       .bind(userId, data.kind, data.convId, nowIso())
       .run();
     return { ok: true as const };
+  });
+
+// Avatar upload to R2 (replaces Supabase storage). Client sends base64;
+// the file is served back through /api/avatar/$ so the bucket stays private.
+const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
+const AVATAR_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+
+export const uploadAvatar = createServerFn({ method: "POST" })
+  .middleware([requireAuth])
+  .inputValidator((input) =>
+    z.object({ dataBase64: z.string().min(1), contentType: z.string() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const ext = AVATAR_TYPES[data.contentType];
+    if (!ext) return { ok: false as const, error: "pick a jpg, png, webp or gif" };
+    let bytes: Uint8Array;
+    try {
+      bytes = Uint8Array.from(atob(data.dataBase64), (c) => c.charCodeAt(0));
+    } catch {
+      return { ok: false as const, error: "upload failed" };
+    }
+    if (bytes.byteLength > AVATAR_MAX_BYTES) return { ok: false as const, error: "image must be under 5mb" };
+
+    const key = `${context.userId}/avatar-${Date.now()}.${ext}`;
+    await getAvatarsBucket().put(key, bytes.buffer as ArrayBuffer, {
+      httpMetadata: { contentType: data.contentType },
+    });
+    const url = `/api/avatar/${key}`;
+    await context.db
+      .prepare("UPDATE profiles SET avatar_url = ?, updated_at = ? WHERE user_id = ?")
+      .bind(url, nowIso(), context.userId)
+      .run();
+    return { ok: true as const, url };
+  });
+
+// Profile search for group creation etc. — minimized columns only.
+export const searchProfiles = createServerFn({ method: "GET" })
+  .middleware([requireAuth])
+  .inputValidator((input) => z.object({ query: z.string().trim().min(2).max(64) }).parse(input))
+  .handler(async ({ data, context }) => {
+    const term = data.query.replace(/^@/, "").replace(/[%_]/g, "");
+    if (term.length < 2) return { results: [] };
+    const like = `%${term}%`;
+    const { results } = await context.db
+      .prepare(
+        `SELECT user_id, name, handle, emoji, instagram_avatar FROM profiles
+         WHERE handle LIKE ? OR name LIKE ? OR instagram_handle LIKE ?
+         LIMIT 20`,
+      )
+      .bind(like, like, like)
+      .all<Pick<ProfileRow, "user_id" | "name" | "handle" | "emoji" | "instagram_avatar">>();
+    return { results };
+  });
+
+// Public signup count for the landing ticker (no auth required, count only).
+export const getPublicStats = createServerFn({ method: "GET" })
+  .middleware([optionalAuth])
+  .handler(async ({ context }) => {
+    const row = await context.db.prepare("SELECT COUNT(*) AS n FROM profiles").first<{ n: number }>();
+    return { signups: row?.n ?? 0 };
   });
 
 // GDPR/App-Store account deletion. FK ON DELETE CASCADE clears profiles,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Users, Flame } from "lucide-react";
+import { getPublicStats } from "@/backend/profile.functions";
 
 // Real-ish live ticker — fetches signup count once + animates a faux delta.
 export function LandingTicker() {
@@ -8,12 +8,11 @@ export function LandingTicker() {
 
   useEffect(() => {
     let cancelled = false;
-    supabase
-      .from("profiles")
-      .select("user_id", { count: "exact", head: true })
-      .then(({ count }) => {
-        if (!cancelled && count !== null) setCount(count);
-      });
+    getPublicStats()
+      .then((res) => {
+        if (!cancelled) setCount(res.signups);
+      })
+      .catch(() => {});
     return () => { cancelled = true; };
   }, []);
 

@@ -4,4 +4,4 @@ export {
   createCheckoutSession,
   getMyEntitlements,
   createBillingPortalSession,
-} from "@/server/payments.functions";
+} from "@/backend/payments.functions";

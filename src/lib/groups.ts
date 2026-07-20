@@ -14,7 +14,7 @@ import {
   listGroupMessages,
   listMyGroups,
   sendGroupMessageFn,
-} from "@/server/groups.functions";
+} from "@/backend/groups.functions";
 import { getSessionUserId, type MatchProfile } from "./store";
 
 export type Group = {

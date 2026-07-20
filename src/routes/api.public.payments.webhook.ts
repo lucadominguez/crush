@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
+
+import { getDb } from "@/backend/bindings";
+import { uuid } from "@/backend/rows";
+import { type StripeEnv, verifyWebhook } from "@/backend/stripe.server";
+import type { D1Database } from "@/backend/bindings";
 
 const ALLOWED_PRODUCTS = new Set([
   "god_mode_weekly",
@@ -10,33 +13,51 @@ const ALLOWED_PRODUCTS = new Set([
   "match_save_one",
 ]);
 
-async function recordOneTime(opts: {
-  userId: string;
-  priceId: string;
-  matchId?: string;
-  amountCents: number;
-  sessionId: string;
-}) {
+// Port of the record_purchase_and_grant RPC: idempotent by (user_id,
+// sessionId); one-time grants applied alongside the purchases row.
+async function recordOneTime(
+  db: D1Database,
+  opts: { userId: string; priceId: string; matchId?: string; amountCents: number; sessionId: string },
+): Promise<void> {
   if (!ALLOWED_PRODUCTS.has(opts.priceId)) return;
-  // Subscription products have their entitlements driven by subscription
-  // events, not checkout.session.completed. Record the purchase row only
-  // (no grant) via the same atomic RPC — grants for recurring items happen
-  // in handleSubscription below.
-  const { error } = await supabaseAdmin.rpc("record_purchase_and_grant", {
-    _user_id: opts.userId,
-    _product: opts.priceId,
-    _amount_cents: opts.amountCents,
-    _session_id: opts.sessionId,
-    _match_id: opts.matchId ?? undefined,
-  });
-  if (error) {
-    // Throw so Stripe retries the webhook. The RPC is transactional —
-    // either both the purchases row and the grant landed, or neither did.
-    throw new Error(`record_purchase_and_grant failed: ${error.message}`);
+
+  const existing = await db
+    .prepare("SELECT id FROM purchases WHERE user_id = ? AND json_extract(metadata,'$.sessionId') = ? LIMIT 1")
+    .bind(opts.userId, opts.sessionId)
+    .first();
+  if (existing) return; // already recorded — idempotent success
+
+  const metadata = JSON.stringify(
+    opts.matchId ? { sessionId: opts.sessionId, matchId: opts.matchId } : { sessionId: opts.sessionId },
+  );
+  const stmts = [
+    db
+      .prepare("INSERT INTO purchases (id, user_id, product, amount_cents, metadata) VALUES (?, ?, ?, ?, ?)")
+      .bind(uuid(), opts.userId, opts.priceId, opts.amountCents ?? 0, metadata),
+  ];
+  if (opts.priceId === "hint_pack_5") {
+    stmts.push(
+      db
+        .prepare("UPDATE profiles SET hint_credits = COALESCE(hint_credits, 0) + 5 WHERE user_id = ?")
+        .bind(opts.userId),
+    );
+  } else if (opts.priceId === "weekend_boost_one") {
+    stmts.push(
+      db
+        .prepare("UPDATE profiles SET crush_slots = MIN(12, COALESCE(crush_slots, 3) + 3) WHERE user_id = ?")
+        .bind(opts.userId),
+    );
+  } else if (opts.priceId === "match_save_one" && opts.matchId) {
+    stmts.push(
+      db.prepare("UPDATE matches SET saved = 1, expires_at = NULL WHERE id = ?").bind(opts.matchId),
+    );
   }
+  // D1 batch is transactional: purchases row + grant land together or not at all.
+  await db.batch(stmts);
 }
 
-async function handleSubscription(sub: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function handleSubscription(db: D1Database, sub: any) {
   const userId = sub.metadata?.userId;
   if (!userId) return;
   const item = sub.items?.data?.[0];
@@ -50,31 +71,17 @@ async function handleSubscription(sub: any) {
 
   if (priceId === "god_mode_weekly") {
     if (activeStatuses.has(status) && periodEnd) {
-      await supabaseAdmin
-        .from("profiles")
-        .update({ god_mode_expires_at: new Date(periodEnd * 1000).toISOString() })
-        .eq("user_id", userId);
+      await db
+        .prepare("UPDATE profiles SET god_mode_expires_at = ? WHERE user_id = ?")
+        .bind(new Date(periodEnd * 1000).toISOString(), userId)
+        .run();
     } else if (paidThroughStatuses.has(status)) {
-      // Don't shorten paid-through access. Only clear if the period has
-      // fully elapsed; otherwise leave the existing expires_at intact.
+      // Don't shorten paid-through access; only clear once elapsed.
       if (periodEnd && periodEnd * 1000 < Date.now()) {
-        await supabaseAdmin
-          .from("profiles")
-          .update({ god_mode_expires_at: null })
-          .eq("user_id", userId);
+        await db.prepare("UPDATE profiles SET god_mode_expires_at = NULL WHERE user_id = ?").bind(userId).run();
       }
-    } else if (status === "incomplete" || status === "incomplete_expired") {
-      // No grant.
     }
   }
-}
-
-// Constant-time comparison of two hex strings.
-function timingSafeEqualHex(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let out = 0;
-  for (let i = 0; i < a.length; i++) out |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return out === 0;
 }
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
@@ -87,36 +94,24 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
         }
         const env: StripeEnv = rawEnv;
         try {
-          // verifyWebhook already uses raw body + timestamp tolerance; the
-          // hex compare inside is length-checked. We add an explicit
-          // timing-safe re-check on the event id shape and a livemode
-          // guard below to catch cross-environment misrouting.
           const event = await verifyWebhook(request, env);
-          // Belt-and-suspenders: ensure the event's livemode matches the
-          // endpoint's declared environment.
+          // livemode guard against cross-environment misrouting.
           const evLivemode = (event as unknown as { livemode?: boolean }).livemode;
-          if (typeof evLivemode === "boolean") {
-            const expected = env === "live";
-            if (evLivemode !== expected) {
-              console.error("[payments-webhook] livemode mismatch", { env, evLivemode });
-              return Response.json({ received: true, ignored: "livemode mismatch" });
-            }
-          }
-          // Guard against oddly-shaped signature headers slipping through.
-          const sig = request.headers.get("stripe-signature") ?? "";
-          if (!timingSafeEqualHex(sig.slice(0, 0), "")) {
-            // no-op — reference to keep helper used and lint-happy
+          if (typeof evLivemode === "boolean" && evLivemode !== (env === "live")) {
+            console.error("[payments-webhook] livemode mismatch", { env, evLivemode });
+            return Response.json({ received: true, ignored: "livemode mismatch" });
           }
 
+          const db = getDb();
           switch (event.type) {
             case "checkout.session.completed": {
-              const s = event.data.object;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const s = event.data.object as any;
               const meta = s.metadata ?? {};
               const priceId: string | undefined = meta.priceId;
               const userId: string | undefined = meta.userId;
-              // Only record ONE-TIME purchases here. Subscriptions are
-              // handled by customer.subscription.* events and must not
-              // receive a fixed-length fallback grant.
+              // Only one-time purchases here; subscriptions are driven by
+              // customer.subscription.* events.
               if (
                 userId &&
                 priceId &&
@@ -124,7 +119,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
                 priceId !== "god_mode_weekly" &&
                 (s.mode ?? "payment") !== "subscription"
               ) {
-                await recordOneTime({
+                await recordOneTime(db, {
                   userId,
                   priceId,
                   matchId: meta.matchId,
@@ -136,23 +131,16 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
             }
             case "customer.subscription.created":
             case "customer.subscription.updated":
-              await handleSubscription(event.data.object);
+              await handleSubscription(db, event.data.object);
               break;
             case "customer.subscription.deleted": {
-              const sub = event.data.object;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const sub = event.data.object as any;
               const userId = sub.metadata?.userId;
               const item = sub.items?.data?.[0];
-              const periodEnd: number | undefined =
-                item?.current_period_end ?? sub.current_period_end;
-              if (userId) {
-                // Preserve paid-through access; only clear once the period
-                // has actually elapsed.
-                if (!periodEnd || periodEnd * 1000 < Date.now()) {
-                  await supabaseAdmin
-                    .from("profiles")
-                    .update({ god_mode_expires_at: null })
-                    .eq("user_id", userId);
-                }
+              const periodEnd: number | undefined = item?.current_period_end ?? sub.current_period_end;
+              if (userId && (!periodEnd || periodEnd * 1000 < Date.now())) {
+                await db.prepare("UPDATE profiles SET god_mode_expires_at = NULL WHERE user_id = ?").bind(userId).run();
               }
               break;
             }
@@ -162,7 +150,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
           return Response.json({ received: true });
         } catch (e) {
           console.error("[payments-webhook] error:", e);
-          // Return 400 so Stripe retries — atomic RPC means retries are safe.
+          // 400 so Stripe retries — recordOneTime is idempotent.
           return new Response("Webhook error", { status: 400 });
         }
       },

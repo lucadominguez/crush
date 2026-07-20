@@ -10,4 +10,4 @@ export {
   deleteMyAccount,
   markConversationRead,
   claimHandleFn,
-} from "@/server/profile.functions";
+} from "@/backend/profile.functions";

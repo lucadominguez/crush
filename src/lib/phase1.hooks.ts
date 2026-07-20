@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import {
   listMyNotifications,
   markNotificationsRead,
@@ -39,23 +38,12 @@ export function useMyNotifications() {
 
   useEffect(() => {
     refresh();
-    const ch = supabase
-      .channel(`notifications:self:${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
-          const row = payload.new as Notification | null;
-          if (!row?.id) { refresh(); return; }
-          if (seenIds.current.has(row.id)) return;
-          seenIds.current.add(row.id);
-          setItems((prev) => (prev.some((p) => p.id === row.id) ? prev : [row, ...prev]));
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
+    // Poll while mounted (replaces the Supabase realtime channel).
+    const iv = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
+      refresh();
+    }, 10000);
+    return () => clearInterval(iv);
   }, [refresh]);
 
   const markRead = useCallback(async (ids: string[]) => {

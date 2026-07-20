@@ -6,5 +6,5 @@ export {
   getPollsFeed,
   castPollVote,
   createPollFn,
-} from "@/server/polls.functions";
-export type { IncomingPollResult } from "@/server/polls.functions";
+} from "@/backend/polls.functions";
+export type { IncomingPollResult } from "@/backend/polls.functions";

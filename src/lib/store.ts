@@ -14,7 +14,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { getMeFn, signInFn, signOutFn, signUpFn } from "@/server/auth.functions";
+import { getMeFn, signInFn, signOutFn, signUpFn } from "@/backend/auth.functions";
 import {
   addCrushFn,
   listMyCrushes,
@@ -23,10 +23,10 @@ import {
   removeCrushFn,
   sendMessageFn,
   type MatchWithOther,
-} from "@/server/crush.functions";
-import { getConversationReads, latestMatchPreviews } from "@/server/groups.functions";
-import { markConversationRead } from "@/server/profile.functions";
-import { castPollVote, createPollFn, getPollsFeed } from "@/server/polls.functions";
+} from "@/backend/crush.functions";
+import { getConversationReads, latestMatchPreviews } from "@/backend/groups.functions";
+import { markConversationRead } from "@/backend/profile.functions";
+import { castPollVote, createPollFn, getPollsFeed } from "@/backend/polls.functions";
 
 // ============================================================
 // Static "Instagram" directory used as a searchable suggestion
@@ -914,6 +914,29 @@ export async function createPoll(question: string, handles: string[]): Promise<{
   }
   invalidate(`["polls",`);
   return { id: r.pollId };
+}
+
+// ============================================================
+// Avatar upload (R2 via server fn; replaces Supabase storage)
+// ============================================================
+export async function uploadAvatarFromFile(file: File): Promise<{ url?: string; error?: string }> {
+  if (!file.type.startsWith("image/")) return { error: "pick an image" };
+  if (file.size > 5 * 1024 * 1024) return { error: "image must be under 5mb" };
+  const buf = new Uint8Array(await file.arrayBuffer());
+  let bin = "";
+  const CHUNK = 0x8000;
+  for (let i = 0; i < buf.length; i += CHUNK) {
+    bin += String.fromCharCode(...buf.subarray(i, i + CHUNK));
+  }
+  const { uploadAvatar } = await import("@/backend/profile.functions");
+  try {
+    const res = await uploadAvatar({ data: { dataBase64: btoa(bin), contentType: file.type } });
+    if (!res.ok) return { error: res.error };
+    invalidate(`["profile",`);
+    return { url: res.url };
+  } catch {
+    return { error: "upload failed" };
+  }
 }
 
 // Network suggestions: handles the user already interacts with.

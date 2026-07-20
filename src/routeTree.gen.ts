@@ -28,6 +28,7 @@ import { Route as ApiIgAvatarRouteImport } from './routes/api.ig-avatar'
 import { Route as AppMatchIdRouteImport } from './routes/app.match.$id'
 import { Route as AppGroupIdRouteImport } from './routes/app.group.$id'
 import { Route as AppChatIdRouteImport } from './routes/app.chat.$id'
+import { Route as ApiAvatarSplatRouteImport } from './routes/api.avatar.$'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api.public.payments.webhook'
 import { Route as ApiPublicHooksWeeklySuperlativeRouteImport } from './routes/api.public.hooks.weekly-superlative'
 import { Route as ApiPublicHooksMatchExpiryRouteImport } from './routes/api.public.hooks.match-expiry'
@@ -128,6 +129,11 @@ const AppChatIdRoute = AppChatIdRouteImport.update({
   path: '/chat/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiAvatarSplatRoute = ApiAvatarSplatRouteImport.update({
+  id: '/api/avatar/$',
+  path: '/api/avatar/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/app/upgrade': typeof AppUpgradeRoute
   '/onboarding/quiz': typeof OnboardingQuizRoute
   '/app/': typeof AppIndexRoute
+  '/api/avatar/$': typeof ApiAvatarSplatRoute
   '/app/chat/$id': typeof AppChatIdRoute
   '/app/group/$id': typeof AppGroupIdRoute
   '/app/match/$id': typeof AppMatchIdRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/app/upgrade': typeof AppUpgradeRoute
   '/onboarding/quiz': typeof OnboardingQuizRoute
   '/app': typeof AppIndexRoute
+  '/api/avatar/$': typeof ApiAvatarSplatRoute
   '/app/chat/$id': typeof AppChatIdRoute
   '/app/group/$id': typeof AppGroupIdRoute
   '/app/match/$id': typeof AppMatchIdRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/app/upgrade': typeof AppUpgradeRoute
   '/onboarding/quiz': typeof OnboardingQuizRoute
   '/app/': typeof AppIndexRoute
+  '/api/avatar/$': typeof ApiAvatarSplatRoute
   '/app/chat/$id': typeof AppChatIdRoute
   '/app/group/$id': typeof AppGroupIdRoute
   '/app/match/$id': typeof AppMatchIdRoute
@@ -246,6 +255,7 @@ export interface FileRouteTypes {
     | '/app/upgrade'
     | '/onboarding/quiz'
     | '/app/'
+    | '/api/avatar/$'
     | '/app/chat/$id'
     | '/app/group/$id'
     | '/app/match/$id'
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/app/upgrade'
     | '/onboarding/quiz'
     | '/app'
+    | '/api/avatar/$'
     | '/app/chat/$id'
     | '/app/group/$id'
     | '/app/match/$id'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/app/upgrade'
     | '/onboarding/quiz'
     | '/app/'
+    | '/api/avatar/$'
     | '/app/chat/$id'
     | '/app/group/$id'
     | '/app/match/$id'
@@ -312,6 +324,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   ApiIgAvatarRoute: typeof ApiIgAvatarRoute
   OnboardingQuizRoute: typeof OnboardingQuizRoute
+  ApiAvatarSplatRoute: typeof ApiAvatarSplatRoute
   ApiPublicHooksDailyPollRoute: typeof ApiPublicHooksDailyPollRoute
   ApiPublicHooksMatchExpiryRoute: typeof ApiPublicHooksMatchExpiryRoute
   ApiPublicHooksWeeklySuperlativeRoute: typeof ApiPublicHooksWeeklySuperlativeRoute
@@ -453,6 +466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChatIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/avatar/$': {
+      id: '/api/avatar/$'
+      path: '/api/avatar/$'
+      fullPath: '/api/avatar/$'
+      preLoaderRoute: typeof ApiAvatarSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -524,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   ApiIgAvatarRoute: ApiIgAvatarRoute,
   OnboardingQuizRoute: OnboardingQuizRoute,
+  ApiAvatarSplatRoute: ApiAvatarSplatRoute,
   ApiPublicHooksDailyPollRoute: ApiPublicHooksDailyPollRoute,
   ApiPublicHooksMatchExpiryRoute: ApiPublicHooksMatchExpiryRoute,
   ApiPublicHooksWeeklySuperlativeRoute: ApiPublicHooksWeeklySuperlativeRoute,

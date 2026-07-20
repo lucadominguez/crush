@@ -7,8 +7,7 @@ import { InstagramClaimCard } from "@/components/InstagramClaimCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PushNotifToggle } from "@/components/PushNotifToggle";
 import { DeleteAccountButton } from "@/components/DeleteAccountButton";
-import { signOut, useMyProfile, useSession } from "@/lib/store";
-import { supabase } from "@/integrations/supabase/client";
+import { signOut, uploadAvatarFromFile, useMyProfile, useSession } from "@/lib/store";
 
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "you · crush" }] }),
@@ -31,18 +30,8 @@ function SettingsPage() {
     if (file.size > 5 * 1024 * 1024) { toast.error("image must be under 5mb"); return; }
     setUploading(true);
     try {
-      const { data: sess } = await supabase.auth.getUser();
-      const uid = sess.user?.id;
-      if (!uid) throw new Error("Not signed in");
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${uid}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage
-        .from("avatars").upload(path, file, { upsert: true, contentType: file.type });
-      if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-      const { error: updErr } = await supabase
-        .from("profiles").update({ avatar_url: pub.publicUrl }).eq("user_id", uid);
-      if (updErr) throw updErr;
+      const res = await uploadAvatarFromFile(file);
+      if (res.error) throw new Error(res.error);
       toast.success("profile pic updated");
       await refresh();
     } catch (err: any) {

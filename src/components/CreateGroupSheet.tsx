@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { createGroup } from "@/lib/groups";
 import { useMyMatches } from "@/lib/store";
-import { supabase } from "@/integrations/supabase/client";
+import { searchProfiles } from "@/backend/profile.functions";
+import { getSessionUserId } from "@/lib/store";
 
 // Minimized identity fields — do not fetch full profiles for member picking.
 type PickProfile = {
@@ -31,7 +32,7 @@ export function CreateGroupSheet({ onClose }: { onClose: () => void }) {
   const nav = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+    setMe(getSessionUserId());
   }, []);
 
   // Debounced search across all profiles — minimized columns only.
@@ -41,13 +42,13 @@ export function CreateGroupSheet({ onClose }: { onClose: () => void }) {
     setSearching(true);
     setSearchError(null);
     const t = setTimeout(async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("user_id,name,handle,emoji,instagram_avatar")
-        .or(`handle.ilike.%${term}%,name.ilike.%${term}%,instagram_handle.ilike.%${term}%`)
-        .limit(20);
-      if (error) { setSearchError("search failed"); setResults([]); }
-      else setResults((data as PickProfile[]) ?? []);
+      try {
+        const res = await searchProfiles({ data: { query: term } });
+        setResults((res.results as PickProfile[]) ?? []);
+      } catch {
+        setSearchError("search failed");
+        setResults([]);
+      }
       setSearching(false);
     }, 220);
     return () => clearTimeout(t);

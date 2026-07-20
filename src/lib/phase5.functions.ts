@@ -9,7 +9,7 @@ export {
   revealHint,
   listMyHints,
   getCrushOfWeek,
-} from "@/server/growth.functions";
+} from "@/backend/growth.functions";
 export type WeeklySuperlative = {
   id: string;
   school: string | null;

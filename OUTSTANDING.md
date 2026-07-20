@@ -41,8 +41,13 @@ Lovable project `crush100` (a0b29d2b-...) is the ORIGIN, being left behind.
 
 ## The port (Phase A — blocks everything else)
 
-- [ ] Scaffold `backend/` per Attentify pattern: Worker `crush-api`, new D1 db
-      `crush-db`, R2 `crush-avatars`, DO namespaces for chat + notifications.
+- [x] Cloudflare resources created 2026-07-19: D1 `crush-db`
+      (`d73cf571-16e6-4edf-8ea3-5eab4142c181`), R2 `crush-avatars`. Bindings
+      in `wrangler.jsonc` (worker renamed `crush-connect`); VERIFIED they
+      propagate into nitro's generated `.output/server/wrangler.json`.
+      Architecture: SINGLE Worker (TanStack app + server fns + bindings), not
+      the Attentify two-worker split — SSR app is already a Worker; no CORS,
+      one deploy. DO namespaces get added to config when the chat DO is written.
 - [ ] Port schema: 27 Supabase migrations -> one D1 `schema.sql` (SQLite dialect;
       drop RLS — authorization moves into server functions).
 - [ ] Auth: Better Auth (or session JWT) on the Worker; users table in D1.

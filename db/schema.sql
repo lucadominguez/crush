@@ -251,6 +251,20 @@ CREATE TABLE IF NOT EXISTS hints (
   UNIQUE (user_id, target_handle, hint_index)
 );
 
+-- ============ QUIZ ============
+
+CREATE TABLE IF NOT EXISTS quiz_answers (
+  id         TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  vibe       TEXT,
+  sleep      TEXT,
+  texting    TEXT,
+  weekend    TEXT,
+  flag       TEXT,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
 -- ============ SUPERLATIVES / REPORTS / PURCHASES ============
 
 CREATE TABLE IF NOT EXISTS weekly_superlatives (

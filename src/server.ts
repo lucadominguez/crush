@@ -66,8 +66,11 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
+import { setWorkerEnv } from "./server/bindings";
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    setWorkerEnv(env);
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

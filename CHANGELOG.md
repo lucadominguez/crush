@@ -2,7 +2,13 @@
 
 All notable changes. Versions follow semver; app version lives in package.json.
 
-## [Unreleased]
+## [0.2.0] — 2026-07-20
+Off Lovable and Supabase entirely; running on own Cloudflare infra.
+
+### Live
+- Deployed to https://crush-connect.ludomi2502.workers.dev (D1 + R2, single
+  Worker). Core loop verified in real browsers: signup, mutual match, chat.
+
 ### Added
 - Complete D1 server layer under `src/server/`: session auth (PBKDF2 +
   HttpOnly cookie), crush/match/message domain with full PG-trigger parity
@@ -17,9 +23,25 @@ All notable changes. Versions follow semver; app version lives in package.json.
   the Supabase data path for ALL server functions is gone.
 - Stripe no longer routes through Lovable's connector gateway.
 - Referral codes generate UPPERCASE (PG parity).
-### Pending
-- Client store/groups rewrite (auth + data + polling), 3 components,
-  api routes, dependency removal, first Cloudflare deploy.
+- Client fully rewritten off Supabase (store/groups/hooks), R2 avatar upload
+  + `/api/avatar/$` reader, `searchProfiles`, `getPublicStats`.
+- Cron hooks gated by `x-cron-secret` (previously unauthenticated); daily-poll
+  generation reimplemented on D1; poll question bank seeded.
+
+### Fixed
+- Bindings now read `globalThis.__env__`: nitro generates its own Worker entry
+  and ignores `main`, so the previous env capture never ran in production.
+- PBKDF2 iterations lowered to the Workers ceiling of 100k (210k threw).
+
+### Removed
+- `@supabase/supabase-js`, `@lovable.dev/cloud-auth-js`, `src/integrations/`,
+  and the Lovable Stripe connector gateway.
+
+### Known gaps
+- Cron Triggers not auto-firing yet (nitro owns the entry); hooks callable.
+- Google OAuth stubbed; add-crush UI needs HIKER_API_KEY; no "add anyway" path.
+
+## [Unreleased]
 
 ## [0.1.0] — 2026-07-19
 Off-Lovable migration begins ("Phase A").

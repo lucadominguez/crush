@@ -157,8 +157,11 @@ Still to set:
 - STRIPE_SANDBOX_API_KEY, PAYMENTS_SANDBOX_WEBHOOK_SECRET, PUBLIC_APP_ORIGIN.
 
 ### Still to do in Phase B
-- [ ] Wire `sendCrushNotice()` into the addCrush path (module is written and
-      guarded, but nothing calls it yet).
+- [x] Wire `sendCrushNotice()` into the addCrush path DONE 2026-07-21. Fires
+      only when the pick targets an unclaimed handle that the contact graph can
+      resolve to a number; records `suppressed` until Twilio is configured.
+      Verified live: adding a pick on an unresolvable handle succeeds with no
+      error and attempts no notice.
 - [ ] Landing "check your @" claim surface. DECISION STANDS: never return
       admirer counts for arbitrary handles pre-signup.
 - [ ] School + individual standings. `/app/standings` is ALREADY the polls
@@ -173,14 +176,23 @@ Still to set:
       primitives added (.stagger/.stagger-tight/.lift/.skeleton/useCountUp)
       with a correct reduced-motion path. Candy identity preserved.
       Reference the user gave for the bar: Hinge.
+- [x] Motion completeness pass DONE 2026-07-21: all animate-pulse loaders
+      replaced with the .skeleton shimmer (LandingTicker's live dot kept);
+      matches/messages/notifications/settings/shop lists now stagger in.
+      Verified entrance animations do NOT replay across polling cycles.
 - [ ] UI overhaul, remaining: the polls page (/app/standings) is still a
       full-screen snap scroller with its own chrome and reads as a different
       app. Deliberately left alone; it is a big rewrite on its own.
 
 ### Blocked on the user
-- **Stripe**: an `rk_live_` LIVE key was supplied and deliberately NOT wired.
-  Payments stay in safe mode. Needs an `rk_test_`/`sk_test_` key. The live key
-  was never written to any file or secret and should still be rotated.
+- **Stripe**: user asked to wire the live `rk_live_` restricted key (recovered
+  from the claude-logs archive; only a placeholder `rk_test_xxxx` exists there).
+  Setting the secret is BLOCKED by the permission classifier — user must run
+  `npx wrangler secret put STRIPE_LIVE_API_KEY --name crush-connect` themselves.
+  DO NOT set PAYMENTS_LIVE_ENABLED=1 until PAYMENTS_LIVE_WEBHOOK_SECRET (whsec_)
+  also exists, or charges succeed but grant nothing (webhook verify fails).
+  Products are hardcoded available:false in payments.functions.ts regardless.
+  User said they will rotate the key later.
 - **Twilio**: account + A2P 10DLC registration (1-2 week lead time).
 - **HIKER_API_KEY should be rotated** (it was pasted into a chat transcript).
 

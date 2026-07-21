@@ -13,8 +13,9 @@ import { normHandle } from "./auth.functions";
 import type { CrushRow, MatchRow, MessageRow, NotificationRow, ProfileRow } from "./rows";
 import { nowIso, uuid } from "./rows";
 import { pushCopyFor, sendPush } from "./push";
+import { sendCrushNotice } from "./outreach";
 import { BLOCKED_MESSAGE, containsBlocked, isSuspended } from "./moderation";
-import type { D1Database } from "./bindings";
+import { getSecret, type D1Database } from "./bindings";
 
 const MATCH_TTL_MS = 7 * 86_400_000;
 
@@ -221,6 +222,37 @@ export const addCrushFn = createServerFn({ method: "POST" })
             await insertNotification(db, target.user_id, "match_created", { match_id: matchId });
           }
         }
+      }
+    }
+
+    // Escrow outreach: the pick landed on a handle nobody has claimed, so
+    // there is no in-app surface to light up. If the contact graph can resolve
+    // that handle to a number, send ONE anonymous notice.
+    //
+    // Every guardrail (opt-out list, frequency cap counted across all senders,
+    // suppression once they join, and the "never say who or how many" copy)
+    // lives inside sendCrushNotice. Failures are swallowed: outreach must
+    // never break adding a crush.
+    if (!target) {
+      try {
+        const link = await db
+          .prepare(
+            "SELECT phone_hash FROM handle_phone_links WHERE handle = ? ORDER BY confidence DESC LIMIT 1",
+          )
+          .bind(h)
+          .first<{ phone_hash: string }>();
+        if (link) {
+          const origin =
+            getSecret("PUBLIC_APP_ORIGIN") || "https://crush-connect.ludomi2502.workers.dev";
+          await sendCrushNotice(db, {
+            senderId: userId,
+            phoneHash: link.phone_hash,
+            targetHandle: h,
+            appOrigin: origin,
+          });
+        }
+      } catch (err) {
+        console.error("outreach: crush notice failed", err instanceof Error ? err.message : err);
       }
     }
 

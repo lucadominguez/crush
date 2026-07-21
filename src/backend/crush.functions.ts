@@ -12,6 +12,7 @@ import { requireAuth } from "./auth-middleware";
 import { normHandle } from "./auth.functions";
 import type { CrushRow, MatchRow, MessageRow, NotificationRow, ProfileRow } from "./rows";
 import { nowIso, uuid } from "./rows";
+import { pushCopyFor, sendPush } from "./push";
 import type { D1Database } from "./bindings";
 
 const MATCH_TTL_MS = 7 * 86_400_000;
@@ -45,6 +46,13 @@ export async function insertNotification(
     .prepare("INSERT INTO notifications (id, user_id, type, payload) VALUES (?, ?, ?, ?)")
     .bind(uuid(), userId, type, JSON.stringify(payload))
     .run();
+
+  // Remote push rides the same fan-out as the in-app bell, so there is exactly
+  // one place a notification can be raised. Only types with copy in
+  // pushCopyFor() are pushed; the rest stay in-app. sendPush never throws, so a
+  // push outage can never fail the action that triggered the notification.
+  const msg = pushCopyFor(type, payload);
+  if (msg) await sendPush(db, userId, msg);
 }
 
 /**

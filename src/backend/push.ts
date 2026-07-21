@@ -267,6 +267,13 @@ export function pushCopyFor(type: string, payload: Record<string, unknown>): Pus
       return { title: "a friend joined 🎉", body: "you're closer to another pick slot", url: "/app", tag: "referral" };
     case "poll_won":
       return { title: "you won a poll 🏆", body: "see what people voted", url: "/app/standings", tag: "poll" };
+    case "weekly_recap":
+      return {
+        title: "your week on crush ✨",
+        body: typeof payload.headline === "string" ? payload.headline : "see how your week went",
+        url: "/app",
+        tag: "recap",
+      };
     default:
       return null;
   }

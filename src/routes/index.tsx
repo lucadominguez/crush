@@ -24,6 +24,12 @@ function Landing() {
   const nav = useNavigate();
   const { session } = useSession();
   const [q, setQ] = useState("");
+  // "pick" = search for someone to crush on. "claim" = enter your own @ to see
+  // if anyone picked you. Claim mode never calls the server for a specific
+  // handle, so it cannot leak whether that @ has admirers; the truth is only
+  // revealed after signup, where the escrow backfill already handles it.
+  const [mode, setMode] = useState<"pick" | "claim">("pick");
+  const [claimHandle, setClaimHandle] = useState("");
   const pending = usePendingTargets();
   const isPhone = /^\+?\d[\d\s-]{5,}$/.test(q.trim());
   const { results, loading, error: err } = useIGSearch(isPhone ? "" : q);
@@ -118,6 +124,37 @@ function Landing() {
           {/* Search card column */}
           <div className="order-1 lg:order-2">
             <div className="surface p-5 sm:p-6 shadow-glow relative animate-pop-in">
+              {/* Mode toggle */}
+              <div className="flex gap-1 p-1 rounded-full mb-4" style={{ background: "color-mix(in oklab, var(--muted) 80%, transparent)" }}>
+                <button
+                  onClick={() => setMode("pick")}
+                  aria-pressed={mode === "pick"}
+                  className="flex-1 min-h-10 rounded-full text-caption font-bold transition-all"
+                  style={mode === "pick" ? { background: "var(--card)", boxShadow: "var(--shadow-pop)" } : { color: "var(--muted-foreground)" }}
+                >
+                  pick your crush
+                </button>
+                <button
+                  onClick={() => setMode("claim")}
+                  aria-pressed={mode === "claim"}
+                  className="flex-1 min-h-10 rounded-full text-caption font-bold transition-all"
+                  style={mode === "claim" ? { background: "var(--card)", boxShadow: "var(--shadow-pop)" } : { color: "var(--muted-foreground)" }}
+                >
+                  check your @
+                </button>
+              </div>
+
+              {mode === "claim" ? (
+                <ClaimYourAt
+                  handle={claimHandle}
+                  onChange={setClaimHandle}
+                  onSubmit={() => {
+                    const h = claimHandle.trim().replace(/^@+/, "").toLowerCase();
+                    nav({ to: "/signup", search: h ? { claim: h } : {} });
+                  }}
+                />
+              ) : (
+              <>
               <div className="flex items-center justify-between mb-3">
                 <label htmlFor="landing-search" className="text-caption font-bold uppercase tracking-wider text-muted-foreground lowercase">
                   pick your crush
@@ -197,6 +234,8 @@ function Landing() {
               <p className="mt-3 text-center text-caption text-muted-foreground inline-flex items-center justify-center gap-1.5 w-full">
                 <Lock className="size-3.5" /> they'll never know, unless they pick you back.
               </p>
+              </>
+              )}
             </div>
           </div>
         </section>
@@ -237,6 +276,54 @@ function Landing() {
           </div>
         </footer>
       </main>
+    </div>
+  );
+}
+
+/**
+ * "check your @" surface.
+ *
+ * Privacy: this deliberately does NOT tell you whether your handle has admirers
+ * before you sign up — showing that to anyone who types a handle would leak
+ * "does @X have admirers" to the whole internet. The copy is identical for
+ * everyone; the honest answer arrives after signup, where the escrow backfill
+ * reveals any waiting picks truthfully.
+ */
+function ClaimYourAt({
+  handle, onChange, onSubmit,
+}: { handle: string; onChange: (v: string) => void; onSubmit: () => void }) {
+  const clean = handle.trim().replace(/^@+/, "");
+  return (
+    <div className="animate-fade-in">
+      <p className="text-caption font-bold uppercase tracking-wider text-muted-foreground lowercase mb-3">
+        did someone pick you?
+      </p>
+      <form
+        onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
+        className="relative"
+      >
+        <span className="absolute top-1/2 left-4 -translate-y-1/2 text-lead font-bold text-muted-foreground pointer-events-none">@</span>
+        <input
+          value={clean}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="yourhandle"
+          aria-label="Your Instagram handle"
+          className="input-field pl-9 h-14 text-lead font-medium"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+        />
+      </form>
+      <button
+        onClick={onSubmit}
+        disabled={clean.length < 2}
+        className="btn-pop mt-4 w-full h-14 text-lead animate-gradient-pan disabled:opacity-60"
+      >
+        {clean.length >= 2 ? <>claim @{clean.toLowerCase()} <ArrowRight className="size-4" /></> : <>enter your @</>}
+      </button>
+      <p className="mt-3 text-center text-caption text-muted-foreground inline-flex items-center justify-center gap-1.5 w-full">
+        <EyeOff className="size-3.5" /> we only reveal a pick if you both chose each other.
+      </p>
     </div>
   );
 }

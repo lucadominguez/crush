@@ -5,6 +5,7 @@ import { useMyNotifications } from "@/lib/phase1.hooks";
 import { SomeonePickedYouBanner } from "@/components/SomeonePickedYouBanner";
 import { InviteFriendsSheet } from "@/components/InviteFriendsSheet";
 import { ContactImportSheet } from "@/components/ContactImportSheet";
+import { WeeklyRecapCard } from "@/components/WeeklyRecapCard";
 import { useEffect, useState } from "react";
 import { getIG, removeCrush, useMyCrushes, useMyMatches, useMyProfile, addCrush, rememberIG } from "@/lib/store";
 import { useIGSearch } from "@/lib/use-ig-search";
@@ -148,6 +149,10 @@ function CrushesPage() {
           <SomeonePickedYouBanner slotsFilled={slotsFilled} slotsTotal={slotsTotal} />
         </div>
       )}
+
+      {/* Weekly recap: shows once per week when there is activity to celebrate,
+          above the status card but below a live "someone picked you". */}
+      {!initialLoading && <WeeklyRecapCard />}
 
       {/* Matches are the PAYOFF of the whole product, so when they exist they
           outrank everything else on the screen. This used to render as a plain

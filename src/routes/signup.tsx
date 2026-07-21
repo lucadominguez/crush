@@ -19,6 +19,12 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Sign up · Crush" }] }),
+  // `?claim=<handle>` prefills the handle field. It comes from the landing
+  // "claim your @" surface, which never reveals whether that handle has
+  // admirers — the truth is only shown after signup via the escrow backfill.
+  validateSearch: (search: Record<string, unknown>): { claim?: string } => ({
+    claim: typeof search.claim === "string" ? search.claim.slice(0, 40) : undefined,
+  }),
   component: SignupPage,
 });
 
@@ -42,9 +48,10 @@ const isValidDob = (v: string) => {
 
 function SignupPage() {
   const nav = useNavigate();
+  const { claim } = Route.useSearch();
   const pending = getPendingTargets();
   const [name, setName] = useState("");
-  const [handle, setHandle] = useState("");
+  const [handle, setHandle] = useState(claim ? norm(claim) : "");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [dob, setDob] = useState("");
@@ -147,7 +154,13 @@ function SignupPage() {
       </div>
       <ScreenHeader
         title="Claim your @"
-        subtitle={pending.length ? `we'll quietly send your ${pending.length} pick${pending.length > 1 ? "s" : ""} the moment you're in.` : "lock in your handle so people can pick you back."}
+        subtitle={
+          pending.length
+            ? `we'll quietly send your ${pending.length} pick${pending.length > 1 ? "s" : ""} the moment you're in.`
+            : claim
+              ? "claim your @ to find out if anyone's already picked you."
+              : "lock in your handle so people can pick you back."
+        }
       />
       <form onSubmit={submit} className="px-5 mt-4 flex-1 flex flex-col gap-4">
         <Field label="your name" value={name} onChange={setName} placeholder="taylor swift" error={err.name} isValid={isValidName} />

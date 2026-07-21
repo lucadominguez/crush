@@ -4,6 +4,8 @@ import { getDb } from "@/backend/bindings";
 import { requireCronAuth } from "@/backend/cron-auth";
 import { uuid } from "@/backend/rows";
 import type { PollRow } from "@/backend/rows";
+import { insertNotification } from "@/backend/crush.functions";
+import { computeWeeklyRecap } from "@/backend/recap.functions";
 
 // Weekly "Crush of the week" cron — runs Sundays 17:00 UTC via Cron Trigger.
 // For each school cohort, picks the most-voted-for handle in the last 7 days
@@ -90,7 +92,28 @@ export const Route = createFileRoute("/api/public/hooks/weekly-superlative")({
           }
         }
 
-        return Response.json({ created });
+        // Personal weekly recap push, same Sunday cadence. Only users with a
+        // push subscription and something worth reporting get one, so this is a
+        // celebratory nudge rather than a blanket weekly ping.
+        let recapsPushed = 0;
+        const { results: subscribers } = await db
+          .prepare("SELECT DISTINCT user_id FROM push_subscriptions")
+          .all<{ user_id: string }>();
+        for (const { user_id } of subscribers) {
+          try {
+            const recap = await computeWeeklyRecap(db, user_id);
+            const worthSending =
+              recap.newMatches + recap.admirers + recap.pollWins + recap.invites > 0;
+            if (!worthSending) continue;
+            // insertNotification fans out to push via pushCopyFor("weekly_recap").
+            await insertNotification(db, user_id, "weekly_recap", { headline: recap.headline });
+            recapsPushed++;
+          } catch {
+            // one user's recap failing must not stop the batch
+          }
+        }
+
+        return Response.json({ created, recapsPushed });
       },
     },
   },

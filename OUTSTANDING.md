@@ -167,7 +167,15 @@ Still to set:
 - [ ] Cron Triggers still not firing automatically (nitro owns the entry).
 - [ ] Durable Object websockets to replace polling.
 - [ ] Google OAuth still stubbed.
-- [ ] **UI overhaul: NOT STARTED.**
+- [x] **UI overhaul (option B) DONE 2026-07-21**: semantic type scale
+      (nano..display) adopted across 30 files, surface classes documented,
+      hierarchy reworked (matches now outrank the picks stat), motion
+      primitives added (.stagger/.stagger-tight/.lift/.skeleton/useCountUp)
+      with a correct reduced-motion path. Candy identity preserved.
+      Reference the user gave for the bar: Hinge.
+- [ ] UI overhaul, remaining: the polls page (/app/standings) is still a
+      full-screen snap scroller with its own chrome and reads as a different
+      app. Deliberately left alone; it is a big rewrite on its own.
 
 ### Blocked on the user
 - **Stripe**: an `rk_live_` LIVE key was supplied and deliberately NOT wired.

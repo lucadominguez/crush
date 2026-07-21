@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Search, BadgeCheck, Loader2, Lock, ArrowLeft, Bell, Crown, Plus, X, Send, Sparkles, Check } from "lucide-react";
+import { Search, BadgeCheck, Loader2, Lock, ArrowLeft, Bell, Crown, Plus, X, Send, Sparkles, Check, Trophy } from "lucide-react";
 import { useMyNotifications } from "@/lib/phase1.hooks";
 
 import { SomeonePickedYouBanner } from "@/components/SomeonePickedYouBanner";
@@ -128,6 +128,9 @@ function CrushesPage() {
           <button onClick={() => setInviteOpen(true)} className="icon-btn" aria-label="Invite friends">
             <Send className="size-4" />
           </button>
+          <Link to="/app/leaderboard" className="icon-btn" aria-label="Standings">
+            <Trophy className="size-4" />
+          </Link>
           <Link to="/app/upgrade" className="icon-btn" aria-label="Upgrade to god mode" style={{ color: "oklch(0.7 0.16 60)" }}>
             <Crown className="size-4" />
           </Link>

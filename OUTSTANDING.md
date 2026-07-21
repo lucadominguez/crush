@@ -109,75 +109,72 @@ Live: **https://crush-connect.ludomi2502.workers.dev**
 "add @handle anyway" path, so crushing on someone not in IG search results is
 impossible — the escrow/claim virality loop depends on that path existing.
 
-## RESUME HERE (state saved 2026-07-20, mid Phase B)
+## RESUME HERE (state saved 2026-07-21)
 
-Live: https://crush-connect.ludomi2502.workers.dev — everything below is
-DEPLOYED and verified unless marked WIP.
+Live: https://crush-connect.ludomi2502.workers.dev
+GitHub: https://github.com/lucadominguez/crush (main, pushed and current).
+NOTE: the local branch was `master`, not `main` as previously recorded here.
+Renamed to `main` on 2026-07-21 and pushed with both tags.
 
-### Shipped since the port
-- **Escrow loop is LIVE and verified.** `/app/add` has an "add @handle anyway"
-  row (handles IG search can't return); `backfillEscrowClaims()` in
-  `src/backend/crush.functions.ts` replays waiting picks into `crush_received`
-  notifications on signup / handle claim / IG claim (idempotent via payload
-  crush_id). Verified: A picks a nonexistent handle -> B signs up with it ->
-  B sees "someone picked you" -> B picks back -> mutual match.
-- **Fixed: `SomeonePickedYouBanner` was rendered NOWHERE** (dead code). Now on
-  the home screen above the fold; title no longer truncates at 390px.
-- HIKER_API_KEY set; Instagram search verified live (10 real results).
+### Shipped 2026-07-21
+- **Contact graph server fns** (`src/backend/contacts.functions.ts`):
+  importContacts, getInviteTargets, resolveHandleToPhone, confirmContactMatch,
+  linkPersonNodesForHandle. person_nodes are RECOMPUTED from the full edge set,
+  never incremented, so degree/canonical_name survive re-imports.
+  Privacy: no phone is ever returned to a client. importContacts echoes back
+  hashes for the numbers the caller uploaded so the client builds its own local
+  hash -> phone map for the SMS composer. Targeting and name matching are
+  scoped to the caller's own edges so nobody can probe other address books.
+- **Contact import UI** (`ContactImportSheet`): per-call consent screen, Contact
+  Picker API + manual paste fallback, ranked targets (reach bucketed, never an
+  exact cross-book count). Reached from InviteFriendsSheet, but OWNED by
+  app.index as a sibling: nesting the two sheets gave competing focus traps.
+- **Web Push, VERIFIED LIVE END TO END.** Full RFC 8291 + 8292 on WebCrypto in
+  `src/backend/push.ts` (web-push is Node-only). Wired into insertNotification,
+  the single fan-out point. sw.js in public/. PushNotifToggle is now real.
+- **Moderation**: word blocklist + suspension gate on both message send paths,
+  /app/moderation review page, ReportUserSheet + a report control in chat.
+- **Outreach sender** (`src/backend/outreach.ts`): pluggable, guardrails
+  enforced in one place, records `suppressed` until Twilio is configured.
+- **Em dash sweep**: 55 user-facing strings rewritten across 19 files.
 
-### Worker secrets already set (do NOT regenerate)
-`HIKER_API_KEY`, `CRON_SECRET`, `VAPID_PUBLIC`, `VAPID_PRIVATE`, `CONTACT_KEY`.
-The VAPID public key is readable server-side via `getSecret("VAPID_PUBLIC")` —
-expose it to the client through a server fn, don't hardcode it.
-NOTE: the local scratch copy of these keys is gone after the PC restart; they
-live only in Cloudflare now, which is correct. Rotating `CONTACT_KEY`
-invalidates all contact matching AND delivery (deliberate kill switch).
+### Push: hard-won details (do not regress)
+1. **VAPID_PRIVATE is stored as PKCS#8 DER (138 bytes), NOT a raw 32-byte
+   scalar.** The importer accepts both, but this is the format in production.
+2. After `unsubscribe()`, `getSubscription()` can still hand back the dead
+   subscription; pushing to it returns 410 and prunes the fresh row. enable()
+   now always subscribes fresh.
+3. Log EVERY delivery failure including the 404/410 prune path. Both bugs above
+   were invisible because failed sends were deleted without recording why.
 
-### Phase B schema: APPLIED (local + remote, 30 tables)
-`db/patch-002-phaseb.sql`, folded into `db/schema.sql`. New tables:
-`push_subscriptions`, `contact_edges`, `person_nodes`, `handle_phone_links`,
-`outreach_sends`, `outreach_optouts`, `moderation_actions`; plus
-`profiles.suspended_at`.
+### Secrets: set vs still needed
+Set: HIKER_API_KEY, CRON_SECRET, VAPID_PUBLIC, VAPID_PRIVATE, CONTACT_KEY.
+Still to set:
+- `MODERATOR_USER_IDS` (comma-separated) — **/app/moderation is inaccessible
+  until this is set**; it fails closed by design.
+- `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` — outreach
+  stays in `suppressed` mode until all three exist.
+- STRIPE_SANDBOX_API_KEY, PAYMENTS_SANDBOX_WEBHOOK_SECRET, PUBLIC_APP_ORIGIN.
 
-### WIP — exactly where I stopped
-- `src/backend/contacts.ts` is WRITTEN and typechecks: E.164 normalization,
-  HMAC `phoneHash()`, AES-GCM `encryptPhone()`/`decryptPhone()`, nickname map,
-  `cleanContactName()`, `nameSimilarity()`, `canonicalName()`. It is NOT yet
-  imported by anything.
-- NEXT FILE TO WRITE: `src/backend/contacts.functions.ts` — server fns:
-  `importContacts` (batch of {phone, name} -> contact_edges + upsert
-  person_nodes with degree/canonical_name/school_guess), `getInviteTargets`
-  (person_nodes ordered by degree DESC, excluding existing users),
-  `resolveHandleToPhone` (handle_phone_links + name match against IG profile),
-  `confirmContactMatch` (sender-confirmed link, confidence 1.0).
-  Then wire an import UI + consent screen.
-
-### Still to do in Phase B (unstarted)
-- Push delivery: Web Push (VAPID keys ready) + `push_subscriptions` writes,
-  service worker, and a `sendPush()` used by the notification fan-out.
-- Landing "check your @" claim surface. DECISION MADE: do NOT return admirer
-  counts for arbitrary handles pre-signup (that leaks "does @X have admirers"
-  to anyone). Show the teaser, gate the real count behind signup, where the
-  escrow backfill already reveals it truthfully.
-- School + individual standings. `/app/standings` is ALREADY the polls page —
-  use a new route (`/app/leaderboard`). Individual ranking must use positive
-  activity only (poll wins, streaks, invites), NEVER admirer counts.
-- Weekly recap card + Sunday send.
-- Twilio SMS outreach (needs the user's Twilio account + A2P registration).
-  Build behind a pluggable sender that records to `outreach_sends` and marks
-  `suppressed` when Twilio isn't configured.
-- Moderation: report review page, chat word blocklist, suspension enforcement
-  in `requireAuth` via `profiles.suspended_at`.
-- UI overhaul: NOT STARTED.
+### Still to do in Phase B
+- [ ] Wire `sendCrushNotice()` into the addCrush path (module is written and
+      guarded, but nothing calls it yet).
+- [ ] Landing "check your @" claim surface. DECISION STANDS: never return
+      admirer counts for arbitrary handles pre-signup.
+- [ ] School + individual standings. `/app/standings` is ALREADY the polls
+      page; use `/app/leaderboard`. Positive activity only, never admirer counts.
+- [ ] Weekly recap card + Sunday send.
+- [ ] Cron Triggers still not firing automatically (nitro owns the entry).
+- [ ] Durable Object websockets to replace polling.
+- [ ] Google OAuth still stubbed.
+- [ ] **UI overhaul: NOT STARTED.**
 
 ### Blocked on the user
-- **GitHub push is denied by the permission classifier.** Remote is set to
-  `https://github.com/lucadominguez/crush.git`, branch `main`, all commits
-  local. User must run `git push -u origin main --tags` themselves or approve it.
-- **Stripe: user supplied an `rk_live_` LIVE key — deliberately NOT wired.**
-  Payments stay in safe mode (every product `available:false`). Need an
-  `rk_test_`/`sk_test_` key for sandbox. The live key was never written to any
-  file or secret; it should be rotated since it was pasted into chat.
+- **Stripe**: an `rk_live_` LIVE key was supplied and deliberately NOT wired.
+  Payments stay in safe mode. Needs an `rk_test_`/`sk_test_` key. The live key
+  was never written to any file or secret and should still be rotated.
+- **Twilio**: account + A2P 10DLC registration (1-2 week lead time).
+- **HIKER_API_KEY should be rotated** (it was pasted into a chat transcript).
 
 ## Features (Phase B, after port) — user-approved list
 

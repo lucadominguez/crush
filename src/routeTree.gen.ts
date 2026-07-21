@@ -24,6 +24,7 @@ import { Route as AppNotificationsRouteImport } from './routes/app.notifications
 import { Route as AppModerationRouteImport } from './routes/app.moderation'
 import { Route as AppMessagesRouteImport } from './routes/app.messages'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppLeaderboardRouteImport } from './routes/app.leaderboard'
 import { Route as AppAddRouteImport } from './routes/app.add'
 import { Route as ApiIgAvatarRouteImport } from './routes/api.ig-avatar'
 import { Route as AppMatchIdRouteImport } from './routes/app.match.$id'
@@ -110,6 +111,11 @@ const AppMatchesRoute = AppMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLeaderboardRoute = AppLeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAddRoute = AppAddRouteImport.update({
   id: '/add',
   path: '/add',
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/api/ig-avatar': typeof ApiIgAvatarRoute
   '/app/add': typeof AppAddRoute
+  '/app/leaderboard': typeof AppLeaderboardRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/messages': typeof AppMessagesRoute
   '/app/moderation': typeof AppModerationRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/api/ig-avatar': typeof ApiIgAvatarRoute
   '/app/add': typeof AppAddRoute
+  '/app/leaderboard': typeof AppLeaderboardRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/messages': typeof AppMessagesRoute
   '/app/moderation': typeof AppModerationRoute
@@ -226,6 +234,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/api/ig-avatar': typeof ApiIgAvatarRoute
   '/app/add': typeof AppAddRoute
+  '/app/leaderboard': typeof AppLeaderboardRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/messages': typeof AppMessagesRoute
   '/app/moderation': typeof AppModerationRoute
@@ -255,6 +264,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/ig-avatar'
     | '/app/add'
+    | '/app/leaderboard'
     | '/app/matches'
     | '/app/messages'
     | '/app/moderation'
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/ig-avatar'
     | '/app/add'
+    | '/app/leaderboard'
     | '/app/matches'
     | '/app/messages'
     | '/app/moderation'
@@ -308,6 +319,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/ig-avatar'
     | '/app/add'
+    | '/app/leaderboard'
     | '/app/matches'
     | '/app/messages'
     | '/app/moderation'
@@ -450,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/leaderboard': {
+      id: '/app/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/app/leaderboard'
+      preLoaderRoute: typeof AppLeaderboardRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/add': {
       id: '/app/add'
       path: '/add'
@@ -525,6 +544,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAddRoute: typeof AppAddRoute
+  AppLeaderboardRoute: typeof AppLeaderboardRoute
   AppMatchesRoute: typeof AppMatchesRoute
   AppMessagesRoute: typeof AppMessagesRoute
   AppModerationRoute: typeof AppModerationRoute
@@ -541,6 +561,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAddRoute: AppAddRoute,
+  AppLeaderboardRoute: AppLeaderboardRoute,
   AppMatchesRoute: AppMatchesRoute,
   AppMessagesRoute: AppMessagesRoute,
   AppModerationRoute: AppModerationRoute,

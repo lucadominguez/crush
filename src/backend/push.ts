@@ -44,30 +44,42 @@ async function hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, length:
 // ---------------------------------------------------------------------------
 
 /**
- * The VAPID keypair is stored as raw base64url: public is the 65-byte
- * uncompressed P-256 point (0x04 || x || y), private the 32-byte scalar.
- * WebCrypto will only import EC private keys as JWK or pkcs8, so we rebuild
- * the JWK from both halves.
+ * Import the VAPID private key, tolerating either storage format:
+ *  - 32 bytes: the raw P-256 scalar, as `web-push` style generators emit.
+ *    WebCrypto cannot import a bare scalar, so we rebuild a JWK using x/y
+ *    from VAPID_PUBLIC.
+ *  - anything else: treated as PKCS#8 DER, which is what SubtleCrypto's own
+ *    exportKey("pkcs8") produces (~138 bytes for P-256). This is the format
+ *    the deployed keypair actually uses.
  */
 async function vapidSigningKey(): Promise<CryptoKey> {
-  const pub = b64uToBytes(getSecret("VAPID_PUBLIC") ?? "");
   const priv = b64uToBytes(getSecret("VAPID_PRIVATE") ?? "");
-  if (pub.length !== 65 || pub[0] !== 0x04) {
-    throw new Error(`VAPID_PUBLIC must be a 65-byte uncompressed P-256 point (got ${pub.length})`);
+  if (!priv.length) throw new Error("VAPID_PRIVATE is not configured");
+
+  if (priv.length === 32) {
+    const pub = b64uToBytes(getSecret("VAPID_PUBLIC") ?? "");
+    if (pub.length !== 65 || pub[0] !== 0x04) {
+      throw new Error(`VAPID_PUBLIC must be a 65-byte uncompressed P-256 point (got ${pub.length})`);
+    }
+    return crypto.subtle.importKey(
+      "jwk",
+      {
+        kty: "EC",
+        crv: "P-256",
+        x: bytesToB64u(pub.slice(1, 33)),
+        y: bytesToB64u(pub.slice(33, 65)),
+        d: bytesToB64u(priv),
+        ext: true,
+      },
+      { name: "ECDSA", namedCurve: "P-256" },
+      false,
+      ["sign"],
+    );
   }
-  if (priv.length !== 32) {
-    throw new Error(`VAPID_PRIVATE must be a 32-byte scalar (got ${priv.length})`);
-  }
+
   return crypto.subtle.importKey(
-    "jwk",
-    {
-      kty: "EC",
-      crv: "P-256",
-      x: bytesToB64u(pub.slice(1, 33)),
-      y: bytesToB64u(pub.slice(33, 65)),
-      d: bytesToB64u(priv),
-      ext: true,
-    },
+    "pkcs8",
+    priv as BufferSource,
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"],
@@ -206,12 +218,19 @@ export async function sendPush(db: D1Database, userId: string, msg: PushMessage)
           }
           return;
         }
+        // Push services explain rejections in the body. Log every failure,
+        // including the 404/410 prune path: deleting a subscription without
+        // saying why is exactly the case that is impossible to debug later.
+        const detail = await res.text().catch(() => "");
+        console.error(`push: ${res.status} from ${new URL(sub.endpoint).host}: ${detail.slice(0, 300)}`);
+
         if (res.status === 404 || res.status === 410) {
           await db.prepare("DELETE FROM push_subscriptions WHERE id = ?").bind(sub.id).run();
           return;
         }
         await bumpFailure(db, sub);
-      } catch {
+      } catch (err) {
+        console.error(`push: threw for ${sub.id}:`, err instanceof Error ? `${err.name}: ${err.message}` : String(err));
         await bumpFailure(db, sub).catch(() => {});
       }
     }),

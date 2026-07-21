@@ -65,12 +65,25 @@ export function PushNotifToggle() {
         const reg = await navigator.serviceWorker.getRegistration();
         const existing = reg ? await reg.pushManager.getSubscription() : null;
         if (!cancelled) setState(existing ? "on" : "off");
+
+        // Self-heal client/server drift. The browser subscription is the source
+        // of truth for "on", but the server row can disappear underneath it
+        // (pruned after repeated delivery failures, or lost to a 410). Without
+        // this re-save the toggle reads "on" while nothing can be delivered.
+        if (existing) {
+          const json = existing.toJSON() as { keys?: { p256dh?: string; auth?: string } };
+          const p256dh = json.keys?.p256dh;
+          const auth = json.keys?.auth;
+          if (p256dh && auth) {
+            await save({ data: { endpoint: existing.endpoint, p256dh, auth } }).catch(() => {});
+          }
+        }
       } catch {
         if (!cancelled) setState("unsupported");
       }
     })();
     return () => { cancelled = true; };
-  }, [fetchConfig, supported]);
+  }, [fetchConfig, supported, save]);
 
   const enable = useCallback(async () => {
     if (!vapidKey) return;
@@ -85,12 +98,17 @@ export function PushNotifToggle() {
       const reg = await navigator.serviceWorker.register("/sw.js");
       await navigator.serviceWorker.ready;
 
-      const sub =
-        (await reg.pushManager.getSubscription()) ??
-        (await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: b64uToUint8(vapidKey) as BufferSource,
-        }));
+      // We only get here when the toggle believed it was off, so any lingering
+      // subscription is stale — the browser can keep handing back an object it
+      // has already unsubscribed, and pushing to it returns 410 (observed).
+      // Drop it and subscribe fresh rather than reusing.
+      const stale = await reg.pushManager.getSubscription();
+      if (stale) await stale.unsubscribe().catch(() => {});
+
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: b64uToUint8(vapidKey) as BufferSource,
+      });
 
       const json = sub.toJSON() as { keys?: { p256dh?: string; auth?: string } };
       const p256dh = json.keys?.p256dh ?? bufToB64u(sub.getKey("p256dh"));

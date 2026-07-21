@@ -174,7 +174,13 @@ Still to set:
       push fanned out via the weekly-superlative cron to push subscribers with
       activity. Verified live with seeded data. IG-story shareable render NOT
       built (nice-to-have, deferred).
-- [ ] Cron Triggers still not firing automatically (nitro owns the entry).
+- [x] Cron Triggers DONE 2026-07-21 via a standalone `crush-scheduler` Worker
+      (repo `scheduler/`). Registers daily-poll (15:00), match-expiry (hourly),
+      weekly-superlative+recap (Sun 17:00). Reaches the app via a SERVICE
+      BINDING (env.APP) because two workers.dev workers can't call each other
+      publicly (error 1042). Verified live (403 forbidden through the chain).
+      USER MUST set the scheduler's CRON_SECRET to match the app:
+      `cd scheduler && npx wrangler secret put CRON_SECRET`.
 - [ ] Durable Object websockets to replace polling.
 - [ ] Google OAuth still stubbed.
 - [x] **UI overhaul (option B) DONE 2026-07-21**: semantic type scale

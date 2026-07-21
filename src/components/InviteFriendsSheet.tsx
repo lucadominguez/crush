@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Copy, MessageSquare, Share2, X, Gift, Loader2, Check } from "lucide-react";
+import { Copy, MessageSquare, Share2, X, Gift, Loader2, Check, Users } from "lucide-react";
 import { toast } from "sonner";
 import { getMyInviteText, logInvite, getReferralStats } from "@/lib/phase5.functions";
 
@@ -11,9 +11,13 @@ const MAX_EARNED = 5;
 export function InviteFriendsSheet({
   open,
   onClose,
+  onFindContacts,
 }: {
   open: boolean;
   onClose: () => void;
+  /** Hands off to the contact-import sheet, which the parent owns so the two
+   *  modals never nest (competing focus traps + backdrop closing both). */
+  onFindContacts?: () => void;
 }) {
   const fetchText = useServerFn(getMyInviteText);
   const fetchStats = useServerFn(getReferralStats);
@@ -280,6 +284,15 @@ export function InviteFriendsSheet({
             {copied ? <Check className="size-4" /> : busy === "copy" ? <Loader2 className="size-4 animate-spin" /> : <Copy className="size-4" />}
             {copied ? "copied" : "copy link"}
           </button>
+          {onFindContacts && (
+            <button
+              onClick={() => { onClose(); onFindContacts(); }}
+              className="w-full min-h-11 rounded-xl surface inline-flex items-center justify-center gap-2 text-[14px] font-semibold"
+            >
+              <Users className="size-4" />
+              find friends from contacts
+            </button>
+          )}
         </div>
       </div>
     </div>

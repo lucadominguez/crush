@@ -4,6 +4,7 @@ import { useMyNotifications } from "@/lib/phase1.hooks";
 
 import { SomeonePickedYouBanner } from "@/components/SomeonePickedYouBanner";
 import { InviteFriendsSheet } from "@/components/InviteFriendsSheet";
+import { ContactImportSheet } from "@/components/ContactImportSheet";
 import { useEffect, useState } from "react";
 import { getIG, removeCrush, useMyCrushes, useMyMatches, useMyProfile, addCrush, rememberIG } from "@/lib/store";
 import { useIGSearch } from "@/lib/use-ig-search";
@@ -24,6 +25,7 @@ function CrushesPage() {
   const { data: matches } = useMyMatches();
   const nav = useNavigate();
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [contactsOpen, setContactsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [q, setQ] = useState("");
   const { results, loading, error: err } = useIGSearch(q);
@@ -390,7 +392,12 @@ function CrushesPage() {
         </Link>
       )}
 
-      <InviteFriendsSheet open={inviteOpen} onClose={() => setInviteOpen(false)} />
+      <InviteFriendsSheet
+        open={inviteOpen}
+        onClose={() => setInviteOpen(false)}
+        onFindContacts={() => setContactsOpen(true)}
+      />
+      <ContactImportSheet open={contactsOpen} onClose={() => setContactsOpen(false)} />
     </div>
   );
 }

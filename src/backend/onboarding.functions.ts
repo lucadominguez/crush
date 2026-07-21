@@ -34,7 +34,7 @@ const HANDLE_ERRORS: Record<string, string> = {
   handle_required: "pick a handle.",
   handle_length: "handles are 3–20 characters.",
   handle_chars: "only letters, numbers, dot and underscore.",
-  handle_reserved: "that one's reserved — try another.",
+  handle_reserved: "that one's reserved. try another.",
   handle_taken: "that handle is taken.",
   not_authenticated: "sign in first.",
 };
@@ -203,7 +203,7 @@ function buildIcebreakers(mine: QuizRow | null, theirs: QuizRow | null): string[
       const b = theirs[k]?.trim();
       if (a && b && a.toLowerCase() === b.toLowerCase()) {
         if (k === "sleep") out.push(`ok we're both ${a} 😭 what're you usually doing at 2am?`);
-        else if (k === "vibe") out.push(`apparently we share the same vibe (${a}) — prove it, what're you listening to rn?`);
+        else if (k === "vibe") out.push(`apparently we share the same vibe (${a}), so prove it, what're you listening to rn?`);
         else if (k === "texting") out.push(`fair warning: i was told we're both ${a} texters 😅`);
         else if (k === "weekend") out.push(`saw we both said ${a} for weekends. plans this one?`);
         else if (k === "flag") out.push(`we apparently agree that ${a} is the move. discuss 👀`);
@@ -213,7 +213,7 @@ function buildIcebreakers(mine: QuizRow | null, theirs: QuizRow | null): string[
   const fallbacks = [
     "okay i'll start: rate your week 1-10, no explanation needed",
     "hi 👋 what's the most chaotic thing in your camera roll right now?",
-    "be honest — coffee, matcha, or energy drink person?",
+    "be honest: coffee, matcha, or energy drink person?",
     "if we were doing one thing tonight, what would it be?",
     "tell me a hot take and i'll tell you mine 🎯",
   ];

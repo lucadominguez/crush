@@ -103,7 +103,7 @@ function MatchReveal() {
       <MobileShell>
         <CenterState
           title="loading your match…"
-          body="hold tight — checking that this is really yours."
+          body="hold tight. checking that this is really yours."
           action={<Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" />}
         />
       </MobileShell>
@@ -157,7 +157,7 @@ function MatchReveal() {
       <MobileShell>
         <CenterState
           title="this mutual expired"
-          body="you didn't say hi in time — but new picks are always open."
+          body="you didn't say hi in time, but new picks are always open."
           action={
             <div className="flex flex-col gap-2 items-center">
               <Link
@@ -241,7 +241,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
     setSending(text);
     const r = await sendMessage(id, text);
     setSending(null);
-    if (r.error) { toast.error("couldn't send — try again"); return; }
+    if (r.error) { toast.error("couldn't send. try again"); return; }
     nav({ to: "/app/chat/$id", params: { id } });
   }
 
@@ -303,7 +303,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
           )}
           {icebreakers && icebreakers.length === 0 && (
             <div className="surface p-4 text-center text-[13px] text-muted-foreground">
-              {iceError ? "couldn't load ideas — you got this though." : "no ideas yet — say something you'd actually say."}
+              {iceError ? "couldn't load ideas, you got this though." : "no ideas yet. say something you'd actually say."}
             </div>
           )}
           {icebreakers && icebreakers.length > 0 && (
@@ -364,7 +364,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
           </div>
           <p className="text-[11px] text-muted-foreground text-center inline-flex items-center gap-1 justify-center">
             <AlertCircle className="size-3" />
-            sharing sends a generic message — never their name or handle.
+            sharing sends a generic message, never their name or handle.
           </p>
         </div>
       </div>

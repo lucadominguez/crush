@@ -58,7 +58,7 @@ export function HintsCard({ targetHandle }: { targetHandle: string }) {
           <p className="text-sm font-bold">pick a crush to unlock your first hint</p>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          hints give context — never identity.
+          hints give context, never identity.
         </p>
       </div>
     );

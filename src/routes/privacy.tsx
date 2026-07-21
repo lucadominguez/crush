@@ -25,7 +25,7 @@ function PrivacyPage() {
         }
       />
       <div className="px-5 space-y-3 pb-10">
-        <Card icon={Lock} title="your picks stay yours" text="no one — not friends, not the person you picked — ever sees who you chose. names only surface when it's mutual." />
+        <Card icon={Lock} title="your picks stay yours" text="no one ever sees who you chose. not your friends, and not the person you picked. names only surface when it's mutual." />
         <Card icon={EyeOff} title="no public profiles" text="you can't browse people on crush. no one can browse you." />
         <Card icon={MessageSquareOff} title="we never message anyone for you" text="no sms, email, or dm goes out on your behalf. invites are links you choose to share." />
         <Card icon={ShieldCheck} title="mutual-only reveal" text="if only one of you picks, nothing happens. both sides have to pick to unlock a match and a chat." />

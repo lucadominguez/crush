@@ -183,7 +183,7 @@ export function CreateGroupSheet({ onClose }: { onClose: () => void }) {
           <p className="text-sm text-muted-foreground py-6 text-center">
             {q.trim().length >= 2
               ? (searching ? "Searching…" : "No one found. Try a different handle.")
-              : "Search above to add anyone — or get some matches first."}
+              : "Search above to add anyone, or get some matches first."}
           </p>
 
         ) : (

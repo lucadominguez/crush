@@ -79,7 +79,7 @@ function ShopPage() {
         ) : (
           items.map((it) => {
             const Icon = ICONS[it.key] ?? Sparkles;
-            const priceLabel = it.price?.amountFormatted ?? "—";
+            const priceLabel = it.price?.amountFormatted ?? "not set";
             const disabled = !it.available || !it.price?.active;
             return (
               <div key={it.key} className="surface w-full p-3.5 flex items-center gap-3">

@@ -97,7 +97,7 @@ function SignupPage() {
       await new Promise((r) => setTimeout(r, reduced ? 0 : 720));
       nav({ to: "/onboarding/quiz" });
     } catch {
-      setErr({ top: "network hiccup — try again." });
+      setErr({ top: "network hiccup. try again." });
     } finally {
       setBusy(false);
     }

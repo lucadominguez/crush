@@ -50,7 +50,7 @@ export function SuggestQuestionButton() {
               </button>
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Keep it fun, kind, and about a vibe — not a person. We review every submission.
+              Keep it fun, kind, and about a vibe, not a person. We review every submission.
             </p>
             <textarea
               value={text}

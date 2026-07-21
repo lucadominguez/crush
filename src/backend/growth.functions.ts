@@ -60,7 +60,7 @@ export const getMyInviteText = createServerFn({ method: "POST" })
     return {
       referralCode: code,
       url,
-      text: `join me on crush — pick your secret crushes. it's mutual-only, so nobody finds out unless you both picked each other. ${url}`,
+      text: `join me on crush. pick your secret crushes. it's mutual-only, so nobody finds out unless you both picked each other. ${url}`,
     };
   });
 
@@ -74,9 +74,9 @@ const REFERRAL_ERRORS: Record<string, string> = {
   invalid_code: "That code isn't valid",
   self_referral: "You can't refer yourself",
   already_referred: "You've already used a different code",
-  profile_not_found: "Profile not ready — try again in a moment",
+  profile_not_found: "Profile not ready. Try again in a moment",
   not_authenticated: "Please sign in",
-  internal_error: "Something went wrong — try again",
+  internal_error: "Something went wrong. Try again",
 };
 
 // Port of claim_referral: link referred_by, one referrals row, slot award
@@ -270,7 +270,7 @@ export const revealHint = createServerFn({ method: "POST" })
         .first<{ school: string | null }>();
       const sameSchool = school && tProf?.school && school === tProf.school;
       text = sameSchool
-        ? `You're in the same school cohort — that doubles the chance the poll shows you to them.`
+        ? `You're in the same school cohort, and that doubles the chance the poll shows you to them.`
         : `Different school cohort, so polls won't bring you to each other organically. Tag a mutual friend to nudge.`;
     } else {
       text = `Final nudge: pick 5 more from your school to widen the network. You stop being a guess and start being a pattern.`;

@@ -47,8 +47,8 @@ const META: Record<string, Meta> = {
   match_created:          { icon: Heart,           title: "it's mutual 💘",             sub: () => "open the chat and say hi", tone: "primary" },
   message_received:       { icon: MessageCircle,   title: "new message",                sub: () => "tap to read it", tone: "accent" },
   group_message_received: { icon: MessagesSquare,  title: "new group message",          sub: () => "tap to open the group", tone: "accent" },
-  poll_voted_for:         { icon: BarChart3,       title: "someone voted for you",      sub: () => "polls are anonymous — tap to see", tone: "primary" },
-  referral_joined:        { icon: Gift,            title: "a friend joined",            sub: (n) => (payloadObj(n).milestone ? "you just unlocked +1 pick slot" : "keep going — 3 friends = +1 slot"), tone: "accent" },
+  poll_voted_for:         { icon: BarChart3,       title: "someone voted for you",      sub: () => "polls are anonymous. tap to see", tone: "primary" },
+  referral_joined:        { icon: Gift,            title: "a friend joined",            sub: (n) => (payloadObj(n).milestone ? "you just unlocked +1 pick slot" : "keep going. 3 friends = +1 slot"), tone: "accent" },
 };
 
 function metaFor(n: Notification): Meta {

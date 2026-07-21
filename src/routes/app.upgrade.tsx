@@ -76,7 +76,7 @@ function UpgradePage() {
                 color: "var(--success)",
               }}
             >
-              Active until {expiresAt ? new Date(expiresAt).toLocaleDateString() : "—"}. Billing management requires
+              Active until {expiresAt ? new Date(expiresAt).toLocaleDateString() : "not set"}. Billing management requires
               additional account configuration.
             </div>
           ) : (

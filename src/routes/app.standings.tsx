@@ -88,7 +88,7 @@ function StandingsPage() {
           </div>
           <h2 className="text-xl font-semibold">No polls yet</h2>
           <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-            Launch the first one — pick a question and 2 to 4 people.
+            Launch the first one. Pick a question and 2 to 4 people.
           </p>
           <button
             onClick={() => setLaunching(true)}
@@ -225,7 +225,7 @@ function PollSlide({
       await Promise.resolve(onVoted());
       return;
     }
-    setErr(r.error ?? "couldn't record your vote — try again");
+    setErr(r.error ?? "couldn't record your vote. try again");
   }
 
   const maxCount = voted ? Math.max(0, ...Object.values(optimisticVotes)) : 0;

@@ -11,7 +11,7 @@ export function PaymentTestModeBanner({ env }: { env: "sandbox" | "live" | null 
       style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}
     >
       {isSandbox
-        ? "Sandbox mode — no real charges. Test card 4242 4242 4242 4242."
+        ? "Sandbox mode. No real charges. Test card 4242 4242 4242 4242."
         : "Payments are not configured for this environment."}
     </div>
   );

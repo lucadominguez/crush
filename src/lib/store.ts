@@ -275,7 +275,7 @@ export async function signIn(email: string, password: string): Promise<{ error?:
 // Google OAuth was provided by Lovable's auth broker. Off-platform it needs
 // its own OAuth client + domain — deferred (see OUTSTANDING.md). Email works.
 export async function signInWithGoogle(): Promise<{ error?: string; redirected?: boolean }> {
-  return { error: "google sign-in is coming back soon — use email for now" };
+  return { error: "google sign-in is coming back soon. use email for now" };
 }
 
 export async function signOut() {
@@ -325,10 +325,10 @@ export function commitPendingCrushes(): Promise<CommitResult> {
             stillPending.push(h);
             continue;
           }
-          result.failed.push({ handle: h, reason: "couldn't save — try again" });
+          result.failed.push({ handle: h, reason: "couldn't save. try again" });
           stillPending.push(h);
         } catch {
-          result.failed.push({ handle: h, reason: "couldn't save — try again" });
+          result.failed.push({ handle: h, reason: "couldn't save. try again" });
           stillPending.push(h);
         }
       }
@@ -353,7 +353,7 @@ export function summarizeCommit(r: CommitResult | undefined): { ok: string | nul
   const warnBits: string[] = [];
   if (r.skippedSelf.length) warnBits.push("skipped your own handle");
   if (r.slotLimited.length) warnBits.push(`${r.slotLimited.length} over your crush limit`);
-  if (r.failed.length) warnBits.push(`${r.failed.length} didn't send — we'll retry`);
+  if (r.failed.length) warnBits.push(`${r.failed.length} didn't send. we'll retry`);
   const warn = warnBits.length ? warnBits.join(" · ") : null;
   return { ok, warn };
 }
@@ -508,14 +508,14 @@ export async function addCrush(targetHandle: string): Promise<{ error?: string; 
     res = await addCrushFn({ data: { targetHandle: h } });
   } catch {
     if (hadLoaded) setCache<Crush[]>(ck, prev);
-    return { error: "couldn't save that pick — try again" };
+    return { error: "couldn't save that pick. try again" };
   }
   if (!res.ok) {
     if (hadLoaded) setCache<Crush[]>(ck, prev);
     if (res.error === "self") return { error: "that's you 😅" };
     if (res.error === "duplicate") return { error: "already on your list" };
-    if (res.error === "slot_limit") return { error: "you're at your pick limit — drop one first" };
-    return { error: "couldn't save that pick — try again" };
+    if (res.error === "slot_limit") return { error: "you're at your pick limit. drop one first" };
+    return { error: "couldn't save that pick. try again" };
   }
   invalidate(`["crushes",`);
   if (res.matchId) {
@@ -538,7 +538,7 @@ export async function removeCrush(id: string): Promise<{ error?: string }> {
     await removeCrushFn({ data: { id } });
   } catch {
     for (const s of snapshots) setCache(s.key, s.prev);
-    return { error: "couldn't remove that pick — try again" };
+    return { error: "couldn't remove that pick. try again" };
   }
   return {};
 }
@@ -681,7 +681,7 @@ export async function sendMessage(matchId: string, text: string): Promise<{ erro
   const cur = (getEntry(ck).data as ChatMessage[] | undefined) ?? [];
   if (res.error || !res.row) {
     setCache<ChatMessage[]>(ck, cur.map((m) => (m._clientId === clientId ? { ...m, _status: "failed" } : m)));
-    return { error: "couldn't send — tap to retry", clientId };
+    return { error: "couldn't send. tap to retry", clientId };
   }
   setCache<ChatMessage[]>(ck, reconcileServerRow(cur, res.row, clientId));
   return { clientId };
@@ -699,7 +699,7 @@ export async function retryFailedMessage(matchId: string, clientId: string): Pro
   const cur2 = (getEntry(ck).data as ChatMessage[] | undefined) ?? [];
   if (res.error || !res.row) {
     setCache<ChatMessage[]>(ck, cur2.map((m) => (m._clientId === clientId ? { ...m, _status: "failed" } : m)));
-    return { error: "still couldn't send — check your connection" };
+    return { error: "still couldn't send. check your connection" };
   }
   setCache<ChatMessage[]>(ck, reconcileServerRow(cur2, res.row, clientId));
   return {};
@@ -872,7 +872,7 @@ export async function votePoll(pollId: string, handle: string): Promise<VotePoll
   try {
     r = await castPollVote({ data: { pollId, handle } });
   } catch {
-    return { ok: false, code: "network", error: "couldn't record your vote — try again" };
+    return { ok: false, code: "network", error: "couldn't record your vote. try again" };
   }
   if (!r.ok) {
     const code = (r.error ?? "unknown") as VotePollResult["code"];
@@ -881,7 +881,7 @@ export async function votePoll(pollId: string, handle: string): Promise<VotePoll
       : code === "not_authenticated" ? "sign in first"
       : code === "invalid_option" ? "that option isn't part of this poll"
       : code === "poll_not_found" ? "this poll is gone"
-      : "couldn't record your vote — try again";
+      : "couldn't record your vote. try again";
     return {
       ok: false,
       code,
@@ -900,7 +900,7 @@ export async function createPoll(question: string, handles: string[]): Promise<{
   try {
     r = await createPollFn({ data: { question, handles: opts } });
   } catch {
-    return { error: "couldn't launch poll — try again" };
+    return { error: "couldn't launch poll. try again" };
   }
   if (!r.ok) {
     const code: string = r.error ?? "unknown";
@@ -908,8 +908,8 @@ export async function createPoll(question: string, handles: string[]): Promise<{
       code === "not_authenticated" ? "sign in first"
       : code === "invalid_question" ? "question needs 5–120 characters"
       : code === "invalid_options" ? "pick 2–4 unique people"
-      : code === "rate_limited" ? "you've launched 3 polls today — try again tomorrow"
-      : "couldn't launch poll — try again";
+      : code === "rate_limited" ? "you've launched 3 polls today. try again tomorrow"
+      : "couldn't launch poll. try again";
     return { error: msg };
   }
   invalidate(`["polls",`);

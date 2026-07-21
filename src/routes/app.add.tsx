@@ -81,7 +81,7 @@ function AddPage() {
         <div className="mt-3 space-y-1 pb-6">
           {q.trim().length < 2 && (
             <p className="text-[12px] text-muted-foreground text-center py-4">
-              they never find out — unless they pick you too.
+              they never find out, unless they pick you too.
             </p>
           )}
           {err && <div className="surface p-3 text-[13px] text-destructive">{err}</div>}
@@ -100,7 +100,7 @@ function AddPage() {
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-[14px] truncate">@{typed}</p>
                 <p className="text-[12px] text-muted-foreground truncate">
-                  {results.length ? "not the one you meant? pick this exact @" : "not on crush yet — we'll hold your pick"}
+                  {results.length ? "not the one you meant? pick this exact @" : "not on crush yet. we'll hold your pick"}
                 </p>
               </div>
               <span className="text-[11px] text-muted-foreground shrink-0 inline-flex items-center gap-1">

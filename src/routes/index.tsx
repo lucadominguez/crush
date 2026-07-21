@@ -11,9 +11,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "crush — only if it's mutual" },
+      { title: "crush: only if it's mutual" },
       { name: "description", content: "pick your secret crush. if they pick you back, you both find out. otherwise it stays private, forever." },
-      { property: "og:title", content: "crush — only if it's mutual" },
+      { property: "og:title", content: "crush: only if it's mutual" },
       { property: "og:description", content: "pick your secret crush. if they pick you back, you both find out. otherwise it stays private." },
     ],
   }),
@@ -195,7 +195,7 @@ function Landing() {
                   : <>pick someone to continue</>}
               </button>
               <p className="mt-3 text-center text-[12px] text-muted-foreground inline-flex items-center justify-center gap-1.5 w-full">
-                <Lock className="size-3.5" /> they'll never know — unless they pick you back.
+                <Lock className="size-3.5" /> they'll never know, unless they pick you back.
               </p>
             </div>
           </div>
@@ -211,7 +211,7 @@ function Landing() {
           </div>
           <ol className="grid gap-4 sm:grid-cols-3 max-w-4xl mx-auto">
             {[
-              { Icon: UserRoundSearch, title: "pick your crush", body: "search their @ or number. nothing is sent — ever — until it's mutual.", tone: "sun" as const },
+              { Icon: UserRoundSearch, title: "pick your crush", body: "search their @ or number. nothing is ever sent until it's mutual.", tone: "sun" as const },
               { Icon: HeartHandshake, title: "they pick too", body: "if they add you back, we quietly wait. no pings, no pressure, no hints.", tone: "grape" as const },
               { Icon: Mail, title: "it's mutual", body: "you both find out at the same moment. otherwise it stays private, forever.", tone: "primary" as const },
             ].map((s, i) => (

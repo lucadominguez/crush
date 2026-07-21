@@ -260,7 +260,7 @@ function CrushesPage() {
           <div className="mt-2 space-y-1">
             {q.trim().length < 2 && (
               <p className="text-[12px] text-muted-foreground text-center py-3">
-                They never find out — unless they pick you too.
+                They never find out, unless they pick you too.
               </p>
             )}
             {err && <div className="surface p-3 text-[13px] text-destructive">{err}</div>}

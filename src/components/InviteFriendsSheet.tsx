@@ -125,13 +125,13 @@ export function InviteFriendsSheet({
       }
       if (!completed) {
         const ok = await safeCopy(text);
-        if (!ok) { toast.error("Couldn't share — try copy"); return; }
+        if (!ok) { toast.error("Couldn't share. Try copy instead"); return; }
         toast.success("Invite copied");
         completed = true;
       }
       if (completed) {
         const r = await log({ data: { channel: "share" } }).catch(() => ({ ok: false as const, error: "log_failed" }));
-        if (!r.ok) toast("Shared — couldn't update progress right now.");
+        if (!r.ok) toast("Shared. We couldn't update your progress right now.");
       }
     } finally {
       setBusy(null);
@@ -162,7 +162,7 @@ export function InviteFriendsSheet({
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
       const r = await log({ data: { channel: "copy" } }).catch(() => ({ ok: false as const, error: "log_failed" }));
-      if (!r.ok) toast("Copied — couldn't update progress right now.");
+      if (!r.ok) toast("Copied. We couldn't update your progress right now.");
     } finally {
       setBusy(null);
     }

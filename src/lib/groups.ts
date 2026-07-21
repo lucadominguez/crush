@@ -225,7 +225,7 @@ export async function createGroup(input: { name: string; emoji?: string; memberU
   try {
     payload = await createGroupFn({ data: { name, emoji: input.emoji ?? "✨", memberIds: input.memberUserIds } });
   } catch {
-    return { error: "couldn't create group — try again" };
+    return { error: "couldn't create group. try again" };
   }
   if (!payload.ok) {
     const errMap: Record<string, string> = {
@@ -234,7 +234,7 @@ export async function createGroup(input: { name: string; emoji?: string; memberU
       no_members: "add at least one person",
       invalid_members: "one of those picks isn't on Crush yet",
     };
-    return { error: errMap[payload.error ?? ""] ?? "couldn't create group — try again" };
+    return { error: errMap[payload.error ?? ""] ?? "couldn't create group. try again" };
   }
   return { id: payload.id };
 }
@@ -271,7 +271,7 @@ export async function sendGroupMessage(groupId: string, text: string): Promise<S
   const cur = bucket(groupId).rows;
   if (res.error || !res.row) {
     setBucket(groupId, cur.map((m) => (m._clientId === clientId ? { ...m, _status: "failed" } : m)));
-    return { error: "couldn't send — tap to retry", clientId };
+    return { error: "couldn't send. tap to retry", clientId };
   }
   setBucket(groupId, reconcileServerRow(cur, res.row, clientId));
   return { clientId };
@@ -288,7 +288,7 @@ export async function retryFailedGroupMessage(groupId: string, clientId: string)
   const cur2 = bucket(groupId).rows;
   if (res.error || !res.row) {
     setBucket(groupId, cur2.map((m) => (m._clientId === clientId ? { ...m, _status: "failed" } : m)));
-    return { error: "still couldn't send — check your connection" };
+    return { error: "still couldn't send. check your connection" };
   }
   setBucket(groupId, reconcileServerRow(cur2, res.row, clientId));
   return {};
@@ -304,7 +304,7 @@ export async function addGroupMembers(groupId: string, userIds: string[]): Promi
   try {
     await addGroupMembersFn({ data: { groupId, memberIds: userIds } });
   } catch {
-    return { error: "couldn't add members — try again" };
+    return { error: "couldn't add members. try again" };
   }
   return {};
 }
@@ -315,7 +315,7 @@ export async function leaveGroup(groupId: string): Promise<{ error?: string }> {
   try {
     await leaveGroupFn({ data: { groupId } });
   } catch {
-    return { error: "couldn't leave — try again" };
+    return { error: "couldn't leave. try again" };
   }
   return {};
 }

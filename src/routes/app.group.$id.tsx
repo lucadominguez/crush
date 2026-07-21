@@ -180,7 +180,7 @@ function GroupChatPage() {
             {group?.emoji ?? "✨"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-bold truncate text-[15px]">{group?.name ?? (groupError ? "Group unavailable" : "Group")}</p>
+            <p className="font-bold truncate text-lead">{group?.name ?? (groupError ? "Group unavailable" : "Group")}</p>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Users className="size-3" strokeWidth={2.2} /> {members.length} {members.length === 1 ? "member" : "members"}
             </p>
@@ -200,8 +200,8 @@ function GroupChatPage() {
         {error && (
           <div className="mx-2 my-3 p-3 rounded-2xl border border-destructive/40 bg-card flex items-start gap-2">
             <AlertCircle className="size-4 mt-0.5 text-destructive shrink-0" />
-            <div className="flex-1 text-[12px] font-semibold">Couldn't load messages</div>
-            <button onClick={refresh} className="text-[12px] font-semibold min-h-11 px-3 rounded-lg border border-border">Retry</button>
+            <div className="flex-1 text-caption font-semibold">Couldn't load messages</div>
+            <button onClick={refresh} className="text-caption font-semibold min-h-11 px-3 rounded-lg border border-border">Retry</button>
           </div>
         )}
 
@@ -218,7 +218,7 @@ function GroupChatPage() {
           if (g.from === "__day__") {
             return (
               <div key={`d-${gi}`} className="flex justify-center my-3">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/70 border border-border/60 rounded-full px-3 py-1">
+                <span className="text-nano font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/70 border border-border/60 rounded-full px-3 py-1">
                   {g.day}
                 </span>
               </div>
@@ -237,7 +237,7 @@ function GroupChatPage() {
               )}
               <div className={`flex flex-col gap-0.5 max-w-[75%] ${mine ? "items-end" : "items-start"}`}>
                 {!mine && (
-                  <span className="text-[10px] font-semibold text-muted-foreground px-2 truncate max-w-full">{sender?.name ?? "Someone"}</span>
+                  <span className="text-nano font-semibold text-muted-foreground px-2 truncate max-w-full">{sender?.name ?? "Someone"}</span>
                 )}
                 {g.items.map((m, mi) => {
                   const isLast = mi === g.items.length - 1;
@@ -268,15 +268,15 @@ function GroupChatPage() {
                         </div>
                       )}
                       {isLast && !pending && !failed && (
-                        <div className={`mt-1 text-[10px] text-muted-foreground ${mine ? "text-right" : "text-left"}`}>
+                        <div className={`mt-1 text-nano text-muted-foreground ${mine ? "text-right" : "text-left"}`}>
                           {formatTime(m.created_at)}
                         </div>
                       )}
                       {pending && (
-                        <div className={`mt-1 text-[10px] text-muted-foreground ${mine ? "text-right" : "text-left"}`}>Sending…</div>
+                        <div className={`mt-1 text-nano text-muted-foreground ${mine ? "text-right" : "text-left"}`}>Sending…</div>
                       )}
                       {failed && (
-                        <div className={`mt-1 flex items-center gap-2 text-[11px] text-destructive ${mine ? "justify-end" : "justify-start"}`}>
+                        <div className={`mt-1 flex items-center gap-2 text-micro text-destructive ${mine ? "justify-end" : "justify-start"}`}>
                           <span>Not sent</span>
                           <button onClick={() => onRetry(m)} className="underline font-semibold min-h-11 px-2 rounded">Retry</button>
                           <button onClick={() => onDiscard(m)} className="underline min-h-11 px-2 rounded">Discard</button>
@@ -341,7 +341,7 @@ function GroupChatPage() {
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }}
             placeholder="Message the group…"
             rows={1}
-            className="flex-1 bg-transparent outline-none py-2.5 px-1 text-[15px] resize-none max-h-[140px]"
+            className="flex-1 bg-transparent outline-none py-2.5 px-1 text-lead resize-none max-h-[140px]"
           />
           <button
             type="submit"
@@ -379,8 +379,8 @@ function GroupChatPage() {
                     ) : (p.emoji ?? p.name?.[0] ?? "?")}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[14px] truncate">{p.name}{p.user_id === uid && <span className="text-xs text-muted-foreground font-normal"> · you</span>}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">@{p.handle}</p>
+                    <p className="font-semibold text-body truncate">{p.name}{p.user_id === uid && <span className="text-xs text-muted-foreground font-normal"> · you</span>}</p>
+                    <p className="text-micro text-muted-foreground truncate">@{p.handle}</p>
                   </div>
                 </div>
               ))}

@@ -126,11 +126,11 @@ function MessagesPage() {
         }
       />
 
-      <div className="px-5 pb-8 space-y-6">
+      <div className="px-5 pb-28 space-y-6">
         {(listError || previewsError) && (
           <div className="surface p-4 flex items-start gap-3">
             <AlertCircle className="size-4 mt-0.5 text-destructive shrink-0" />
-            <div className="flex-1 text-[13px]">
+            <div className="flex-1 text-label">
               <p className="font-semibold">
                 {listError ? "Couldn't load conversations" : "Couldn't load previews"}
               </p>
@@ -138,7 +138,7 @@ function MessagesPage() {
             </div>
             <button
               onClick={retryAll}
-              className="min-h-11 px-3 rounded-lg text-[13px] font-semibold border border-border tap-scale"
+              className="min-h-11 px-3 rounded-lg text-label font-semibold border border-border tap-scale"
             >
               <RotateCw className="size-4 inline mr-1" /> Retry
             </button>
@@ -163,7 +163,7 @@ function MessagesPage() {
                     <img src={avatarFor(m)} alt={m.other?.name ?? "match"} className="size-full object-cover" referrerPolicy="no-referrer" />
                     <span className="absolute -top-0.5 -right-0.5 size-3 rounded-full bg-primary border-2" style={{ borderColor: "var(--card)" }} aria-hidden />
                   </div>
-                  <p className="text-[11px] font-medium truncate w-full text-center">{m.other?.name?.split(" ")[0] ?? "match"}</p>
+                  <p className="text-micro font-medium truncate w-full text-center">{m.other?.name?.split(" ")[0] ?? "match"}</p>
                 </Link>
               ))}
             </div>
@@ -193,13 +193,13 @@ function MessagesPage() {
             <div className="size-11 mx-auto rounded-full grid place-items-center" style={{ background: "color-mix(in oklab, var(--primary) 10%, var(--card))", color: "var(--primary)" }}>
               <MessageCircle className="size-5" />
             </div>
-            <p className="mt-3 font-semibold text-[15px]">No chats yet</p>
-            <p className="mt-1 text-[13px] text-muted-foreground max-w-xs mx-auto">
+            <p className="mt-3 font-semibold text-lead">No chats yet</p>
+            <p className="mt-1 text-label text-muted-foreground max-w-xs mx-auto">
               When two people pick each other, a private chat appears here.
             </p>
             <Link
               to="/app"
-              className="mt-5 inline-flex px-5 py-2.5 min-h-11 rounded-lg text-[14px] font-semibold tap-scale"
+              className="mt-5 inline-flex px-5 py-2.5 min-h-11 rounded-lg text-body font-semibold tap-scale"
               style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
             >
               Add a pick
@@ -230,7 +230,7 @@ function ListSkeleton() {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-1">{children}</p>;
+  return <p className="text-micro font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-1">{children}</p>;
 }
 
 function DMRow({ m, preview, uid, readAt }: { m: Match; preview: LatestPreview; uid: string | null; readAt: number }) {
@@ -247,11 +247,11 @@ function DMRow({ m, preview, uid, readAt }: { m: Match; preview: LatestPreview; 
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <p className={`text-[15px] truncate ${unread ? "font-bold" : "font-semibold"}`}>{m.other?.name ?? "match"}</p>
-            {ago && <span className={`text-[11px] shrink-0 ${unread ? "font-bold text-foreground" : "text-muted-foreground"}`}>{ago}</span>}
+            <p className={`text-lead truncate ${unread ? "font-bold" : "font-semibold"}`}>{m.other?.name ?? "match"}</p>
+            {ago && <span className={`text-micro shrink-0 ${unread ? "font-bold text-foreground" : "text-muted-foreground"}`}>{ago}</span>}
           </div>
           <div className="flex items-center justify-between gap-2 mt-0.5">
-            <p className={`text-[13px] truncate ${unread ? "text-foreground" : "text-muted-foreground"}`}>
+            <p className={`text-label truncate ${unread ? "text-foreground" : "text-muted-foreground"}`}>
               {mine && <span className="opacity-70">You: </span>}
               {previewText(preview.text)}
             </p>
@@ -280,11 +280,11 @@ function GroupRow({ g, preview, uid, readAt }: { g: Group; preview?: GroupPrevie
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <p className={`text-[15px] truncate ${unread ? "font-bold" : "font-semibold"}`}>{g.name}</p>
-            {ago && <span className={`text-[11px] shrink-0 ${unread ? "font-bold text-foreground" : "text-muted-foreground"}`}>{ago}</span>}
+            <p className={`text-lead truncate ${unread ? "font-bold" : "font-semibold"}`}>{g.name}</p>
+            {ago && <span className={`text-micro shrink-0 ${unread ? "font-bold text-foreground" : "text-muted-foreground"}`}>{ago}</span>}
           </div>
           <div className="flex items-center justify-between gap-2 mt-0.5">
-            <p className={`text-[13px] truncate flex items-center gap-1 ${unread ? "text-foreground" : "text-muted-foreground"}`}>
+            <p className={`text-label truncate flex items-center gap-1 ${unread ? "text-foreground" : "text-muted-foreground"}`}>
               <Users className="size-3 shrink-0" strokeWidth={2.2} />
               {preview
                 ? <>{mine && <span className="opacity-70">You: </span>}{previewText(preview.text)}</>

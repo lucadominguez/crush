@@ -11,10 +11,10 @@ export function BlurredRevealTeaser({ count }: { count: number }) {
     <div className="relative mt-4 rounded-3xl border-2 border-foreground bg-gradient-bubble shadow-pop overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-foreground text-background text-[11px] font-black">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-foreground text-background text-micro font-black">
             <Lock className="size-3" /> locked · sign up to reveal
           </span>
-          <span className="text-[11px] font-bold text-muted-foreground">preview</span>
+          <span className="text-micro font-bold text-muted-foreground">preview</span>
         </div>
 
         <div className="mt-3 flex items-center gap-3 select-none">

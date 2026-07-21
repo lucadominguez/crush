@@ -152,8 +152,8 @@ export function ContactImportSheet({ open, onClose }: { open: boolean; onClose: 
       >
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
-            <h2 className="text-[18px] font-black lowercase">find your friends</h2>
-            <p className="text-[12px] text-muted-foreground">see who is already here, invite who is not</p>
+            <h2 className="text-title font-black lowercase">find your friends</h2>
+            <p className="text-caption text-muted-foreground">see who is already here, invite who is not</p>
           </div>
           <button ref={closeBtnRef} onClick={onClose} aria-label="Close" className="icon-btn min-w-11 min-h-11">
             <X className="size-5" />
@@ -162,12 +162,12 @@ export function ContactImportSheet({ open, onClose }: { open: boolean; onClose: 
 
         {step === "consent" && (
           <div className="space-y-4">
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-label text-muted-foreground">
               Crush can check which of your contacts are already here, and rank who is
               worth inviting. Your contacts stay private.
             </p>
 
-            <ul className="space-y-3 text-[13px]">
+            <ul className="space-y-3 text-label">
               <li className="flex gap-3">
                 <Lock className="size-4 mt-0.5 shrink-0 text-primary" />
                 <span>Numbers are encrypted before they are stored. We never keep a readable copy.</span>
@@ -184,7 +184,7 @@ export function ContactImportSheet({ open, onClose }: { open: boolean; onClose: 
 
             {showPaste ? (
               <div className="space-y-2">
-                <label htmlFor="paste-contacts" className="text-[13px] font-semibold">
+                <label htmlFor="paste-contacts" className="text-label font-semibold">
                   Paste contacts, one per line
                 </label>
                 <textarea
@@ -193,7 +193,7 @@ export function ContactImportSheet({ open, onClose }: { open: boolean; onClose: 
                   onChange={(e) => setPasted(e.target.value)}
                   rows={6}
                   placeholder={"Jamie, +1 555 0100\nSam, 555 0111"}
-                  className="input-field w-full p-3 text-[14px]"
+                  className="input-field w-full p-3 text-body"
                 />
                 <button
                   onClick={() => submit(parsePasted(pasted))}
@@ -215,7 +215,7 @@ export function ContactImportSheet({ open, onClose }: { open: boolean; onClose: 
                 </button>
                 <button
                   onClick={() => setShowPaste(true)}
-                  className="w-full min-h-11 rounded-xl surface inline-flex items-center justify-center text-[14px] font-semibold"
+                  className="w-full min-h-11 rounded-xl surface inline-flex items-center justify-center text-body font-semibold"
                 >
                   Or paste them manually
                 </button>
@@ -227,19 +227,19 @@ export function ContactImportSheet({ open, onClose }: { open: boolean; onClose: 
         {step === "picking" && (
           <div className="py-10 grid place-items-center gap-3">
             <Loader2 className="size-6 animate-spin text-primary" />
-            <p className="text-[13px] text-muted-foreground">Waiting for your contact picker</p>
+            <p className="text-label text-muted-foreground">Waiting for your contact picker</p>
           </div>
         )}
 
         {step === "targets" && (
           <div className="space-y-3">
             {targets.length === 0 ? (
-              <p className="text-[13px] py-6 text-center text-muted-foreground">
+              <p className="text-label py-6 text-center text-muted-foreground">
                 Everyone we recognized is already on Crush. Nice network.
               </p>
             ) : (
               <>
-                <p className="text-[13px] text-muted-foreground">
+                <p className="text-label text-muted-foreground">
                   These people are not on Crush yet. The ones at the top are in the most friend groups.
                 </p>
                 <ul className="space-y-2">
@@ -250,7 +250,7 @@ export function ContactImportSheet({ open, onClose }: { open: boolean; onClose: 
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate">{t.name ?? "Unsaved contact"}</p>
                           {t.reach === "high" && (
-                            <p className="text-[12px] text-muted-foreground">In a lot of friend groups</p>
+                            <p className="text-caption text-muted-foreground">In a lot of friend groups</p>
                           )}
                         </div>
                         <button

@@ -19,7 +19,7 @@ export function CrushOfWeekBanner() {
     <div className="mx-5 mt-1 mb-3 card-pop p-4 bg-gradient-to-br from-grape via-accent to-primary">
       <div className="flex items-center gap-2 mb-1.5">
         <Crown className="size-4" />
-        <p className="text-[10px] font-black uppercase tracking-wider opacity-80">
+        <p className="text-nano font-black uppercase tracking-wider opacity-80">
           crush of the week
         </p>
       </div>

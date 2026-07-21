@@ -86,8 +86,8 @@ export function ReportUserSheet({
       >
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
-            <h2 className="text-[18px] font-black lowercase">report {reportedName ?? "this person"}</h2>
-            <p className="text-[12px] text-muted-foreground">they are never told you reported them</p>
+            <h2 className="text-title font-black lowercase">report {reportedName ?? "this person"}</h2>
+            <p className="text-caption text-muted-foreground">they are never told you reported them</p>
           </div>
           <button ref={closeBtnRef} onClick={onClose} aria-label="Close" className="icon-btn min-w-11 min-h-11">
             <X className="size-4" />
@@ -107,7 +107,7 @@ export function ReportUserSheet({
           ))}
         </div>
 
-        <label htmlFor="report-note" className="text-[13px] font-semibold">
+        <label htmlFor="report-note" className="text-label font-semibold">
           anything else? (optional)
         </label>
         <textarea
@@ -116,7 +116,7 @@ export function ReportUserSheet({
           onChange={(e) => setNote(e.target.value)}
           rows={3}
           maxLength={400}
-          className="input-field w-full p-3 text-[14px] mt-1.5"
+          className="input-field w-full p-3 text-body mt-1.5"
         />
 
         <button
@@ -127,7 +127,7 @@ export function ReportUserSheet({
           {busy ? <Loader2 className="size-4 animate-spin" /> : "send report"}
         </button>
 
-        <p className="text-[11px] text-muted-foreground mt-3 text-center">
+        <p className="text-micro text-muted-foreground mt-3 text-center">
           if someone is in danger, contact local emergency services.
         </p>
       </div>

@@ -102,7 +102,7 @@ function Landing() {
                     only if they pick you back.
                   </span>
                 </h1>
-                <p className="mt-5 text-[15px] lg:text-[17px] text-foreground/70 max-w-md mx-auto lg:mx-0 leading-relaxed">
+                <p className="mt-5 text-lead lg:text-lead text-foreground/70 max-w-md mx-auto lg:mx-0 leading-relaxed">
                   pick someone. if they pick you back, you both find out at the same time. otherwise, nobody ever knows.
                 </p>
 
@@ -119,7 +119,7 @@ function Landing() {
           <div className="order-1 lg:order-2">
             <div className="surface p-5 sm:p-6 shadow-glow relative animate-pop-in">
               <div className="flex items-center justify-between mb-3">
-                <label htmlFor="landing-search" className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground lowercase">
+                <label htmlFor="landing-search" className="text-caption font-bold uppercase tracking-wider text-muted-foreground lowercase">
                   pick your crush
                 </label>
                 <span className="chip chip-primary">{pending.length}/3</span>
@@ -133,7 +133,7 @@ function Landing() {
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="@username or phone"
                   aria-label="Search Instagram username or phone number"
-                  className="input-field pl-11 pr-11 h-14 text-[16px] font-medium"
+                  className="input-field pl-11 pr-11 h-14 text-lead font-medium"
                   autoCapitalize="none"
                   autoCorrect="off"
                   spellCheck={false}
@@ -188,13 +188,13 @@ function Landing() {
                 onClick={onSend}
                 disabled={!canSend}
                 aria-disabled={!canSend}
-                className="btn-pop mt-4 w-full h-14 text-[16px] animate-gradient-pan"
+                className="btn-pop mt-4 w-full h-14 text-lead animate-gradient-pan"
               >
                 {canSend
                   ? <>send {pending.length === 1 ? "your pick" : `${pending.length} picks`} <ArrowRight className="size-4" /></>
                   : <>pick someone to continue</>}
               </button>
-              <p className="mt-3 text-center text-[12px] text-muted-foreground inline-flex items-center justify-center gap-1.5 w-full">
+              <p className="mt-3 text-center text-caption text-muted-foreground inline-flex items-center justify-center gap-1.5 w-full">
                 <Lock className="size-3.5" /> they'll never know, unless they pick you back.
               </p>
             </div>
@@ -205,7 +205,7 @@ function Landing() {
         <section className="mt-8 lg:mt-14">
           <div className="text-center mb-8 lg:mb-10">
             <span className="chip chip-grape">how it works</span>
-            <h2 className="mt-3 text-[26px] lg:text-[34px] font-black tracking-tight lowercase">
+            <h2 className="mt-3 text-headline lg:text-display font-black tracking-tight lowercase">
               two people. one quiet reveal.
             </h2>
           </div>
@@ -219,8 +219,8 @@ function Landing() {
                 <div className={`size-11 rounded-2xl grid place-items-center ${s.tone === "sun" ? "bg-gradient-sun text-[color:var(--sun-foreground)]" : s.tone === "grape" ? "bg-gradient-grape text-[color:var(--accent-foreground)]" : "bg-gradient-bubble text-[color:var(--primary-foreground)]"}`}>
                   <s.Icon className="size-5" strokeWidth={2.2} />
                 </div>
-                <p className="mt-3 font-bold text-[16px] lowercase">{s.title}</p>
-                <p className="mt-1.5 text-[13.5px] text-foreground/70 leading-relaxed">{s.body}</p>
+                <p className="mt-3 font-bold text-lead lowercase">{s.title}</p>
+                <p className="mt-1.5 text-label text-foreground/70 leading-relaxed">{s.body}</p>
               </li>
             ))}
           </ol>
@@ -229,8 +229,8 @@ function Landing() {
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t border-border/60 flex flex-col items-center gap-3">
           <BrandMark size={26} />
-          <p className="text-[13px] text-muted-foreground lowercase">only if it's mutual.</p>
-          <div className="flex items-center gap-4 text-[11.5px] text-muted-foreground lowercase">
+          <p className="text-label text-muted-foreground lowercase">only if it's mutual.</p>
+          <div className="flex items-center gap-4 text-micro text-muted-foreground lowercase">
             <Link to="/privacy" className="hover:text-foreground underline-offset-4 hover:underline">privacy</Link>
             <Link to="/privacy" className="hover:text-foreground underline-offset-4 hover:underline">terms</Link>
             <span>13+</span>
@@ -277,11 +277,11 @@ function ResultRow({
         {burst && <span aria-hidden className="absolute inset-0 rounded-full animate-ring-burst pointer-events-none" />}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-[14px] truncate flex items-center gap-1">
+        <p className="font-semibold text-body truncate flex items-center gap-1">
           {title}
           {verified && <BadgeCheck className="size-3.5" style={{ color: "var(--accent-foreground)" }} />}
         </p>
-        <p className="text-[12px] text-muted-foreground truncate">{subtitle}</p>
+        <p className="text-caption text-muted-foreground truncate">{subtitle}</p>
       </div>
       <div
         className="size-8 rounded-full grid place-items-center shrink-0 transition-all"

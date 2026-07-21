@@ -28,7 +28,7 @@ export function LandingTicker() {
   const displayCount = count ?? 0;
 
   return (
-    <div className="w-full flex items-center gap-2 px-3 py-2 rounded-2xl bg-white/60 border-2 border-foreground/10 backdrop-blur-sm text-[12px] font-bold">
+    <div className="w-full flex items-center gap-2 px-3 py-2 rounded-2xl bg-white/60 border-2 border-foreground/10 backdrop-blur-sm text-caption font-bold">
       <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
       <Users className="size-3.5 shrink-0" />
       <span className="tabular-nums">{displayCount.toLocaleString()}</span>

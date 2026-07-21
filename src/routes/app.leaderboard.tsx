@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Flame, Gift, Loader2, Trophy } from "lucide-react";
+import { Flame, Gift, Trophy } from "lucide-react";
 
 import {
   getIndividualStandings,
@@ -56,10 +56,10 @@ function LeaderboardPage() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <div className="min-h-full px-5 pt-4 pb-8">
+    <div className="min-h-full px-5 pt-4 pb-28">
       <header className="mb-4">
-        <h1 className="text-[24px] font-black lowercase">standings</h1>
-        <p className="text-[13px] text-muted-foreground">
+        <h1 className="text-headline font-black lowercase">standings</h1>
+        <p className="text-label text-muted-foreground">
           earned from poll wins, streaks and friends you brought in
         </p>
       </header>
@@ -101,22 +101,27 @@ function LeaderboardPage() {
       )}
 
       {loading ? (
-        <div className="py-16 grid place-items-center">
-          <Loader2 className="size-6 animate-spin text-primary" />
-        </div>
+        // Skeletons keep the real row shape, so nothing jumps when data lands.
+        <ul className="space-y-2" aria-hidden>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <li key={i} className="skeleton h-[66px] rounded-[20px]" />
+          ))}
+        </ul>
       ) : tab === "people" ? (
         people.length === 0 ? (
           <EmptyState text="nobody's on the board yet. vote in a poll or invite a friend to get on it." />
         ) : (
           <>
-            <ul className="space-y-2">
+            {/* Keyed by scope so switching lens replays the cascade, which
+                makes the list read as "re-ranked" rather than silently swapped. */}
+            <ul className="space-y-2 stagger-tight" key={scope}>
               {people.map((p) => (
                 <PersonRow key={p.user_id} p={p} highlight={p.user_id === me?.user_id} />
               ))}
             </ul>
             {me && me.rank > people.length && (
               <>
-                <p className="text-center text-[12px] text-muted-foreground my-3">your spot</p>
+                <p className="text-center text-caption text-muted-foreground my-3">your spot</p>
                 <PersonRow p={me} highlight />
               </>
             )}
@@ -125,19 +130,19 @@ function LeaderboardPage() {
       ) : schools.length === 0 ? (
         <EmptyState text="no schools on the board yet. schools need at least 3 people." />
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2 stagger-tight">
           {schools.map((s) => (
-            <li key={s.school} className="surface p-3 flex items-center gap-3">
-              <span className="w-8 text-center font-black text-[15px] shrink-0">
+            <li key={s.school} className="surface p-3 flex items-center gap-3 lift">
+              <span className="w-8 text-center font-black text-lead shrink-0 tabular-nums">
                 {medal(s.rank) ?? s.rank}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-[15px] truncate">{s.school}</p>
-                <p className="text-[12px] text-muted-foreground">
+                <p className="font-bold text-lead truncate">{s.school}</p>
+                <p className="text-caption text-muted-foreground">
                   {s.members} {s.members === 1 ? "person" : "people"}
                 </p>
               </div>
-              <span className="font-black text-[15px] text-gradient-primary shrink-0">{s.score}</span>
+              <span className="font-black text-lead text-gradient-primary shrink-0 tabular-nums">{s.score}</span>
             </li>
           ))}
         </ul>
@@ -148,11 +153,14 @@ function LeaderboardPage() {
 
 function PersonRow({ p, highlight }: { p: StandingRow; highlight?: boolean }) {
   return (
-    <li className={`surface p-3 flex items-center gap-3 ${highlight ? "shadow-glow" : ""}`}>
-      <span className="w-8 text-center font-black text-[15px] shrink-0">
+    <li
+      className={`surface p-3 flex items-center gap-3 lift ${highlight ? "shadow-glow" : ""}`}
+      style={highlight ? { borderColor: "color-mix(in oklab, var(--primary) 45%, var(--border))" } : undefined}
+    >
+      <span className="w-8 text-center font-black text-lead shrink-0 tabular-nums">
         {medal(p.rank) ?? p.rank}
       </span>
-      <div className="size-9 rounded-full bg-gradient-bubble grid place-items-center overflow-hidden shrink-0 text-[15px]">
+      <div className="size-9 rounded-full bg-gradient-bubble grid place-items-center overflow-hidden shrink-0 text-lead">
         {p.avatar ? (
           <img
             src={`/api/ig-avatar?u=${encodeURIComponent(p.avatar)}`}
@@ -165,8 +173,8 @@ function PersonRow({ p, highlight }: { p: StandingRow; highlight?: boolean }) {
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-bold text-[14px] truncate">{p.name ?? "someone"}</p>
-        <p className="text-[11.5px] text-muted-foreground truncate flex items-center gap-2">
+        <p className="font-bold text-body truncate">{p.name ?? "someone"}</p>
+        <p className="text-micro text-muted-foreground truncate flex items-center gap-2">
           {p.poll_wins > 0 && (
             <span className="inline-flex items-center gap-0.5">
               <Trophy className="size-3" />
@@ -187,7 +195,7 @@ function PersonRow({ p, highlight }: { p: StandingRow; highlight?: boolean }) {
           )}
         </p>
       </div>
-      <span className="font-black text-[15px] text-gradient-primary shrink-0">{p.score}</span>
+      <span className="font-black text-lead text-gradient-primary shrink-0 tabular-nums">{p.score}</span>
     </li>
   );
 }
@@ -195,7 +203,7 @@ function PersonRow({ p, highlight }: { p: StandingRow; highlight?: boolean }) {
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="surface p-6 text-center">
-      <p className="text-[13px] text-muted-foreground">{text}</p>
+      <p className="text-label text-muted-foreground">{text}</p>
     </div>
   );
 }

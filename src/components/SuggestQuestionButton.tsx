@@ -61,7 +61,7 @@ export function SuggestQuestionButton() {
               className="w-full bg-secondary border-2 border-foreground rounded-2xl p-3 text-sm outline-none resize-none"
             />
             <div className="flex justify-between items-center mt-1">
-              <span className="text-[10px] text-muted-foreground">{text.length}/120 · 3/day max</span>
+              <span className="text-nano text-muted-foreground">{text.length}/120 · 3/day max</span>
             </div>
             <button
               onClick={send}

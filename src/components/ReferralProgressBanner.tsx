@@ -47,8 +47,8 @@ export function ReferralProgressBanner({ onOpen }: { onOpen: () => void }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2">
-          <p className="font-bold text-[13.5px] lowercase truncate">{label}</p>
-          <span className="text-[10px] font-black tracking-wider text-muted-foreground shrink-0">
+          <p className="font-bold text-label lowercase truncate">{label}</p>
+          <span className="text-nano font-black tracking-wider text-muted-foreground shrink-0">
             {stats.maxed ? `${stats.slotsEarned}/${MAX_EARNED}` : `${stats.total}/${target}`}
           </span>
         </div>

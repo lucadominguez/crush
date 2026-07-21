@@ -7,7 +7,7 @@ export function PaymentTestModeBanner({ env }: { env: "sandbox" | "live" | null 
     <div
       role="status"
       aria-live="polite"
-      className="w-full px-4 py-2 text-center text-[12px] border-b border-border/60"
+      className="w-full px-4 py-2 text-center text-caption border-b border-border/60"
       style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}
     >
       {isSandbox

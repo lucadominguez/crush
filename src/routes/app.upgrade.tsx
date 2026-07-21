@@ -42,16 +42,16 @@ function UpgradePage() {
             >
               <Crown className="size-4" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Planned pass</p>
+            <p className="text-micro font-semibold uppercase tracking-wider text-muted-foreground">Planned pass</p>
           </div>
 
           {catalog.isLoading ? (
             <div className="mt-3 h-8 w-32 rounded bg-muted animate-pulse" aria-busy="true" />
           ) : (
-            <p className="mt-3 text-[24px] font-semibold leading-none tracking-tight text-muted-foreground">
+            <p className="mt-3 text-headline font-semibold leading-none tracking-tight text-muted-foreground">
               {god?.price?.amountFormatted ?? "Price TBD"}
               {god?.price?.interval && (
-                <span className="text-[13px] font-medium ml-1">
+                <span className="text-label font-medium ml-1">
                   / {god.price.intervalCount && god.price.intervalCount > 1 ? `${god.price.intervalCount} ` : ""}
                   {god.price.interval}
                 </span>
@@ -61,7 +61,7 @@ function UpgradePage() {
 
           <ul className="mt-5 space-y-2.5">
             {PLANNED_PERKS.map((label) => (
-              <li key={label} className="flex items-center gap-3 text-[14px] text-muted-foreground">
+              <li key={label} className="flex items-center gap-3 text-body text-muted-foreground">
                 <Check className="size-4 shrink-0 opacity-50" />
                 <span>{label}</span>
               </li>
@@ -70,7 +70,7 @@ function UpgradePage() {
 
           {active ? (
             <div
-              className="mt-6 p-3 rounded-lg text-center text-[13px] font-medium"
+              className="mt-6 p-3 rounded-lg text-center text-label font-medium"
               style={{
                 background: "color-mix(in oklab, var(--success) 15%, var(--card))",
                 color: "var(--success)",
@@ -83,7 +83,7 @@ function UpgradePage() {
             <button
               disabled
               aria-disabled="true"
-              className="mt-6 w-full h-12 rounded-lg font-semibold text-[15px]"
+              className="mt-6 w-full h-12 rounded-lg font-semibold text-lead"
               style={{ background: "var(--muted)", color: "var(--muted-foreground)", cursor: "not-allowed" }}
               title="Not available yet"
             >
@@ -94,7 +94,7 @@ function UpgradePage() {
 
         <div className="surface p-4 flex gap-3">
           <Info className="size-4 mt-0.5 shrink-0 text-muted-foreground" />
-          <p className="text-[12px] text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             We won't sell God Mode until the benefits above are implemented end-to-end and the cadence is confirmed.
             This screen exists so the surface is honest rather than misleading.
           </p>
@@ -102,13 +102,13 @@ function UpgradePage() {
 
         <Link to="/app/shop" className="surface p-4 flex items-center gap-3 tap-scale">
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-[14px]">Planned à la carte perks</p>
-            <p className="text-[12px] text-muted-foreground">Hints, poll reveal, weekend boost.</p>
+            <p className="font-semibold text-body">Planned à la carte perks</p>
+            <p className="text-caption text-muted-foreground">Hints, poll reveal, weekend boost.</p>
           </div>
           <span className="text-muted-foreground">→</span>
         </Link>
 
-        <Link to="/app" className="block text-center text-[12px] text-muted-foreground py-2 min-h-11">
+        <Link to="/app" className="block text-center text-caption text-muted-foreground py-2 min-h-11">
           Back to Crush
         </Link>
       </div>

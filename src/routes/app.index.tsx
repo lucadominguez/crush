@@ -8,6 +8,7 @@ import { ContactImportSheet } from "@/components/ContactImportSheet";
 import { useEffect, useState } from "react";
 import { getIG, removeCrush, useMyCrushes, useMyMatches, useMyProfile, addCrush, rememberIG } from "@/lib/store";
 import { useIGSearch } from "@/lib/use-ig-search";
+import { useCountUp } from "@/lib/use-count-up";
 import { getReferralStats, repairMissingReferral } from "@/lib/phase5.functions";
 import { useServerFn } from "@tanstack/react-start";
 import type { IGSearchResult } from "@/lib/instagram.functions";
@@ -95,6 +96,7 @@ function CrushesPage() {
   const slotsFilled = crushes.length;
   const slotsLeft = Math.max(0, slotsTotal - slotsFilled);
   const initialLoading = meLoading || crushesLoading;
+  const animatedPicks = useCountUp(slotsFilled);
   const refTarget = referral ? referral.total + referral.toNext : 3;
   const refPct = referral && !referral.maxed && refTarget > 0
     ? Math.min(100, Math.round((referral.total / refTarget) * 100))
@@ -102,21 +104,21 @@ function CrushesPage() {
 
 
   return (
-    <div className="min-h-full px-5 pt-4 pb-8">
+    <div className="min-h-full px-5 pt-4 pb-28">
       {/* Compact header */}
       <header className="flex items-center justify-between mb-5">
         <div className="min-w-0">
           {initialLoading ? (
             <>
-              <div className="h-6 w-40 rounded-md bg-muted animate-pulse" />
-              <div className="mt-2 h-3 w-24 rounded-md bg-muted animate-pulse" />
+              <div className="skeleton h-6 w-40" />
+              <div className="skeleton mt-2 h-3 w-24" />
             </>
           ) : (
             <>
-              <h1 className="text-[24px] font-black tracking-tight truncate lowercase">
+              <h1 className="text-headline font-black tracking-tight truncate lowercase">
                 hi {me?.name?.split(" ")[0] ?? "there"} 👋
               </h1>
-              <p className="text-[13px] text-muted-foreground truncate">
+              <p className="text-label text-muted-foreground truncate">
                 {slotsFilled === 0 ? "add your first pick" : slotsLeft === 0 ? "all slots used" : `${slotsLeft} slot${slotsLeft > 1 ? "s" : ""} open`}
               </p>
             </>
@@ -147,18 +149,47 @@ function CrushesPage() {
         </div>
       )}
 
-      {/* Primary status card — playful gradient accent */}
+      {/* Matches are the PAYOFF of the whole product, so when they exist they
+          outrank everything else on the screen. This used to render as a plain
+          card below the picks counter, which inverted the hierarchy: the thing
+          you came back for was quieter than a progress stat. */}
+      {!initialLoading && matches.length > 0 && (
+        <Link
+          to="/app/matches"
+          className="surface-solid p-4 mb-3 flex items-center gap-3 lift shadow-glow relative overflow-hidden animate-rise"
+        >
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-90"
+            style={{ background: "var(--gradient-primary)" }}
+          />
+          <div className="relative size-11 rounded-2xl grid place-items-center bg-white/25 text-primary-foreground backdrop-blur-sm">
+            <Sparkles className="size-5" />
+          </div>
+          <div className="relative flex-1 min-w-0 text-primary-foreground">
+            <p className="font-black text-title lowercase leading-tight">
+              {matches.length} mutual match{matches.length > 1 ? "es" : ""} 💌
+            </p>
+            <p className="text-caption opacity-90 lowercase">tap to open the chat</p>
+          </div>
+          <span className="relative text-primary-foreground text-title">→</span>
+        </Link>
+      )}
+
+      {/* Picks status. Demoted from the loudest element to a calm stat block:
+          the referral progress bar that used to live inside it is now its own
+          row, so this card carries exactly one message. */}
       {initialLoading ? (
-        <section className="surface p-5 mb-3 h-[152px] animate-pulse" aria-hidden="true" />
+        <section className="skeleton mb-3 h-[92px]" aria-hidden="true" />
       ) : (
-      <section className="surface p-5 mb-3 shadow-glow relative overflow-hidden">
-        <div className="absolute -top-8 -right-8 size-32 rounded-full opacity-40 blur-2xl" style={{ background: "var(--gradient-primary)" }} />
+      <section className="surface p-5 mb-3 relative overflow-hidden animate-rise">
+        <div className="absolute -top-8 -right-8 size-32 rounded-full opacity-30 blur-2xl" style={{ background: "var(--gradient-primary)" }} />
         <div className="relative flex items-center justify-between gap-3">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground lowercase">picks sent</p>
-            <p className="mt-1 text-[32px] font-black leading-none">
-              <span className="text-gradient-primary">{slotsFilled}</span>
-              <span className="text-muted-foreground font-bold text-[22px]">/{slotsTotal}</span>
+            <p className="text-micro font-bold tracking-wider text-muted-foreground lowercase">picks sent</p>
+            <p className="mt-1 text-display font-black leading-none tabular-nums">
+              <span className="text-gradient-primary">{animatedPicks}</span>
+              <span className="text-muted-foreground font-bold text-headline">/{slotsTotal}</span>
             </p>
           </div>
           <div className="flex gap-1.5">
@@ -179,13 +210,19 @@ function CrushesPage() {
             })}
           </div>
         </div>
+      </section>
+      )}
+
+      {/* Referral progress, now a quiet row of its own rather than a second
+          message competing inside the status card. */}
+      {!initialLoading && (
         <button
           type="button"
           onClick={() => setInviteOpen(true)}
-          className="relative mt-4 w-full text-left tap-scale rounded-lg min-h-11"
+          className="surface w-full p-3.5 mb-3 text-left lift animate-rise"
           aria-label="Open invite friends to earn more slots"
         >
-          <div className="flex items-center justify-between text-[11.5px] text-muted-foreground mb-1.5 font-semibold">
+          <div className="flex items-center justify-between text-micro text-muted-foreground mb-1.5 font-semibold">
             <span className="lowercase">
               {refErr
                 ? "couldn't load invites · tap to retry"
@@ -197,40 +234,31 @@ function CrushesPage() {
                       ? "invite 3 friends → +1 slot"
                       : `${referral.total} invited · ${referral.toNext} more → +1 slot${referral.slotsEarned > 0 ? ` (${referral.slotsEarned} earned)` : ""}`}
             </span>
-            <span>{referral?.maxed ? "MAX" : `${refPct}%`}</span>
+            <span className="tabular-nums">{referral?.maxed ? "MAX" : `${refPct}%`}</span>
           </div>
 
           <div className="h-2 rounded-full overflow-hidden" style={{ background: "color-mix(in oklab, var(--muted) 90%, transparent)" }}>
-            <div className="h-full rounded-full transition-all animate-gradient-pan" style={{ width: `${refPct}%`, background: "var(--gradient-primary)" }} />
+            <div
+              className="h-full rounded-full"
+              style={{
+                width: `${refPct}%`,
+                background: "var(--gradient-primary)",
+                transition: "width var(--motion-slow) var(--ease-out)",
+              }}
+            />
           </div>
         </button>
-      </section>
-      )}
-
-
-      {/* Matches summary — only if any */}
-      {matches.length > 0 && (
-        <Link to="/app/matches" className="surface p-4 mb-3 flex items-center gap-3 tap-scale">
-          <div className="size-11 rounded-2xl grid place-items-center bg-gradient-bubble text-primary-foreground shadow-pop">
-            <Sparkles className="size-5" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-bold text-[15px] lowercase">{matches.length} mutual match{matches.length > 1 ? "es" : ""} 💌</p>
-            <p className="text-[12px] text-muted-foreground lowercase">open to chat</p>
-          </div>
-          <span className="text-muted-foreground">→</span>
-        </Link>
       )}
 
       {/* Section label */}
       <div className="flex items-center justify-between px-1 mb-2 mt-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Your picks</p>
+        <p className="text-micro font-bold tracking-wider text-muted-foreground lowercase">your picks</p>
         {!searchOpen && slotsFilled > 0 && slotsLeft > 0 && (
           <button
             onClick={() => setSearchOpen(true)}
-            className="text-[12px] font-medium inline-flex items-center gap-1 text-muted-foreground hover:text-foreground min-h-11 px-2"
+            className="text-caption font-medium inline-flex items-center gap-1 text-muted-foreground hover:text-foreground min-h-11 px-2"
           >
-            <Plus className="size-3.5" /> Add
+            <Plus className="size-3.5" /> add
           </button>
         )}
       </div>
@@ -251,7 +279,7 @@ function CrushesPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search Instagram @…"
-              className="flex-1 bg-transparent outline-none py-2 text-[14px]"
+              className="flex-1 bg-transparent outline-none py-2 text-body"
               autoFocus
               autoCapitalize="none"
               autoCorrect="off"
@@ -262,13 +290,13 @@ function CrushesPage() {
 
           <div className="mt-2 space-y-1">
             {q.trim().length < 2 && (
-              <p className="text-[12px] text-muted-foreground text-center py-3">
+              <p className="text-caption text-muted-foreground text-center py-3">
                 They never find out, unless they pick you too.
               </p>
             )}
-            {err && <div className="surface p-3 text-[13px] text-destructive">{err}</div>}
+            {err && <div className="surface p-3 text-label text-destructive">{err}</div>}
             {!loading && !err && q.trim().length >= 2 && results.length === 0 && (
-              <div className="surface p-4 text-center text-[13px] text-muted-foreground">No one found for "{q}"</div>
+              <div className="surface p-4 text-center text-label text-muted-foreground">No one found for "{q}"</div>
             )}
             {results.map((a) => {
               const has = owned.has(a.handle) || justPicked.has(a.handle);
@@ -294,14 +322,14 @@ function CrushesPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[14px] truncate flex items-center gap-1">
+                    <p className="font-medium text-body truncate flex items-center gap-1">
                       {a.name}
                       {a.verified && <BadgeCheck className="size-3.5 text-muted-foreground" />}
                       {a.isPrivate && <Lock className="size-3 text-muted-foreground" />}
                     </p>
-                    <p className="text-[12px] text-muted-foreground truncate">@{a.handle}</p>
+                    <p className="text-caption text-muted-foreground truncate">@{a.handle}</p>
                   </div>
-                  <span className="text-[11px] text-muted-foreground shrink-0 inline-flex items-center gap-1">
+                  <span className="text-micro text-muted-foreground shrink-0 inline-flex items-center gap-1">
                     {isPending ? (<><Loader2 className="size-3 animate-spin" /> adding</>) : has ? (<><Check className="size-3.5 text-primary animate-check-pop" /> added</>) : "pick"}
                   </span>
                 </button>
@@ -312,26 +340,26 @@ function CrushesPage() {
       )}
 
       {/* Picks list / empty state */}
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 stagger-tight">
         {initialLoading && (
           <>
-            <div className="surface h-[62px] animate-pulse" />
-            <div className="surface h-[62px] animate-pulse" />
+            <div className="skeleton h-[62px] rounded-[20px]" />
+            <div className="skeleton h-[62px] rounded-[20px]" />
           </>
         )}
         {!initialLoading && crushes.length === 0 && !searchOpen && (
 
-          <div className="surface text-center py-10 px-6">
+          <div className="surface text-center py-7 px-6 animate-rise">
             <div className="size-11 mx-auto rounded-full grid place-items-center" style={{ background: "color-mix(in oklab, var(--primary) 10%, var(--card))", color: "var(--primary)" }}>
               <Search className="size-5" />
             </div>
-            <p className="mt-3 font-semibold text-[15px]">No picks yet</p>
-            <p className="mt-1 text-[13px] text-muted-foreground max-w-xs mx-auto">
-              Add your secret crush. We only tell them if they pick you back.
+            <p className="mt-3 font-black text-title lowercase">no picks yet</p>
+            <p className="mt-1 text-label text-muted-foreground max-w-[15rem] mx-auto">
+              add your secret crush. we only tell them if they pick you back.
             </p>
             <button
               onClick={() => setSearchOpen(true)}
-              className="btn-pop mt-5"
+              className="btn-pop mt-4"
             >
               <Search className="size-4" /> find someone
             </button>
@@ -348,10 +376,10 @@ function CrushesPage() {
                 ) : (ig?.name?.[0]?.toUpperCase() ?? c.target_handle[0]?.toUpperCase())}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-[14px] truncate">{ig?.name ?? `@${c.target_handle}`}</p>
-                <p className="text-[12px] text-muted-foreground truncate">@{c.target_handle}</p>
+                <p className="font-medium text-body truncate">{ig?.name ?? `@${c.target_handle}`}</p>
+                <p className="text-caption text-muted-foreground truncate">@{c.target_handle}</p>
               </div>
-              <span className="chip">Waiting</span>
+              <span className="chip">waiting</span>
               <button
                 onClick={() => onRemove(c.id)}
                 disabled={removing === c.id || (!!removing && removing !== c.id)}
@@ -367,15 +395,15 @@ function CrushesPage() {
         {crushes.length > 0 && !searchOpen && slotsLeft > 0 && (
           <button
             onClick={() => setSearchOpen(true)}
-            className="surface w-full px-3 py-2.5 flex items-center gap-3 tap-scale border-dashed"
+            className="surface w-full px-3 py-2.5 flex items-center gap-3 lift border-dashed"
             style={{ borderStyle: "dashed" }}
           >
             <div className="size-10 rounded-full grid place-items-center" style={{ border: "1px dashed var(--border)", color: "var(--muted-foreground)" }}>
               <Plus className="size-4" />
             </div>
             <div className="flex-1 text-left">
-              <p className="font-medium text-[14px]">Add another pick</p>
-              <p className="text-[12px] text-muted-foreground">{slotsLeft} slot{slotsLeft > 1 ? "s" : ""} left</p>
+              <p className="font-medium text-body lowercase">add another pick</p>
+              <p className="text-caption text-muted-foreground">{slotsLeft} slot{slotsLeft > 1 ? "s" : ""} left</p>
             </div>
           </button>
         )}
@@ -383,13 +411,13 @@ function CrushesPage() {
 
       {/* Quiet upgrade nudge — only when relevant */}
       {slotsFilled >= slotsTotal && (
-        <Link to="/app/upgrade" className="mt-6 surface p-3.5 flex items-center gap-3 tap-scale">
+        <Link to="/app/upgrade" className="mt-6 surface p-3.5 flex items-center gap-3 lift">
           <div className="size-9 rounded-lg grid place-items-center" style={{ background: "color-mix(in oklab, var(--accent) 30%, var(--card))", color: "var(--accent-foreground)" }}>
             <Crown className="size-4" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-[14px]">Want more slots?</p>
-            <p className="text-[12px] text-muted-foreground">God Mode unlocks unlimited picks and reveals.</p>
+            <p className="font-semibold text-body lowercase">want more slots?</p>
+            <p className="text-caption text-muted-foreground">God Mode unlocks unlimited picks and reveals.</p>
           </div>
           <span className="text-muted-foreground">→</span>
         </Link>
@@ -413,7 +441,7 @@ function NotifBell() {
       <Bell className="size-4" />
       {count > 0 && (
         <span
-          className="absolute top-2 right-2 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-semibold grid place-items-center"
+          className="absolute top-2 right-2 min-w-[16px] h-4 px-1 rounded-full text-nano font-semibold grid place-items-center"
           style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
         >
           {count > 9 ? "9+" : count}

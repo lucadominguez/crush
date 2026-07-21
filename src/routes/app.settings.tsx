@@ -47,7 +47,7 @@ function SettingsPage() {
   return (
     <>
       <ScreenHeader title="you" subtitle="your account and privacy." />
-      <div className="px-5 space-y-3 pb-6">
+      <div className="px-5 space-y-3 pb-28">
         <div className="card-pop p-4 flex items-center gap-4">
           <button
             type="button"
@@ -70,7 +70,7 @@ function SettingsPage() {
           <div className="flex-1 min-w-0">
             <p className="font-black text-lg leading-tight truncate">{me?.name}</p>
             <p className="text-xs text-muted-foreground truncate">@{me?.handle} · {session?.user.email}</p>
-            <p className="text-[11px] text-muted-foreground mt-1">tap photo to change · png/jpg, up to 5mb</p>
+            <p className="text-micro text-muted-foreground mt-1">tap photo to change · png/jpg, up to 5mb</p>
           </div>
           <input
             ref={inputRef}

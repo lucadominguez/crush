@@ -79,7 +79,7 @@ function CenterState({
     >
       <div className="max-w-sm">
         <p className="text-lg font-semibold">{title}</p>
-        {body && <p className="mt-2 text-[14px] text-muted-foreground">{body}</p>}
+        {body && <p className="mt-2 text-body text-muted-foreground">{body}</p>}
         {action && <div className="mt-5">{action}</div>}
       </div>
     </div>
@@ -119,7 +119,7 @@ function MatchReveal() {
           action={
             <button
               onClick={() => refresh()}
-              className="inline-flex px-5 py-2.5 min-h-11 rounded-lg text-[14px] font-semibold tap-scale"
+              className="inline-flex px-5 py-2.5 min-h-11 rounded-lg text-body font-semibold tap-scale"
               style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
             >
               try again
@@ -139,7 +139,7 @@ function MatchReveal() {
           action={
             <Link
               to="/app"
-              className="inline-flex px-5 py-2.5 min-h-11 rounded-lg text-[14px] font-semibold tap-scale"
+              className="inline-flex px-5 py-2.5 min-h-11 rounded-lg text-body font-semibold tap-scale"
               style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
             >
               back home
@@ -162,14 +162,14 @@ function MatchReveal() {
             <div className="flex flex-col gap-2 items-center">
               <Link
                 to="/app/matches"
-                className="inline-flex px-5 py-2.5 min-h-11 rounded-lg text-[14px] font-semibold tap-scale"
+                className="inline-flex px-5 py-2.5 min-h-11 rounded-lg text-body font-semibold tap-scale"
                 style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
               >
                 see other matches
               </Link>
               <Link
                 to="/app"
-                className="inline-flex px-4 py-2 text-[13px] text-muted-foreground"
+                className="inline-flex px-4 py-2 text-label text-muted-foreground"
               >
                 back home
               </Link>
@@ -258,7 +258,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
       >
         <div className="pt-4 flex justify-center">
           <span
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-micro font-semibold"
             style={{
               background: "color-mix(in oklab, var(--primary) 12%, var(--card))",
               color: "var(--primary)",
@@ -276,20 +276,20 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
         </div>
 
         <div className="mt-5 text-center">
-          <h1 className="text-[26px] leading-tight font-bold tracking-tight">
+          <h1 className="text-headline leading-tight font-bold tracking-tight">
             you & <span className="break-words">{otherName}</span>
           </h1>
           {other?.handle && (
-            <p className="mt-1 text-[13px] text-muted-foreground inline-flex items-center gap-1 justify-center">
+            <p className="mt-1 text-label text-muted-foreground inline-flex items-center gap-1 justify-center">
               @{other.handle}
               {other.instagram_verified_at && <BadgeCheck className="size-3.5" />}
             </p>
           )}
-          <p className="mt-2 text-[12px] text-muted-foreground">picked each other on {dateStr}</p>
+          <p className="mt-2 text-caption text-muted-foreground">picked each other on {dateStr}</p>
         </div>
 
         <section className="mt-6 flex-1 min-h-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+          <p className="text-micro font-semibold uppercase tracking-wider text-muted-foreground mb-2">
             icebreakers
           </p>
           {icebreakers === null && (
@@ -302,7 +302,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
             </div>
           )}
           {icebreakers && icebreakers.length === 0 && (
-            <div className="surface p-4 text-center text-[13px] text-muted-foreground">
+            <div className="surface p-4 text-center text-label text-muted-foreground">
               {iceError ? "couldn't load ideas, you got this though." : "no ideas yet. say something you'd actually say."}
             </div>
           )}
@@ -310,12 +310,12 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
             <ul className="space-y-2">
               {icebreakers.map((tip, i) => (
                 <li key={i} className="surface p-3">
-                  <p className="text-[14px] leading-snug">{tip}</p>
+                  <p className="text-body leading-snug">{tip}</p>
                   <div className="mt-2 flex gap-2">
                     <button
                       onClick={() => useIcebreaker(tip, "send")}
                       disabled={sending !== null}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-9 rounded-lg text-[12px] font-semibold tap-scale disabled:opacity-60"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-9 rounded-lg text-caption font-semibold tap-scale disabled:opacity-60"
                       style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
                     >
                       {sending === tip ? <Loader2 className="size-3.5 animate-spin" /> : <MessageCircle className="size-3.5" />}
@@ -323,7 +323,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
                     </button>
                     <button
                       onClick={() => useIcebreaker(tip, "copy")}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-9 rounded-lg text-[12px] font-semibold tap-scale"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-9 rounded-lg text-caption font-semibold tap-scale"
                       style={{ background: "var(--muted)", color: "var(--foreground)" }}
                     >
                       <Copy className="size-3.5" /> copy
@@ -339,7 +339,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
           <Link
             to="/app/chat/$id"
             params={{ id }}
-            className="inline-flex w-full items-center justify-center gap-2 px-4 py-3 min-h-12 rounded-xl text-[14px] font-semibold tap-scale"
+            className="inline-flex w-full items-center justify-center gap-2 px-4 py-3 min-h-12 rounded-xl text-body font-semibold tap-scale"
             style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
           >
             <MessageCircle className="size-4" /> open chat
@@ -348,7 +348,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
             <button
               onClick={onShare}
               disabled={sharing}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-11 rounded-xl text-[13px] font-semibold tap-scale disabled:opacity-60"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-11 rounded-xl text-label font-semibold tap-scale disabled:opacity-60"
               style={{ background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" }}
               aria-label="share a generic mutual match message"
             >
@@ -356,13 +356,13 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
             </button>
             <Link
               to="/app"
-              className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-11 rounded-xl text-[13px] font-semibold tap-scale"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-11 rounded-xl text-label font-semibold tap-scale"
               style={{ background: "var(--muted)", color: "var(--foreground)" }}
             >
               <Home className="size-4" /> home
             </Link>
           </div>
-          <p className="text-[11px] text-muted-foreground text-center inline-flex items-center gap-1 justify-center">
+          <p className="text-micro text-muted-foreground text-center inline-flex items-center gap-1 justify-center">
             <AlertCircle className="size-3" />
             sharing sends a generic message, never their name or handle.
           </p>

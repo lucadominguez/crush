@@ -49,15 +49,15 @@ function ShopPage() {
             <Lightbulb className="size-4" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-[14px]">
+            <p className="font-semibold text-body">
               You have {ents.data?.ok ? ents.data.hintCredits : 0} hint
               {ents.data?.ok && ents.data.hintCredits === 1 ? "" : "s"}
             </p>
-            <p className="text-[12px] text-muted-foreground">Redemption is coming soon.</p>
+            <p className="text-caption text-muted-foreground">Redemption is coming soon.</p>
           </div>
         </div>
 
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-4 mb-1 px-1">
+        <p className="text-micro font-semibold uppercase tracking-wider text-muted-foreground mt-4 mb-1 px-1">
           Planned perks
         </p>
 
@@ -68,14 +68,14 @@ function ShopPage() {
             ))}
           </div>
         ) : catalog.isError ? (
-          <div className="surface p-4 text-[13px]">
+          <div className="surface p-4 text-label">
             Couldn't load the catalog.{" "}
             <button className="underline min-h-11 tap-scale" onClick={() => catalog.refetch()}>
               Try again
             </button>
           </div>
         ) : items.length === 0 ? (
-          <div className="surface p-4 text-[13px] text-muted-foreground">Nothing available right now.</div>
+          <div className="surface p-4 text-label text-muted-foreground">Nothing available right now.</div>
         ) : (
           items.map((it) => {
             const Icon = ICONS[it.key] ?? Sparkles;
@@ -91,15 +91,15 @@ function ShopPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-2">
-                    <p className="font-semibold text-[14px] truncate">{it.label}</p>
-                    <p className="font-semibold text-[13px] shrink-0 text-muted-foreground">{priceLabel}</p>
+                    <p className="font-semibold text-body truncate">{it.label}</p>
+                    <p className="font-semibold text-label shrink-0 text-muted-foreground">{priceLabel}</p>
                   </div>
-                  <p className="text-[12px] text-muted-foreground truncate">{it.planned}</p>
+                  <p className="text-caption text-muted-foreground truncate">{it.planned}</p>
                 </div>
                 <button
                   disabled={disabled}
                   aria-disabled={disabled}
-                  className="h-11 px-3 rounded-lg text-[12px] font-semibold shrink-0"
+                  className="h-11 px-3 rounded-lg text-caption font-semibold shrink-0"
                   style={{
                     background: "var(--muted)",
                     color: "var(--muted-foreground)",
@@ -117,31 +117,31 @@ function ShopPage() {
 
         <div className="surface p-4 mt-4 flex gap-3">
           <Info className="size-4 mt-0.5 shrink-0 text-muted-foreground" />
-          <p className="text-[12px] text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             These items appear in the catalog but their end-to-end redemption isn't wired yet. We won't take payment
             for something the app can't deliver.
           </p>
         </div>
 
         <div className="surface p-4 mt-2">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+          <p className="text-micro font-semibold uppercase tracking-wider text-muted-foreground mb-2">
             Recent purchases
           </p>
           {ents.isLoading ? (
             <div className="h-4 w-24 rounded bg-muted animate-pulse" />
           ) : !ents.data?.ok ? (
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               Couldn't load history.{" "}
               <button className="underline min-h-11" onClick={() => ents.refetch()}>
                 Try again
               </button>
             </p>
           ) : ents.data.purchases.length === 0 ? (
-            <p className="text-[12px] text-muted-foreground">Nothing yet.</p>
+            <p className="text-caption text-muted-foreground">Nothing yet.</p>
           ) : (
             <ul className="space-y-1.5">
               {ents.data.purchases.map((p, i) => (
-                <li key={i} className="flex items-center justify-between text-[12px]">
+                <li key={i} className="flex items-center justify-between text-caption">
                   <span className="font-medium">{PRODUCT_LABELS[p.product] ?? "Purchase"}</span>
                   <span className="text-muted-foreground">
                     ${(p.amountCents / 100).toFixed(2)}

@@ -112,7 +112,7 @@ export function LaunchPollSheet({
 
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Question</label>
+            <label className="text-micro font-semibold uppercase tracking-wider text-muted-foreground">Question</label>
             <textarea
               ref={firstFieldRef}
               value={question}
@@ -128,7 +128,7 @@ export function LaunchPollSheet({
                   key={s}
                   type="button"
                   onClick={() => setQuestion(s)}
-                  className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-secondary/60 border border-foreground/10 hover:bg-secondary"
+                  className="text-micro font-medium px-2.5 py-1 rounded-full bg-secondary/60 border border-foreground/10 hover:bg-secondary"
                 >
                   {s}
                 </button>
@@ -137,7 +137,7 @@ export function LaunchPollSheet({
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <label className="text-micro font-semibold uppercase tracking-wider text-muted-foreground">
               People · {picks.length}/4
             </label>
 
@@ -151,7 +151,7 @@ export function LaunchPollSheet({
                       onClick={() => toggle(h)}
                       className="inline-flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary-foreground text-xs font-medium"
                     >
-                      <span className="size-5 rounded-full bg-card border border-foreground/10 flex items-center justify-center overflow-hidden text-[10px]">
+                      <span className="size-5 rounded-full bg-card border border-foreground/10 flex items-center justify-center overflow-hidden text-nano">
                         {ig?.avatar ? <img src={ig.avatar} alt="" className="size-full object-cover" referrerPolicy="no-referrer" /> : ig?.emoji ?? "✨"}
                       </span>
                       <span className="text-foreground">@{h}</span>
@@ -164,7 +164,7 @@ export function LaunchPollSheet({
 
             {network.length > 0 && q.trim().length < 2 && (
               <div className="mt-3">
-                <p className="text-[11px] text-muted-foreground mb-1.5">From your network</p>
+                <p className="text-micro text-muted-foreground mb-1.5">From your network</p>
                 <div className="space-y-1.5">
                   {network.slice(0, 8).map((h) => {
                     const ig = getIG(h);
@@ -180,7 +180,7 @@ export function LaunchPollSheet({
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">{ig?.name ?? `@${h}`}</p>
-                          <p className="text-[11px] text-muted-foreground truncate">@{h}</p>
+                          <p className="text-micro text-muted-foreground truncate">@{h}</p>
                         </div>
                         {on ? <Check className="size-4 text-primary" /> : <Plus className="size-4 text-muted-foreground" />}
                       </button>
@@ -191,7 +191,7 @@ export function LaunchPollSheet({
             )}
 
             <div className="mt-3">
-              <p className="text-[11px] text-muted-foreground mb-1.5">Search Instagram</p>
+              <p className="text-micro text-muted-foreground mb-1.5">Search Instagram</p>
               <div className="flex items-center gap-2 bg-secondary/60 border border-foreground/10 rounded-xl px-3 py-2">
                 <Search className="size-4 text-muted-foreground" />
                 <input
@@ -223,7 +223,7 @@ export function LaunchPollSheet({
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">{u.name}</p>
-                          <p className="text-[11px] text-muted-foreground truncate">@{u.handle}</p>
+                          <p className="text-micro text-muted-foreground truncate">@{u.handle}</p>
                         </div>
                         {on ? <Check className="size-4 text-primary" /> : <Plus className="size-4 text-muted-foreground" />}
                       </button>

@@ -158,7 +158,7 @@ export function CreateGroupSheet({ onClose }: { onClose: () => void }) {
                 onClick={() => toggle(p)}
                 className="flex items-center gap-1.5 pl-1 pr-2 py-1 rounded-full bg-primary/30 border-2 border-foreground text-xs font-bold tap-scale"
               >
-                <span className="size-5 rounded-full bg-gradient-bubble flex items-center justify-center text-[10px] overflow-hidden">
+                <span className="size-5 rounded-full bg-gradient-bubble flex items-center justify-center text-nano overflow-hidden">
                   {p.emoji ?? p.name?.[0] ?? "?"}
                 </span>
                 {p.name ?? p.handle}
@@ -168,12 +168,12 @@ export function CreateGroupSheet({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
-        <p className="text-[11px] font-black uppercase tracking-wider text-foreground/60 mb-2">
+        <p className="text-micro font-black uppercase tracking-wider text-foreground/60 mb-2">
           {listLabel} · {picked.size} picked
         </p>
 
         {searchError && (
-          <div className="p-3 mb-2 rounded-2xl border border-destructive/40 bg-card flex items-center gap-2 text-[12px]">
+          <div className="p-3 mb-2 rounded-2xl border border-destructive/40 bg-card flex items-center gap-2 text-caption">
             <AlertCircle className="size-4 text-destructive shrink-0" />
             <span className="flex-1">Search failed. Try again.</span>
           </div>
@@ -207,7 +207,7 @@ export function CreateGroupSheet({ onClose }: { onClose: () => void }) {
                   </div>
                   <div className="flex-1 text-left min-w-0">
                     <p className="font-bold truncate">{p.name}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">@{p.handle}</p>
+                    <p className="text-micro text-muted-foreground truncate">@{p.handle}</p>
                   </div>
                   <span className={`size-6 rounded-full border-2 border-foreground flex items-center justify-center ${on ? "bg-primary" : "bg-card"}`}>
                     {on && <span className="text-xs font-black">✓</span>}

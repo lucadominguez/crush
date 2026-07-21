@@ -35,7 +35,7 @@ export function BrandLockup({ to = "/", className = "" }: { to?: string; classNa
   return (
     <Link to={to} className={`inline-flex items-center gap-2 ${className}`} aria-label="crush home">
       <BrandMark size={26} />
-      <span className="text-[17px] font-black tracking-tight lowercase">crush</span>
+      <span className="text-lead font-black tracking-tight lowercase">crush</span>
     </Link>
   );
 }

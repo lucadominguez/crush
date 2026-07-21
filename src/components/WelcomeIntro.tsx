@@ -111,14 +111,14 @@ export function WelcomeIntro({ onDone }: { onDone: () => void }) {
       style={{ minHeight: "clamp(240px, 36vh, 360px)" }}
     >
       <div className="flex items-center justify-between mb-4">
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5 text-micro font-semibold uppercase tracking-wider text-muted-foreground">
           <span className="text-primary"><MutualGlyph size={18} /></span>
           intro
         </span>
         <button
           type="button"
           onClick={finish}
-          className="inline-flex items-center gap-1 text-[12px] font-semibold text-muted-foreground hover:text-foreground min-h-11 px-3 -mr-2"
+          className="inline-flex items-center gap-1 text-caption font-semibold text-muted-foreground hover:text-foreground min-h-11 px-3 -mr-2"
           aria-label="Skip intro"
         >
           skip <ArrowRight className="size-3.5" strokeWidth={2.5} />
@@ -142,7 +142,7 @@ export function WelcomeIntro({ onDone }: { onDone: () => void }) {
           const base =
             i === 0
               ? "font-black tracking-tight text-3xl sm:text-4xl"
-              : "text-[15px] sm:text-base font-semibold text-foreground/80";
+              : "text-lead sm:text-base font-semibold text-foreground/80";
           return (
             <p
               key={i}
@@ -164,7 +164,7 @@ export function WelcomeIntro({ onDone }: { onDone: () => void }) {
         aria-hidden="true"
       >
         <MutualGlyph size={44} />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span className="text-micro font-semibold uppercase tracking-wider text-muted-foreground">
           only if it's mutual
         </span>
       </div>

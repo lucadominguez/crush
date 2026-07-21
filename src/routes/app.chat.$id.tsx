@@ -240,13 +240,13 @@ function ChatPage() {
           ) : (other?.emoji ?? other?.name?.[0])}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-bold truncate flex items-center gap-1 text-[15px]">
+          <p className="font-bold truncate flex items-center gap-1 text-lead">
             {other?.name ?? "Match"}
             {other?.instagram_verified_at && <BadgeCheck className="size-3.5 text-accent" aria-label="Verified" />}
           </p>
           <div className="flex items-center gap-2 mt-0.5 min-w-0">
             {other?.handle && (
-              <span className="text-[11px] text-muted-foreground truncate">@{other.handle}</span>
+              <span className="text-micro text-muted-foreground truncate">@{other.handle}</span>
             )}
             <MatchExpiryBadge expiresAt={match?.expires_at ?? null} />
           </div>
@@ -283,10 +283,10 @@ function ChatPage() {
         {error && (
           <div className="mx-2 my-3 p-3 rounded-2xl border border-destructive/40 bg-card flex items-start gap-2">
             <AlertCircle className="size-4 mt-0.5 text-destructive shrink-0" />
-            <div className="flex-1 text-[12px]">
+            <div className="flex-1 text-caption">
               <p className="font-semibold">Couldn't load messages</p>
             </div>
-            <button onClick={refresh} className="text-[12px] font-semibold min-h-11 px-3 rounded-lg border border-border">Retry</button>
+            <button onClick={refresh} className="text-caption font-semibold min-h-11 px-3 rounded-lg border border-border">Retry</button>
           </div>
         )}
 
@@ -298,7 +298,7 @@ function ChatPage() {
             <p className="text-sm text-muted-foreground mt-3">Say hi. This chat is just between you two.</p>
             {icebreakers.length > 0 && (
               <div className="mt-5 px-2">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Tap to send</p>
+                <p className="text-nano font-semibold uppercase tracking-wider text-muted-foreground mb-2">Tap to send</p>
                 <div className="flex flex-col gap-1.5 max-w-sm mx-auto">
                   {icebreakers.map((tip, i) => (
                     <button
@@ -320,7 +320,7 @@ function ChatPage() {
           if (g.from === "__day__") {
             return (
               <div key={`d-${gi}`} className="flex justify-center my-3">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/70 border border-border/60 rounded-full px-3 py-1">
+                <span className="text-nano font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/70 border border-border/60 rounded-full px-3 py-1">
                   {g.day}
                 </span>
               </div>
@@ -361,17 +361,17 @@ function ChatPage() {
                       </div>
                     )}
                     {isLast && !failed && !pending && (
-                      <div className={`mt-1 flex items-center gap-1 text-[10px] text-muted-foreground ${mine ? "justify-end" : "justify-start"}`}>
+                      <div className={`mt-1 flex items-center gap-1 text-nano text-muted-foreground ${mine ? "justify-end" : "justify-start"}`}>
                         <span>{formatTime(m.created_at)}</span>
                       </div>
                     )}
                     {pending && (
-                      <div className={`mt-1 text-[10px] text-muted-foreground ${mine ? "text-right" : "text-left"}`}>
+                      <div className={`mt-1 text-nano text-muted-foreground ${mine ? "text-right" : "text-left"}`}>
                         Sending…
                       </div>
                     )}
                     {failed && (
-                      <div className={`mt-1 flex items-center gap-2 text-[11px] text-destructive ${mine ? "justify-end" : "justify-start"}`}>
+                      <div className={`mt-1 flex items-center gap-2 text-micro text-destructive ${mine ? "justify-end" : "justify-start"}`}>
                         <span>Not sent</span>
                         <button onClick={() => onRetry(m)} className="underline font-semibold min-h-11 px-2 rounded">Retry</button>
                         <button onClick={() => onDiscard(m)} className="underline min-h-11 px-2 rounded">Discard</button>
@@ -426,25 +426,25 @@ function ChatPage() {
 
       {showGames && (
         <div className="border-t border-border/60 bg-card/85 backdrop-blur-md px-3 py-3 animate-in slide-in-from-bottom-2 duration-200">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Playful · tap to send</p>
+          <p className="text-nano font-semibold uppercase tracking-wider text-muted-foreground mb-2">Playful · tap to send</p>
           <div className="grid grid-cols-3 gap-1.5">
             <button
               onClick={() => { sendPreset(rollDice()); setShowGames(false); }}
-              className="rounded-2xl border border-border/60 bg-secondary/60 hover:bg-primary/10 px-2 py-2.5 flex items-center justify-center gap-2 tap-scale min-h-11 text-[12px] font-semibold"
+              className="rounded-2xl border border-border/60 bg-secondary/60 hover:bg-primary/10 px-2 py-2.5 flex items-center justify-center gap-2 tap-scale min-h-11 text-caption font-semibold"
             >
               <Dices className="size-4 text-primary" strokeWidth={2.2} />
               Roll dice
             </button>
             <button
               onClick={() => { sendPreset(eightBall()); setShowGames(false); }}
-              className="rounded-2xl border border-border/60 bg-secondary/60 hover:bg-primary/10 px-2 py-2.5 flex items-center justify-center gap-2 tap-scale min-h-11 text-[12px] font-semibold"
+              className="rounded-2xl border border-border/60 bg-secondary/60 hover:bg-primary/10 px-2 py-2.5 flex items-center justify-center gap-2 tap-scale min-h-11 text-caption font-semibold"
             >
               <Sparkles className="size-4 text-accent" strokeWidth={2.2} />
               8-ball
             </button>
             <button
               onClick={() => { sendPreset(wouldYouRather()); setShowGames(false); }}
-              className="rounded-2xl border border-border/60 bg-secondary/60 hover:bg-primary/10 px-2 py-2.5 flex items-center justify-center gap-2 tap-scale min-h-11 text-[12px] font-semibold"
+              className="rounded-2xl border border-border/60 bg-secondary/60 hover:bg-primary/10 px-2 py-2.5 flex items-center justify-center gap-2 tap-scale min-h-11 text-caption font-semibold"
             >
               <HelpCircle className="size-4 text-primary" strokeWidth={2.2} />
               Would U rather
@@ -485,7 +485,7 @@ function ChatPage() {
           <button
             type="button"
             onClick={() => { setShowGifs((v) => !v); setShowEmoji(false); setShowGames(false); }}
-            className={`h-11 min-w-11 px-2 inline-flex items-center justify-center rounded-xl tap-scale font-black text-[11px] tracking-wider ${showGifs ? "text-primary" : "text-muted-foreground"}`}
+            className={`h-11 min-w-11 px-2 inline-flex items-center justify-center rounded-xl tap-scale font-black text-micro tracking-wider ${showGifs ? "text-primary" : "text-muted-foreground"}`}
             aria-label="GIF picker"
             aria-pressed={showGifs}
           >
@@ -509,7 +509,7 @@ function ChatPage() {
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }}
             placeholder="Message…"
             rows={1}
-            className="flex-1 bg-transparent outline-none py-2.5 px-1 text-[15px] resize-none max-h-[140px]"
+            className="flex-1 bg-transparent outline-none py-2.5 px-1 text-lead resize-none max-h-[140px]"
           />
           <button
             type="submit"

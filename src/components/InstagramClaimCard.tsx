@@ -127,7 +127,7 @@ export function InstagramClaimCard() {
           {busy ? <Loader2 className="size-4 mr-2 animate-spin" /> : <BadgeCheck className="size-4 mr-2" />}
           i added it · verify now
         </button>
-        <p className="text-[11px] text-muted-foreground text-center">
+        <p className="text-micro text-muted-foreground text-center">
           you can remove the code from your bio after verification.
         </p>
       </div>

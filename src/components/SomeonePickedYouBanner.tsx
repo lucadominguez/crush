@@ -44,7 +44,7 @@ export function SomeonePickedYouBanner({ slotsFilled, slotsTotal }: { slotsFille
       <div className="flex-1 min-w-0">
         {/* No truncation: at 390px "someone just picked you" clipped mid-word,
             which read as a rendering bug on the app's highest-intent surface. */}
-        <p className="font-black leading-tight text-[15px]">
+        <p className="font-black leading-tight text-lead">
           {unreadCrushCount === 1
             ? "someone picked you 👀"
             : `${unreadCrushCount} people picked you 👀`}

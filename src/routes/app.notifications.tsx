@@ -105,11 +105,11 @@ function NotificationsPage() {
         {!loading && error && (
           <div className="surface p-5 text-center">
             <AlertCircle className="size-5 mx-auto text-muted-foreground" />
-            <p className="mt-2 font-semibold text-[14px]">couldn't load notifications</p>
-            <p className="text-[12px] text-muted-foreground">check your connection and try again</p>
+            <p className="mt-2 font-semibold text-body">couldn't load notifications</p>
+            <p className="text-caption text-muted-foreground">check your connection and try again</p>
             <button
               onClick={refresh}
-              className="mt-3 min-h-11 px-4 rounded-xl bg-foreground text-background font-semibold text-[13px] inline-flex items-center gap-2"
+              className="mt-3 min-h-11 px-4 rounded-xl bg-foreground text-background font-semibold text-label inline-flex items-center gap-2"
             >
               <RefreshCw className="size-3.5" /> retry
             </button>
@@ -121,8 +121,8 @@ function NotificationsPage() {
             <div className="size-11 mx-auto rounded-full grid place-items-center" style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}>
               <Bell className="size-5" />
             </div>
-            <p className="mt-3 font-semibold text-[15px]">nothing yet</p>
-            <p className="mt-1 text-[13px] text-muted-foreground">we'll ping you the moment something happens.</p>
+            <p className="mt-3 font-semibold text-lead">nothing yet</p>
+            <p className="mt-1 text-label text-muted-foreground">we'll ping you the moment something happens.</p>
           </div>
         )}
 
@@ -144,7 +144,7 @@ function NotificationsPage() {
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <section className="mt-4 first:mt-2">
-      <h2 className="px-1 mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">{label}</h2>
+      <h2 className="px-1 mb-2 text-nano font-black uppercase tracking-[0.14em] text-muted-foreground">{label}</h2>
       <div className="space-y-1.5">{children}</div>
     </section>
   );
@@ -171,10 +171,10 @@ function Row({ n, onGo, showAbs }: { n: Notification; onGo: (dest: string) => vo
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2">
-          <p className="font-semibold text-[14px] truncate lowercase">{meta.title}</p>
-          <span className="ml-auto text-[11px] text-muted-foreground shrink-0">{time}</span>
+          <p className="font-semibold text-body truncate lowercase">{meta.title}</p>
+          <span className="ml-auto text-micro text-muted-foreground shrink-0">{time}</span>
         </div>
-        {sub && <p className="text-[12px] text-muted-foreground line-clamp-2 mt-0.5">{sub}</p>}
+        {sub && <p className="text-caption text-muted-foreground line-clamp-2 mt-0.5">{sub}</p>}
       </div>
       {unread && <span className="size-2 rounded-full shrink-0 self-center" style={{ background: "var(--primary)" }} aria-label="Unread" />}
     </>

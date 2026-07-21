@@ -30,7 +30,7 @@ export function MatchExpiryBadge({
   if (ms <= 0) {
     return (
       <span
-        className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full ${className}`}
+        className={`inline-flex items-center gap-1 text-nano font-medium px-1.5 py-0.5 rounded-full ${className}`}
         style={{ background: "color-mix(in oklab, var(--destructive) 12%, var(--card))", color: "var(--destructive)" }}
       >
         <Hourglass className="size-3" /> expired
@@ -40,7 +40,7 @@ export function MatchExpiryBadge({
   const urgent = ms < 24 * 60 * 60 * 1000;
   return (
     <span
-      className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full ${className}`}
+      className={`inline-flex items-center gap-1 text-nano font-medium px-1.5 py-0.5 rounded-full ${className}`}
       style={
         urgent
           ? { background: "color-mix(in oklab, var(--destructive) 12%, var(--card))", color: "var(--destructive)" }

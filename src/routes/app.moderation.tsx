@@ -91,9 +91,9 @@ function ModerationPage() {
 
   if (!allowed) {
     return (
-      <div className="min-h-full px-5 pt-4 pb-8">
-        <h1 className="text-[24px] font-black lowercase">reports</h1>
-        <p className="mt-2 text-[13px] text-muted-foreground">
+      <div className="min-h-full px-5 pt-4 pb-28">
+        <h1 className="text-headline font-black lowercase">reports</h1>
+        <p className="mt-2 text-label text-muted-foreground">
           You don't have access to this page.
         </p>
       </div>
@@ -101,10 +101,10 @@ function ModerationPage() {
   }
 
   return (
-    <div className="min-h-full px-5 pt-4 pb-8">
+    <div className="min-h-full px-5 pt-4 pb-28">
       <header className="mb-5">
-        <h1 className="text-[24px] font-black lowercase">reports</h1>
-        <p className="text-[13px] text-muted-foreground">
+        <h1 className="text-headline font-black lowercase">reports</h1>
+        <p className="text-label text-muted-foreground">
           {reports.length === 0
             ? "nothing waiting. good."
             : `${reports.length} open, most-reported first`}
@@ -116,11 +116,11 @@ function ModerationPage() {
           <li key={r.id} className="surface p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-bold text-[15px] truncate">
+                <p className="font-bold text-lead truncate">
                   {r.reported_name ?? "Unknown"}{" "}
                   <span className="text-muted-foreground font-medium">@{r.reported_handle ?? "?"}</span>
                 </p>
-                <p className="text-[12px] text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   {r.report_count} report{r.report_count === 1 ? "" : "s"} total
                   {r.suspended_at ? " · currently suspended" : ""}
                 </p>
@@ -134,13 +134,13 @@ function ModerationPage() {
               )}
             </div>
 
-            <p className="mt-3 text-[13px] rounded-xl p-3" style={{ background: "var(--muted)" }}>
+            <p className="mt-3 text-label rounded-xl p-3" style={{ background: "var(--muted)" }}>
               {r.reason}
             </p>
 
             <button
               onClick={() => showContext(r)}
-              className="mt-3 inline-flex items-center gap-1.5 text-[12px] font-semibold text-muted-foreground min-h-11"
+              className="mt-3 inline-flex items-center gap-1.5 text-caption font-semibold text-muted-foreground min-h-11"
             >
               <MessageSquare className="size-3.5" />
               {openContext === r.reported_user_id ? "hide recent messages" : "recent messages"}
@@ -149,10 +149,10 @@ function ModerationPage() {
             {openContext === r.reported_user_id && (
               <ul className="mt-1 mb-2 space-y-1.5 max-h-64 overflow-y-auto">
                 {messages.length === 0 ? (
-                  <li className="text-[12px] text-muted-foreground">No messages found.</li>
+                  <li className="text-caption text-muted-foreground">No messages found.</li>
                 ) : (
                   messages.map((m, i) => (
-                    <li key={i} className="text-[12px] rounded-lg px-2.5 py-1.5" style={{ background: "var(--muted)" }}>
+                    <li key={i} className="text-caption rounded-lg px-2.5 py-1.5" style={{ background: "var(--muted)" }}>
                       {m.text}
                     </li>
                   ))
@@ -164,14 +164,14 @@ function ModerationPage() {
               <button
                 onClick={() => decide(r, "dismissed")}
                 disabled={busy === r.id}
-                className="min-h-11 px-4 rounded-xl surface text-[13px] font-semibold disabled:opacity-50"
+                className="min-h-11 px-4 rounded-xl surface text-label font-semibold disabled:opacity-50"
               >
                 dismiss
               </button>
               <button
                 onClick={() => decide(r, "warned")}
                 disabled={busy === r.id}
-                className="min-h-11 px-4 rounded-xl surface text-[13px] font-semibold disabled:opacity-50"
+                className="min-h-11 px-4 rounded-xl surface text-label font-semibold disabled:opacity-50"
               >
                 warn
               </button>
@@ -187,7 +187,7 @@ function ModerationPage() {
                 <button
                   onClick={() => decide(r, "suspended")}
                   disabled={busy === r.id}
-                  className="min-h-11 px-4 rounded-xl text-[13px] font-semibold disabled:opacity-50"
+                  className="min-h-11 px-4 rounded-xl text-label font-semibold disabled:opacity-50"
                   style={{ background: "var(--destructive)", color: "var(--destructive-foreground)" }}
                 >
                   {busy === r.id ? <Loader2 className="size-4 animate-spin" /> : "suspend"}

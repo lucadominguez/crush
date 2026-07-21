@@ -78,7 +78,7 @@ export function HintsCard({ targetHandle }: { targetHandle: string }) {
           </p>
         </div>
         {hints.length === 0 && (
-          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-foreground text-background px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1 text-nano font-black uppercase tracking-wider bg-foreground text-background px-2 py-0.5 rounded-full">
             <Gift className="size-3" /> 1 free
           </span>
         )}
@@ -86,7 +86,7 @@ export function HintsCard({ targetHandle }: { targetHandle: string }) {
       <ul className="space-y-2 mb-3">
         {hints.map((h) => (
           <li key={h.hint_index} className="text-sm font-medium leading-snug">
-            <span className="inline-flex items-center justify-center size-5 rounded-full bg-foreground text-background text-[10px] font-black mr-1.5">
+            <span className="inline-flex items-center justify-center size-5 rounded-full bg-foreground text-background text-nano font-black mr-1.5">
               {h.hint_index + 1}
             </span>
             {h.hint_text}

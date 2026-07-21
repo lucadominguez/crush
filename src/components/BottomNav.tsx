@@ -31,7 +31,7 @@ export function BottomNav() {
                 }}
               >
                 <Icon className="size-[19px]" strokeWidth={active ? 2.5 : 2} />
-                <span className={`text-[10.5px] lowercase ${active ? "font-bold" : "font-semibold"}`}>{it.label}</span>
+                <span className={`text-nano lowercase ${active ? "font-bold" : "font-semibold"}`}>{it.label}</span>
               </Link>
             </li>
           );

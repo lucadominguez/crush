@@ -171,8 +171,8 @@ export function PushNotifToggle() {
       </div>
 
       <div className="flex-1 text-left min-w-0">
-        <p className="font-bold text-[14px] lowercase">push notifications</p>
-        <p className="text-[12px] text-muted-foreground leading-snug">{copy[state]}</p>
+        <p className="font-bold text-body lowercase">push notifications</p>
+        <p className="text-caption text-muted-foreground leading-snug">{copy[state]}</p>
       </div>
 
       {canToggle && (

@@ -120,13 +120,13 @@ export function PollIncomingReveal() {
       <div className="flex items-start gap-2">
         <Sparkles className="size-4 mt-0.5 shrink-0 text-primary" />
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+          <p className="text-nano font-black uppercase tracking-wider text-muted-foreground">
             You were voted
           </p>
           <p className="font-black text-sm leading-snug mt-0.5 line-clamp-2">
             "{top.question}"
           </p>
-          <p className="text-[11px] font-medium mt-0.5 text-muted-foreground">
+          <p className="text-micro font-medium mt-0.5 text-muted-foreground">
             by {top.votes} {top.votes === 1 ? "person" : "people"} this week
             {items.length > 1 && ` · +${items.length - 1} more`}
           </p>

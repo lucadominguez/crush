@@ -178,7 +178,7 @@ export function GifPicker({ onPick, onClose }: { onPick: (g: GifChoice) => void;
             </button>
           ))}
         </div>
-        <p className="text-center text-[9px] text-muted-foreground py-2 opacity-60">Powered by Tenor</p>
+        <p className="text-center text-nano text-muted-foreground py-2 opacity-60">Powered by Tenor</p>
       </div>
     </div>
   );

@@ -186,8 +186,8 @@ export function InviteFriendsSheet({
       >
         <div className="flex items-start justify-between mb-3">
           <div>
-            <h2 className="text-[18px] font-black lowercase">invite friends</h2>
-            <p className="text-[12px] text-muted-foreground">every 3 friends who join = +1 pick slot</p>
+            <h2 className="text-title font-black lowercase">invite friends</h2>
+            <p className="text-caption text-muted-foreground">every 3 friends who join = +1 pick slot</p>
           </div>
           <button
             ref={closeBtnRef}
@@ -204,8 +204,8 @@ export function InviteFriendsSheet({
           <div className="surface p-3 mb-4 h-[64px] animate-pulse" />
         ) : loadErr ? (
           <div className="surface p-3 mb-4 flex items-center justify-between gap-3">
-            <p className="text-[13px] text-muted-foreground">Couldn't load your invite</p>
-            <button onClick={load} className="text-[12px] font-semibold underline min-h-11 px-2">Retry</button>
+            <p className="text-label text-muted-foreground">Couldn't load your invite</p>
+            <button onClick={load} className="text-caption font-semibold underline min-h-11 px-2">Retry</button>
           </div>
         ) : stats && (
           <div className="surface p-3 mb-4 flex items-center gap-3">
@@ -214,7 +214,7 @@ export function InviteFriendsSheet({
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline justify-between gap-2">
-                <p className="text-[13.5px] font-bold lowercase truncate">
+                <p className="text-label font-bold lowercase truncate">
                   {stats.maxed
                     ? `max slots unlocked · ${stats.slotsEarned}/${MAX_EARNED} earned`
                     : stats.total === 0
@@ -222,7 +222,7 @@ export function InviteFriendsSheet({
                     : `${stats.total} invited · ${stats.toNext} more → +1 slot${stats.slotsEarned > 0 ? ` (${stats.slotsEarned} earned)` : ""}`}
                 </p>
 
-                <span className="text-[10px] font-black tracking-wider text-muted-foreground shrink-0">
+                <span className="text-nano font-black tracking-wider text-muted-foreground shrink-0">
                   {stats.maxed ? `${stats.slotsEarned}/${MAX_EARNED}` : `${stats.total}/${target}`}
                 </span>
               </div>
@@ -244,7 +244,7 @@ export function InviteFriendsSheet({
           {loading ? (
             <div className="h-10 animate-pulse" />
           ) : (
-            <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{text}</p>
+            <p className="text-label leading-relaxed whitespace-pre-wrap">{text}</p>
           )}
         </div>
 
@@ -257,7 +257,7 @@ export function InviteFriendsSheet({
               placeholder="phone number"
               inputMode="tel"
               aria-label="Phone number"
-              className="flex-1 min-h-11 rounded-xl px-3 text-[14px] outline-none surface"
+              className="flex-1 min-h-11 rounded-xl px-3 text-body outline-none surface"
             />
             <button
               onClick={doSms}
@@ -279,7 +279,7 @@ export function InviteFriendsSheet({
           <button
             onClick={doCopy}
             disabled={loading || busy !== null}
-            className="w-full min-h-11 rounded-xl surface inline-flex items-center justify-center gap-2 text-[14px] font-semibold disabled:opacity-50"
+            className="w-full min-h-11 rounded-xl surface inline-flex items-center justify-center gap-2 text-body font-semibold disabled:opacity-50"
           >
             {copied ? <Check className="size-4" /> : busy === "copy" ? <Loader2 className="size-4 animate-spin" /> : <Copy className="size-4" />}
             {copied ? "copied" : "copy link"}
@@ -287,7 +287,7 @@ export function InviteFriendsSheet({
           {onFindContacts && (
             <button
               onClick={() => { onClose(); onFindContacts(); }}
-              className="w-full min-h-11 rounded-xl surface inline-flex items-center justify-center gap-2 text-[14px] font-semibold"
+              className="w-full min-h-11 rounded-xl surface inline-flex items-center justify-center gap-2 text-body font-semibold"
             >
               <Users className="size-4" />
               find friends from contacts

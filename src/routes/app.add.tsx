@@ -69,7 +69,7 @@ function AddPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="search instagram"
-            className="flex-1 bg-transparent outline-none py-2.5 text-[14px]"
+            className="flex-1 bg-transparent outline-none py-2.5 text-body"
             autoFocus
             autoCapitalize="none"
             autoCorrect="off"
@@ -80,11 +80,11 @@ function AddPage() {
 
         <div className="mt-3 space-y-1 pb-6">
           {q.trim().length < 2 && (
-            <p className="text-[12px] text-muted-foreground text-center py-4">
+            <p className="text-caption text-muted-foreground text-center py-4">
               they never find out, unless they pick you too.
             </p>
           )}
-          {err && <div className="surface p-3 text-[13px] text-destructive">{err}</div>}
+          {err && <div className="surface p-3 text-label text-destructive">{err}</div>}
           {showAddAnyway && (
             <button
               onClick={() => pick({ handle: typed, name: `@${typed}`, avatar: null, verified: false, isPrivate: false })}
@@ -98,12 +98,12 @@ function AddPage() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-[14px] truncate">@{typed}</p>
-                <p className="text-[12px] text-muted-foreground truncate">
+                <p className="font-medium text-body truncate">@{typed}</p>
+                <p className="text-caption text-muted-foreground truncate">
                   {results.length ? "not the one you meant? pick this exact @" : "not on crush yet. we'll hold your pick"}
                 </p>
               </div>
-              <span className="text-[11px] text-muted-foreground shrink-0 inline-flex items-center gap-1">
+              <span className="text-micro text-muted-foreground shrink-0 inline-flex items-center gap-1">
                 {pending === typed ? (<><Loader2 className="size-3 animate-spin" /> adding</>)
                   : (owned.has(typed) || justAdded.has(typed)) ? (<><Check className="size-3.5 text-primary" /> added</>)
                   : "pick"}
@@ -111,7 +111,7 @@ function AddPage() {
             </button>
           )}
           {!loading && !err && q.trim().length >= 2 && results.length === 0 && !typedIsValid && (
-            <div className="surface p-4 text-center text-[13px] text-muted-foreground">no one found for "{q}"</div>
+            <div className="surface p-4 text-center text-label text-muted-foreground">no one found for "{q}"</div>
           )}
           {results.map((a) => {
             const has = owned.has(a.handle) || justAdded.has(a.handle);
@@ -140,14 +140,14 @@ function AddPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-[14px] truncate flex items-center gap-1">
+                  <p className="font-medium text-body truncate flex items-center gap-1">
                     {a.name}
                     {a.verified && <BadgeCheck className="size-3.5 text-muted-foreground" />}
                     {a.isPrivate && <Lock className="size-3 text-muted-foreground" />}
                   </p>
-                  <p className="text-[12px] text-muted-foreground truncate">@{a.handle}</p>
+                  <p className="text-caption text-muted-foreground truncate">@{a.handle}</p>
                 </div>
-                <span className="text-[11px] text-muted-foreground shrink-0 inline-flex items-center gap-1">
+                <span className="text-micro text-muted-foreground shrink-0 inline-flex items-center gap-1">
                   {isPending ? (<><Loader2 className="size-3 animate-spin" /> adding</>) : has ? (<><Check className="size-3.5 text-primary animate-check-pop" /> added</>) : "pick"}
                 </span>
               </button>

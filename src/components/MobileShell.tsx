@@ -21,8 +21,8 @@ export function ScreenHeader({
       <div className="flex items-start gap-2 min-w-0">
         {back}
         <div className="min-w-0">
-          <h1 className="text-[24px] font-black tracking-tight truncate lowercase">{title}</h1>
-          {subtitle && <p className="text-[13px] text-muted-foreground mt-0.5">{subtitle}</p>}
+          <h1 className="text-headline font-black tracking-tight truncate lowercase">{title}</h1>
+          {subtitle && <p className="text-label text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
       </div>
       {right && <div className="flex items-center gap-1 shrink-0">{right}</div>}

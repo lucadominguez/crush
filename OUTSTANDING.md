@@ -211,6 +211,15 @@ Still to set:
 
 ## Features (Phase B, after port) — user-approved list
 
+> SUPERSEDED 2026-07-21: this was the original planning list. Its status is now
+> tracked in "RESUME HERE" above, which is authoritative. As of 2026-07-21 the
+> buildable items below are DONE: contact graph, push delivery, moderation,
+> standings, weekly recap, landing "check your @", escrow outreach wiring, cron
+> triggers, and the UI overhaul + motion pass. What remains is user-blocked
+> (Stripe/Twilio/OAuth/domain/secrets) or a deliberate deferral (Durable Object
+> websockets, polls-page redesign, IG-story shareable recap render). The list is
+> kept below only for the original detail/rationale.
+
 - [ ] Crush-link outreach (value-in-escrow): crush on a non-user generates a
       claim record + anonymous server-sent SMS (Twilio). NO Instagram DMs ever
       (bot-ban treadmill). Delivery resolution order: sender-provided number ->

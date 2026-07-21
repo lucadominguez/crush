@@ -13,6 +13,7 @@ import { normHandle } from "./auth.functions";
 import type { CrushRow, MatchRow, MessageRow, NotificationRow, ProfileRow } from "./rows";
 import { nowIso, uuid } from "./rows";
 import { pushCopyFor, sendPush } from "./push";
+import { BLOCKED_MESSAGE, containsBlocked, isSuspended } from "./moderation";
 import type { D1Database } from "./bindings";
 
 const MATCH_TTL_MS = 7 * 86_400_000;
@@ -318,6 +319,13 @@ export const sendMessageFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<SendMessageResult> => {
     const { db, userId } = context;
     const match = await assertMatchParticipant(db, data.matchId, userId);
+
+    if (await isSuspended(db, userId)) {
+      return { ok: false, error: "your account is suspended and can't send messages right now." };
+    }
+    if (containsBlocked(data.text)) {
+      return { ok: false, error: BLOCKED_MESSAGE };
+    }
 
     // Idempotency: same (match, sender, clientId) returns the existing row.
     if (data.clientId) {

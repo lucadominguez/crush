@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, BadgeCheck, Dices, Send, Smile, ImageIcon, AlertCircle, RotateCw, ChevronDown, Sparkles, HelpCircle } from "lucide-react";
+import { ArrowLeft, BadgeCheck, Dices, Send, Smile, ImageIcon, AlertCircle, RotateCw, ChevronDown, Sparkles, HelpCircle, Flag } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { MobileShell } from "@/components/MobileShell";
+import { ReportUserSheet } from "@/components/ReportUserSheet";
 import {
   sendMessage,
   retryFailedMessage,
@@ -89,6 +90,7 @@ function ChatPage() {
   const [showEmoji, setShowEmoji] = useState(false);
   const [showGifs, setShowGifs] = useState(false);
   const [showGames, setShowGames] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [icebreakers, setIcebreakers] = useState<string[]>([]);
   const [showNewBanner, setShowNewBanner] = useState(false);
@@ -249,7 +251,25 @@ function ChatPage() {
             <MatchExpiryBadge expiresAt={match?.expires_at ?? null} />
           </div>
         </div>
+        {other?.user_id && (
+          <button
+            onClick={() => setReportOpen(true)}
+            className="icon-btn -mr-1 shrink-0"
+            aria-label={`Report ${other?.name ?? "this person"}`}
+          >
+            <Flag className="size-4" />
+          </button>
+        )}
       </header>
+
+      {other?.user_id && (
+        <ReportUserSheet
+          open={reportOpen}
+          onClose={() => setReportOpen(false)}
+          reportedUserId={other.user_id}
+          reportedName={other.name}
+        />
+      )}
 
       <div ref={scrollRef} onScroll={onScroll} className="relative flex-1 overflow-y-auto px-3 py-4 space-y-1.5 chat-gradient-bg">
         {loading && messages.length === 0 && (

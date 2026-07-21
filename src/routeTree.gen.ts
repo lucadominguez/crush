@@ -21,6 +21,7 @@ import { Route as AppStandingsRouteImport } from './routes/app.standings'
 import { Route as AppShopRouteImport } from './routes/app.shop'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
+import { Route as AppModerationRouteImport } from './routes/app.moderation'
 import { Route as AppMessagesRouteImport } from './routes/app.messages'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppAddRouteImport } from './routes/app.add'
@@ -92,6 +93,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
 const AppNotificationsRoute = AppNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModerationRoute = AppModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMessagesRoute = AppMessagesRouteImport.update({
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/app/add': typeof AppAddRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/messages': typeof AppMessagesRoute
+  '/app/moderation': typeof AppModerationRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/shop': typeof AppShopRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/app/add': typeof AppAddRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/messages': typeof AppMessagesRoute
+  '/app/moderation': typeof AppModerationRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/shop': typeof AppShopRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/app/add': typeof AppAddRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/messages': typeof AppMessagesRoute
+  '/app/moderation': typeof AppModerationRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/shop': typeof AppShopRoute
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/app/add'
     | '/app/matches'
     | '/app/messages'
+    | '/app/moderation'
     | '/app/notifications'
     | '/app/settings'
     | '/app/shop'
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/app/add'
     | '/app/matches'
     | '/app/messages'
+    | '/app/moderation'
     | '/app/notifications'
     | '/app/settings'
     | '/app/shop'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/app/add'
     | '/app/matches'
     | '/app/messages'
+    | '/app/moderation'
     | '/app/notifications'
     | '/app/settings'
     | '/app/shop'
@@ -417,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNotificationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/moderation': {
+      id: '/app/moderation'
+      path: '/moderation'
+      fullPath: '/app/moderation'
+      preLoaderRoute: typeof AppModerationRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/messages': {
       id: '/app/messages'
       path: '/messages'
@@ -508,6 +527,7 @@ interface AppRouteChildren {
   AppAddRoute: typeof AppAddRoute
   AppMatchesRoute: typeof AppMatchesRoute
   AppMessagesRoute: typeof AppMessagesRoute
+  AppModerationRoute: typeof AppModerationRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppShopRoute: typeof AppShopRoute
@@ -523,6 +543,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAddRoute: AppAddRoute,
   AppMatchesRoute: AppMatchesRoute,
   AppMessagesRoute: AppMessagesRoute,
+  AppModerationRoute: AppModerationRoute,
   AppNotificationsRoute: AppNotificationsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppShopRoute: AppShopRoute,

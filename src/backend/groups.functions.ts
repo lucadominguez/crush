@@ -10,6 +10,7 @@ import { insertNotification } from "./crush.functions";
 import type { GroupChatRow, GroupMessageRow } from "./rows";
 import { nowIso, uuid } from "./rows";
 import type { D1Database } from "./bindings";
+import { BLOCKED_MESSAGE, containsBlocked, isSuspended } from "./moderation";
 
 export async function assertGroupMember(db: D1Database, groupId: string, userId: string): Promise<void> {
   const row = await db
@@ -146,6 +147,13 @@ export const sendGroupMessageFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<{ ok: true; message: GroupMessageRow } | { ok: false; error: string }> => {
     const { db, userId } = context;
     await assertGroupMember(db, data.groupId, userId);
+
+    if (await isSuspended(db, userId)) {
+      return { ok: false, error: "your account is suspended and can't send messages right now." };
+    }
+    if (containsBlocked(data.text)) {
+      return { ok: false, error: BLOCKED_MESSAGE };
+    }
 
     if (data.clientId) {
       const existing = await db

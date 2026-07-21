@@ -162,11 +162,18 @@ Still to set:
       resolve to a number; records `suppressed` until Twilio is configured.
       Verified live: adding a pick on an unresolvable handle succeeds with no
       error and attempts no notice.
-- [ ] Landing "check your @" claim surface. DECISION STANDS: never return
-      admirer counts for arbitrary handles pre-signup.
+- [x] Landing "check your @" claim surface DONE 2026-07-21. Mode toggle on
+      the landing card; entering your @ routes to /signup?claim=<handle> which
+      prefills the handle. Never leaks whether a handle has admirers pre-signup
+      (no server call keyed to the handle); truth comes from the post-signup
+      escrow backfill. Verified live.
 - [ ] School + individual standings. `/app/standings` is ALREADY the polls
       page; use `/app/leaderboard`. Positive activity only, never admirer counts.
-- [ ] Weekly recap card + Sunday send.
+- [x] Weekly recap card + Sunday send DONE 2026-07-21. Personal recap card on
+      home (once per ISO week, dismissable, hidden on an empty week); Sunday
+      push fanned out via the weekly-superlative cron to push subscribers with
+      activity. Verified live with seeded data. IG-story shareable render NOT
+      built (nice-to-have, deferred).
 - [ ] Cron Triggers still not firing automatically (nitro owns the entry).
 - [ ] Durable Object websockets to replace polling.
 - [ ] Google OAuth still stubbed.

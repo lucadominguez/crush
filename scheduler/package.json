@@ -1,0 +1,14 @@
+{
+  "name": "crush-scheduler",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Cron-trigger Worker that POSTs the crush-connect app cron hooks. Separate from the main app because nitro owns the main Worker entry.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250101.0",
+    "wrangler": "^4.0.0"
+  }
+}

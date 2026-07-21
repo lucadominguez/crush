@@ -1,0 +1,25 @@
+name = "crush-scheduler"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# Cron patterns map 1:1 to hooks in src/index.ts (HOOK_FOR_CRON).
+#   0 15 * * *  daily-poll         — every day 15:00 UTC
+#   0 * * * *   match-expiry       — top of every hour
+#   0 17 * * SUN weekly-superlative — Sundays 17:00 UTC (also sends weekly recap)
+# Cloudflare rejects "0" for Sunday; it wants the SUN token.
+[triggers]
+crons = ["0 15 * * *", "0 * * * *", "0 17 * * SUN"]
+
+# APP_ORIGIN is used only to build the request path/host. CRON_SECRET is NOT set
+# here; it is a Worker secret:
+#   cd scheduler && npx wrangler secret put CRON_SECRET
+# It must equal the CRON_SECRET on the crush-connect worker.
+[vars]
+APP_ORIGIN = "https://crush-connect.ludomi2502.workers.dev"
+
+# Service binding to the main app. Two workers.dev Workers on the same account
+# cannot reach each other over the public URL (Cloudflare error 1042); a service
+# binding dispatches the request internally and is the supported way.
+[[services]]
+binding = "APP"
+service = "crush-connect"

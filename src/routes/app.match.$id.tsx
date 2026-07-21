@@ -295,7 +295,7 @@ function ConfirmedReveal({ id, match, me }: { id: string; match: Match; me: Prof
           {icebreakers === null && (
             <div className="space-y-2">
               {[0, 1, 2].map((i) => (
-                <div key={i} className="surface p-3 animate-pulse">
+                <div key={i} className="surface p-3">
                   <div className="h-3 rounded" style={{ background: "var(--muted)", width: `${70 + i * 8}%` }} />
                 </div>
               ))}

@@ -173,7 +173,7 @@ function MessagesPage() {
         {groupList.length > 0 && (
           <section aria-label="Groups">
             <SectionLabel>Groups</SectionLabel>
-            <ul className="rounded-2xl overflow-hidden bg-card/70 backdrop-blur border border-border/60 divide-y divide-border/60">
+            <ul className="stagger-tight rounded-2xl overflow-hidden bg-card/70 backdrop-blur border border-border/60 divide-y divide-border/60">
               {groupList.map(({ g, p }) => <GroupRow key={g.id} g={g} preview={p} uid={uid} readAt={reads[`group:${g.id}`] ?? 0} />)}
             </ul>
           </section>
@@ -182,7 +182,7 @@ function MessagesPage() {
         {withPreview.length > 0 && (
           <section aria-label="Direct messages">
             <SectionLabel>Direct</SectionLabel>
-            <ul className="rounded-2xl overflow-hidden bg-card/70 backdrop-blur border border-border/60 divide-y divide-border/60">
+            <ul className="stagger-tight rounded-2xl overflow-hidden bg-card/70 backdrop-blur border border-border/60 divide-y divide-border/60">
               {withPreview.map(({ m, p }) => <DMRow key={m.id} m={m} preview={p!} uid={uid} readAt={reads[`match:${m.id}`] ?? 0} />)}
             </ul>
           </section>
@@ -217,11 +217,11 @@ function ListSkeleton() {
   return (
     <div className="space-y-2" aria-hidden>
       {[0, 1, 2].map((i) => (
-        <div key={i} className="surface px-3 py-2.5 flex items-center gap-3 animate-pulse">
-          <div className="size-11 rounded-full" style={{ background: "var(--muted)" }} />
+        <div key={i} className="surface px-3 py-2.5 flex items-center gap-3">
+          <div className="skeleton size-11 rounded-full" />
           <div className="flex-1 space-y-1.5">
-            <div className="h-3 rounded" style={{ background: "var(--muted)", width: "40%" }} />
-            <div className="h-3 rounded" style={{ background: "var(--muted)", width: "70%" }} />
+            <div className="skeleton h-3" style={{ width: "40%" }} />
+            <div className="skeleton h-3" style={{ width: "70%" }} />
           </div>
         </div>
       ))}

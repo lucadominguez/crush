@@ -252,7 +252,11 @@ function CrushesPage() {
 
       {/* Section label */}
       <div className="flex items-center justify-between px-1 mb-2 mt-4">
-        <p className="text-micro font-bold tracking-wider text-muted-foreground lowercase">your picks</p>
+        {/* Uppercase tracked eyebrow, matching the section-label convention
+            used across matches/messages/shop/notifications. The app pairs
+            lowercase display type with UPPERCASE micro-labels; this is the
+            convention, not a slip. */}
+        <p className="text-micro font-semibold uppercase tracking-wider text-muted-foreground">Your picks</p>
         {!searchOpen && slotsFilled > 0 && slotsLeft > 0 && (
           <button
             onClick={() => setSearchOpen(true)}

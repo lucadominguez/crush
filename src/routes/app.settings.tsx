@@ -47,7 +47,7 @@ function SettingsPage() {
   return (
     <>
       <ScreenHeader title="you" subtitle="your account and privacy." />
-      <div className="px-5 space-y-3 pb-28">
+      <div className="px-5 space-y-3 pb-28 stagger-tight">
         <div className="card-pop p-4 flex items-center gap-4">
           <button
             type="button"

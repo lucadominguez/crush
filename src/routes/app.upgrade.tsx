@@ -46,7 +46,7 @@ function UpgradePage() {
           </div>
 
           {catalog.isLoading ? (
-            <div className="mt-3 h-8 w-32 rounded bg-muted animate-pulse" aria-busy="true" />
+            <div className="skeleton mt-3 h-8 w-32" aria-busy="true" />
           ) : (
             <p className="mt-3 text-headline font-semibold leading-none tracking-tight text-muted-foreground">
               {god?.price?.amountFormatted ?? "Price TBD"}

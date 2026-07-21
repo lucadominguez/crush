@@ -275,7 +275,7 @@ function ChatPage() {
         {loading && messages.length === 0 && (
           <div className="space-y-2" aria-hidden>
             {[0, 1, 2].map((i) => (
-              <div key={i} className={`h-8 max-w-[60%] rounded-2xl animate-pulse ${i % 2 === 0 ? "" : "ml-auto"}`} style={{ background: "color-mix(in oklab, var(--muted) 60%, transparent)" }} />
+              <div key={i} className={`skeleton h-8 max-w-[60%] rounded-2xl ${i % 2 === 0 ? "" : "ml-auto"}`} />
             ))}
           </div>
         )}

@@ -81,13 +81,13 @@ function MatchesPage() {
       />
       <div className="px-5 pb-28 space-y-6">
         {initialLoading && (
-          <ul className="space-y-1.5">
+          <ul className="space-y-1.5 stagger-tight">
             {[0, 1, 2].map((i) => (
-              <li key={i} className="surface px-3 py-2.5 flex items-center gap-3 animate-pulse">
-                <div className="size-11 rounded-full" style={{ background: "var(--muted)" }} />
+              <li key={i} className="surface px-3 py-2.5 flex items-center gap-3">
+                <div className="skeleton size-11 rounded-full" />
                 <div className="flex-1 space-y-1.5">
-                  <div className="h-3 rounded w-1/2" style={{ background: "var(--muted)" }} />
-                  <div className="h-2.5 rounded w-1/3" style={{ background: "var(--muted)" }} />
+                  <div className="skeleton h-3 w-1/2" />
+                  <div className="skeleton h-2.5 w-1/3" />
                 </div>
               </li>
             ))}
@@ -151,7 +151,7 @@ function MatchesPage() {
         {expiredUnstarted.length > 0 && (
           <section>
             <SectionLabel>Expired · never said hi</SectionLabel>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 stagger-tight">
               {expiredUnstarted.map((m) => (
                 <li key={m.id}>
                   <div className="surface px-3 py-2.5 flex items-center gap-3 opacity-70">
@@ -183,7 +183,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 function MatchList({ matches, fresh }: { matches: Match[]; fresh: boolean }) {
   return (
-    <ul className="space-y-1.5">
+    <ul className="space-y-1.5 stagger-tight">
       {matches.map((m) => {
         const ago = timeAgo(m.last_message_at);
         return (

@@ -23,7 +23,7 @@ export function ReferralProgressBanner({ onOpen }: { onOpen: () => void }) {
   }, [fetchStats]);
 
   if (loading) {
-    return <div className="mx-5 mt-1 mb-4 h-[60px] surface animate-pulse" />;
+    return <div className="skeleton mx-5 mt-1 mb-4 h-[60px] rounded-[20px]" />;
   }
   if (!stats) return null;
 

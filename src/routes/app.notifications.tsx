@@ -145,7 +145,7 @@ function Section({ label, children }: { label: string; children: React.ReactNode
   return (
     <section className="mt-4 first:mt-2">
       <h2 className="px-1 mb-2 text-nano font-black uppercase tracking-[0.14em] text-muted-foreground">{label}</h2>
-      <div className="space-y-1.5">{children}</div>
+      <div className="space-y-1.5 stagger-tight">{children}</div>
     </section>
   );
 }
@@ -209,10 +209,10 @@ function SkeletonList() {
     <div className="space-y-1.5 mt-2">
       {[0, 1, 2, 3].map((i) => (
         <div key={i} className="surface px-3 py-2.5 flex items-center gap-3 min-h-[64px]">
-          <div className="size-10 rounded-xl bg-muted animate-pulse" />
+          <div className="skeleton size-10 rounded-xl" />
           <div className="flex-1 space-y-2">
-            <div className="h-3 w-1/2 rounded bg-muted animate-pulse" />
-            <div className="h-2.5 w-3/4 rounded bg-muted animate-pulse" />
+            <div className="skeleton h-3 w-1/2" />
+            <div className="skeleton h-2.5 w-3/4" />
           </div>
         </div>
       ))}

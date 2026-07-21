@@ -201,7 +201,7 @@ export function InviteFriendsSheet({
 
         {/* Progress */}
         {loading ? (
-          <div className="surface p-3 mb-4 h-[64px] animate-pulse" />
+          <div className="skeleton mb-4 h-[64px] rounded-[20px]" />
         ) : loadErr ? (
           <div className="surface p-3 mb-4 flex items-center justify-between gap-3">
             <p className="text-label text-muted-foreground">Couldn't load your invite</p>
@@ -242,7 +242,7 @@ export function InviteFriendsSheet({
         {/* Invite text preview */}
         <div className="surface p-3 mb-4 bg-muted/50">
           {loading ? (
-            <div className="h-10 animate-pulse" />
+            <div className="skeleton h-10" />
           ) : (
             <p className="text-label leading-relaxed whitespace-pre-wrap">{text}</p>
           )}

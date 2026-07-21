@@ -40,7 +40,7 @@ function ShopPage() {
     <>
       <PaymentTestModeBanner env={env} />
       <ScreenHeader title="Shop" subtitle="À la carte. No subscription." />
-      <div className="px-5 pb-10 space-y-3">
+      <div className="px-5 pb-28 space-y-3 stagger-tight">
         <div className="surface p-4 flex items-center gap-3">
           <div
             className="size-9 rounded-lg grid place-items-center"
@@ -64,7 +64,7 @@ function ShopPage() {
         {catalog.isLoading ? (
           <div className="space-y-2" aria-busy="true">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="surface p-3.5 h-16 animate-pulse" />
+              <div key={i} className="skeleton h-16 rounded-[20px]" />
             ))}
           </div>
         ) : catalog.isError ? (
@@ -128,7 +128,7 @@ function ShopPage() {
             Recent purchases
           </p>
           {ents.isLoading ? (
-            <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+            <div className="skeleton h-4 w-24" />
           ) : !ents.data?.ok ? (
             <p className="text-caption text-muted-foreground">
               Couldn't load history.{" "}

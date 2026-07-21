@@ -46,7 +46,7 @@ function StandingsPage() {
     return (
       <>
         <div className="absolute inset-0 flex items-center justify-center px-6">
-          <div className="w-full max-w-[360px] rounded-3xl border border-foreground/10 bg-card/85 p-6 space-y-4 animate-pulse">
+          <div className="w-full max-w-[360px] rounded-3xl border border-foreground/10 bg-card/85 p-6 space-y-4">
             <div className="h-4 w-24 rounded bg-foreground/10" />
             <div className="h-6 w-3/4 rounded bg-foreground/10" />
             <div className="grid grid-cols-2 gap-2">

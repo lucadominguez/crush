@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Search, BadgeCheck, Loader2, Lock, ArrowLeft, Bell, Crown, Plus, X, Send, Sparkles, Check, Trophy } from "lucide-react";
+import { Search, BadgeCheck, Loader2, Lock, ArrowLeft, Plus, X, Check } from "lucide-react";
+import { IconBell, IconInvite, IconTrophy, IconCrown, IconSparkle } from "@/components/icons/GlyphIcons";
 import { useMyNotifications } from "@/lib/phase1.hooks";
 
 import { SomeonePickedYouBanner } from "@/components/SomeonePickedYouBanner";
@@ -129,13 +130,13 @@ function CrushesPage() {
         <div className="flex items-center gap-0.5">
           <NotifBell />
           <button onClick={() => setInviteOpen(true)} className="icon-btn" aria-label="Invite friends">
-            <Send className="size-4" />
+            <IconInvite size={17} />
           </button>
           <Link to="/app/leaderboard" className="icon-btn" aria-label="Standings">
-            <Trophy className="size-4" />
+            <IconTrophy size={17} />
           </Link>
           <Link to="/app/upgrade" className="icon-btn" aria-label="Upgrade to god mode" style={{ color: "oklch(0.7 0.16 60)" }}>
-            <Crown className="size-4" />
+            <IconCrown size={17} />
           </Link>
         </div>
       </header>
@@ -169,7 +170,7 @@ function CrushesPage() {
             style={{ background: "var(--gradient-primary)" }}
           />
           <div className="relative size-11 rounded-2xl grid place-items-center bg-white/25 text-primary-foreground backdrop-blur-sm">
-            <Sparkles className="size-5" />
+            <IconSparkle size={20} />
           </div>
           <div className="relative flex-1 min-w-0 text-primary-foreground">
             <p className="font-black text-title lowercase leading-tight">
@@ -422,7 +423,7 @@ function CrushesPage() {
       {slotsFilled >= slotsTotal && (
         <Link to="/app/upgrade" className="mt-6 surface p-3.5 flex items-center gap-3 lift">
           <div className="size-9 rounded-lg grid place-items-center" style={{ background: "color-mix(in oklab, var(--accent) 30%, var(--card))", color: "var(--accent-foreground)" }}>
-            <Crown className="size-4" />
+            <IconCrown size={17} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-body lowercase">want more slots?</p>
@@ -447,7 +448,7 @@ function NotifBell() {
   const count = unread.length;
   return (
     <Link to="/app/notifications" className="icon-btn relative" aria-label={`Notifications${count ? ` (${count} unread)` : ""}`}>
-      <Bell className="size-4" />
+      <IconBell size={17} />
       {count > 0 && (
         <span
           className="absolute top-2 right-2 min-w-[16px] h-4 px-1 rounded-full text-nano font-semibold grid place-items-center"

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BadgeCheck, ChevronUp, Plus, Sparkles, Loader2, AlertCircle, Crown, Check } from "lucide-react";
+import { BadgeCheck, ChevronUp, Plus, Loader2, AlertCircle, Check } from "lucide-react";
+import { IconSparkle, IconCrown } from "@/components/icons/GlyphIcons";
 import { PollWithStats, getIG, usePolls, votePoll } from "@/lib/store";
 import { LaunchPollSheet } from "@/components/LaunchPollSheet";
 import { PollIncomingReveal } from "@/components/PollIncomingReveal";
@@ -86,7 +87,7 @@ function StandingsPage() {
       <>
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center animate-rise">
           <div className="size-14 rounded-full grid place-items-center mb-3" style={{ background: "color-mix(in oklab, var(--primary) 12%, var(--card))", color: "var(--primary)" }}>
-            <Sparkles className="size-6" />
+            <IconSparkle size={24} />
           </div>
           <h2 className="text-headline font-black lowercase">no polls yet</h2>
           <p className="text-label text-muted-foreground mt-1 max-w-xs">
@@ -96,7 +97,7 @@ function StandingsPage() {
             onClick={() => setLaunching(true)}
             className="btn-pop mt-5"
           >
-            <Sparkles className="size-4" /> launch a poll
+            <IconSparkle size={16} /> launch a poll
           </button>
         </div>
         {sheet}
@@ -286,7 +287,7 @@ function PollSlide({
       >
         <div className="px-5 pt-5 pb-4">
           <div className="text-nano font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 flex items-center gap-1.5">
-            <Sparkles className="size-3" /> the question
+            <IconSparkle size={12} /> the question
           </div>
           <h2 className="text-title font-black leading-[1.15] tracking-tight">{poll.question}</h2>
         </div>
@@ -394,7 +395,7 @@ function PollSlide({
                     {voted ? (
                       <>
                         <div className="font-black text-title tabular-nums leading-none flex items-center gap-1">
-                          {isWinner && <Crown className="size-4 text-primary" aria-label="Top" />}
+                          {isWinner && <span className="text-primary" aria-label="Top"><IconCrown size={16} /></span>}
                           {pct}%
                         </div>
                         {isVote && (

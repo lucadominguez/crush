@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Crown } from "lucide-react";
+import { IconCrown } from "@/components/icons/GlyphIcons";
 import { getCrushOfWeek, type WeeklySuperlative } from "@/lib/phase5.functions";
 
 // Anonymous superlative — shows the question + vote count, but blurs the
@@ -18,7 +18,7 @@ export function CrushOfWeekBanner() {
   return (
     <div className="mx-5 mt-1 mb-3 card-pop p-4 bg-gradient-to-br from-grape via-accent to-primary">
       <div className="flex items-center gap-2 mb-1.5">
-        <Crown className="size-4" />
+        <IconCrown size={16} />
         <p className="text-nano font-black uppercase tracking-wider opacity-80">
           crush of the week
         </p>

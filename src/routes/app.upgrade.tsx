@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Crown, Check, Info } from "lucide-react";
+import { Check, Info } from "lucide-react";
+import { IconCrown } from "@/components/icons/GlyphIcons";
 import { ScreenHeader } from "@/components/MobileShell";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { getCatalog, getMyEntitlements } from "@/lib/payments.functions";
@@ -40,7 +41,7 @@ function UpgradePage() {
               className="size-8 rounded-lg grid place-items-center"
               style={{ background: "color-mix(in oklab, var(--primary) 15%, var(--card))", color: "var(--primary)" }}
             >
-              <Crown className="size-4" />
+              <IconCrown size={17} />
             </div>
             <p className="text-micro font-semibold uppercase tracking-wider text-muted-foreground">Planned pass</p>
           </div>

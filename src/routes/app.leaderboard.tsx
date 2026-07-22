@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Flame, Gift, Trophy } from "lucide-react";
+import { IconFlame, IconGift, IconTrophy } from "@/components/icons/GlyphIcons";
 
 import {
   getIndividualStandings,
@@ -177,19 +177,19 @@ function PersonRow({ p, highlight }: { p: StandingRow; highlight?: boolean }) {
         <p className="text-micro text-muted-foreground truncate flex items-center gap-2">
           {p.poll_wins > 0 && (
             <span className="inline-flex items-center gap-0.5">
-              <Trophy className="size-3" />
+              <IconTrophy size={13} />
               {p.poll_wins}
             </span>
           )}
           {p.streak > 0 && (
             <span className="inline-flex items-center gap-0.5">
-              <Flame className="size-3" />
+              <IconFlame size={13} />
               {p.streak}
             </span>
           )}
           {p.referrals > 0 && (
             <span className="inline-flex items-center gap-0.5">
-              <Gift className="size-3" />
+              <IconGift size={13} />
               {p.referrals}
             </span>
           )}

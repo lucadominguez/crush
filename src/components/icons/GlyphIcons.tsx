@@ -51,6 +51,25 @@ export function IconCrown(props: IconProps) {
   );
 }
 
+/** streak — a rounded flame. */
+export function IconFlame(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12.7 2.3c-.3-.28-.77-.14-.9.24-.5 1.6-1.5 2.85-2.55 4.06-1.2 1.38-2.55 2.9-3.15 4.98a7.2 7.2 0 0 0 3.02 8.03c.4.26.9-.1.78-.56a4.1 4.1 0 0 1 .62-3.44c.5-.7 1.1-1.32 1.5-2.1.18.63.28 1.3.28 1.98 0 .5.02 1.1-.2 1.66-.17.44.3.86.7.6a5.9 5.9 0 0 0 2.73-4.42c.28-2.9-1.3-5.32-2.72-7.35-.9-1.28-1.6-2.6-1.06-4.04.06-.16.03-.34-.1-.46l-.65-.76-.001-.001Z" />
+    </Svg>
+  );
+}
+
+/** invites earned — a rounded gift box. */
+export function IconGift(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 6.2c-.5-.9-1.5-1.7-2.7-1.7-1.4 0-2.4 1-2.4 2.2 0 .34.07.66.2.95H4.6c-.66 0-1.2.54-1.2 1.2v1.9c0 .5.4.9.9.9h15.4c.5 0 .9-.4.9-.9v-1.9c0-.66-.54-1.2-1.2-1.2h-2.5c.13-.29.2-.61.2-.95 0-1.2-1-2.2-2.4-2.2-1.2 0-2.2.8-2.7 1.7Zm-1-.15c0-.55-.5-1-1.1-1-.6 0-1 .4-1 .95 0 .55.5 1 1.1 1H11v-.95Zm2 0V7h1c.6 0 1.1-.45 1.1-1 0-.55-.4-.95-1-.95-.6 0-1.1.45-1.1 1Z" />
+      <path d="M4.6 13.2v5.4c0 .66.54 1.2 1.2 1.2H11v-6.6H4.6Zm8.4 0v6.6h5.2c.66 0 1.2-.54 1.2-1.2v-5.4H13Z" />
+    </Svg>
+  );
+}
+
 /** sparkle — a rounded four-point star, for celebratory accents. */
 export function IconSparkle(props: IconProps) {
   return (

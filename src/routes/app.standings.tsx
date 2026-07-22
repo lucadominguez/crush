@@ -41,16 +41,16 @@ function StandingsPage() {
     <LaunchPollSheet open={launching} onClose={() => setLaunching(false)} onCreated={refresh} />
   );
 
-  // Loading (initial)
+  // Loading (initial) — shimmer skeleton in the card's real shape.
   if (loading && polls.length === 0) {
     return (
       <>
         <div className="absolute inset-0 flex items-center justify-center px-6">
-          <div className="w-full max-w-[360px] rounded-3xl border border-foreground/10 bg-card/85 p-6 space-y-4">
-            <div className="h-4 w-24 rounded bg-foreground/10" />
-            <div className="h-6 w-3/4 rounded bg-foreground/10" />
-            <div className="grid grid-cols-2 gap-2">
-              {[0,1,2,3].map((i) => <div key={i} className="aspect-square rounded-2xl bg-foreground/5" />)}
+          <div className="w-full max-w-[360px] surface p-6 space-y-4">
+            <div className="skeleton h-4 w-24" />
+            <div className="skeleton h-6 w-3/4" />
+            <div className="space-y-2">
+              {[0, 1, 2, 3].map((i) => <div key={i} className="skeleton h-16 rounded-2xl" />)}
             </div>
           </div>
         </div>
@@ -63,14 +63,16 @@ function StandingsPage() {
   if (error && polls.length === 0) {
     return (
       <>
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <AlertCircle className="size-8 text-muted-foreground mb-2" />
-          <h2 className="text-lg font-semibold">Couldn't load polls</h2>
-          <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-            Check your connection and try again.
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center animate-rise">
+          <div className="size-12 rounded-full grid place-items-center mb-3" style={{ background: "color-mix(in oklab, var(--destructive) 12%, var(--card))", color: "var(--destructive)" }}>
+            <AlertCircle className="size-6" />
+          </div>
+          <h2 className="text-title font-black lowercase">couldn't load polls</h2>
+          <p className="text-label text-muted-foreground mt-1 max-w-xs">
+            check your connection and try again.
           </p>
-          <button onClick={refresh} className="mt-4 min-h-11 px-5 rounded-full bg-foreground text-background font-semibold text-sm">
-            Retry
+          <button onClick={refresh} className="btn-pop mt-4">
+            retry
           </button>
         </div>
         {sheet}
@@ -82,19 +84,19 @@ function StandingsPage() {
   if (polls.length === 0) {
     return (
       <>
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <div className="size-14 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center mb-3">
-            <Sparkles className="size-6 text-primary" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center animate-rise">
+          <div className="size-14 rounded-full grid place-items-center mb-3" style={{ background: "color-mix(in oklab, var(--primary) 12%, var(--card))", color: "var(--primary)" }}>
+            <Sparkles className="size-6" />
           </div>
-          <h2 className="text-xl font-semibold">No polls yet</h2>
-          <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-            Launch the first one. Pick a question and 2 to 4 people.
+          <h2 className="text-headline font-black lowercase">no polls yet</h2>
+          <p className="text-label text-muted-foreground mt-1 max-w-xs">
+            launch the first one. pick a question and 2 to 4 people.
           </p>
           <button
             onClick={() => setLaunching(true)}
-            className="mt-5 min-h-11 px-5 rounded-full bg-foreground text-background font-semibold text-sm inline-flex items-center gap-2"
+            className="btn-pop mt-5"
           >
-            <Sparkles className="size-4" /> Launch a poll
+            <Sparkles className="size-4" /> launch a poll
           </button>
         </div>
         {sheet}
@@ -138,10 +140,10 @@ function StandingsPage() {
 
       <button
         onClick={() => setLaunching(true)}
-        className="fixed right-5 z-30 h-12 pl-3 pr-4 rounded-full bg-foreground text-background font-semibold text-sm flex items-center gap-1.5 shadow-lg active:scale-[0.98] transition-transform"
+        className="btn-pop fixed right-5 z-30 !min-h-12 !rounded-full pl-3 pr-4 !py-0 flex items-center gap-1.5"
         style={{ bottom: "calc(env(safe-area-inset-bottom) + 5rem)" }}
       >
-        <Plus className="size-4" /> Launch
+        <Plus className="size-4" /> launch
       </button>
 
       <SuggestQuestionButton />

@@ -1,13 +1,15 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Heart, Sparkles, BarChart3, MessageCircle, User } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
-const items: { to: string; label: string; icon: LucideIcon; exact?: boolean }[] = [
-  { to: "/app", label: "picks", icon: Heart, exact: true },
-  { to: "/app/matches", label: "matches", icon: Sparkles },
-  { to: "/app/standings", label: "polls", icon: BarChart3 },
-  { to: "/app/messages", label: "chat", icon: MessageCircle },
-  { to: "/app/settings", label: "you", icon: User },
+import { IconPicks, IconMatches, IconPolls, IconChat, IconYou } from "@/components/icons/NavIcons";
+
+type NavIcon = (p: { size?: number; className?: string }) => React.ReactNode;
+
+const items: { to: string; label: string; icon: NavIcon; exact?: boolean }[] = [
+  { to: "/app", label: "picks", icon: IconPicks, exact: true },
+  { to: "/app/matches", label: "matches", icon: IconMatches },
+  { to: "/app/standings", label: "polls", icon: IconPolls },
+  { to: "/app/messages", label: "chat", icon: IconChat },
+  { to: "/app/settings", label: "you", icon: IconYou },
 ];
 
 export function BottomNav() {
@@ -30,7 +32,7 @@ export function BottomNav() {
                   boxShadow: active ? "var(--shadow-pop)" : "none",
                 }}
               >
-                <Icon className="size-[19px]" strokeWidth={active ? 2.5 : 2} />
+                <Icon size={21} className={active ? "drop-shadow-sm" : ""} />
                 <span className={`text-nano lowercase ${active ? "font-bold" : "font-semibold"}`}>{it.label}</span>
               </Link>
             </li>

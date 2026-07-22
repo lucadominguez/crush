@@ -182,7 +182,11 @@ Still to set:
       publicly (error 1042). Verified live (403 forbidden through the chain).
       USER MUST set the scheduler's CRON_SECRET to match the app:
       `cd scheduler && npx wrangler secret put CRON_SECRET`.
-- [ ] Durable Object websockets to replace polling.
+- [x] Durable Object websockets DONE 2026-07-22 as an ADDITIVE poke fast-path
+      (standalone `crush-realtime` Worker, DO per room, D1-ticket auth so no
+      secret needed, service binding for broadcast). Polling stays as the
+      fallback everywhere. Wired into chat, groups, and notifications. Verified
+      end to end live (3 pokes -> 3 instant refreshes, DO reported poked:1).
 - [ ] Google OAuth still stubbed.
 - [x] **UI overhaul (option B) DONE 2026-07-21**: semantic type scale
       (nano..display) adopted across 30 files, surface classes documented,
@@ -194,9 +198,12 @@ Still to set:
       replaced with the .skeleton shimmer (LandingTicker's live dot kept);
       matches/messages/notifications/settings/shop lists now stagger in.
       Verified entrance animations do NOT replay across polling cycles.
-- [ ] UI overhaul, remaining: the polls page (/app/standings) is still a
-      full-screen snap scroller with its own chrome and reads as a different
-      app. Deliberately left alone; it is a big rewrite on its own.
+- [x] Polls page chrome aligned to the design system 2026-07-22 (lowercase
+      voice, btn-pop buttons, shimmer skeletons, gradient FAB). The immersive
+      snap-scroll interaction was KEPT deliberately — it is a good pattern, not
+      a bug; only the off-brand chrome changed.
+- [x] Weekly recap IG-story shareable render DONE 2026-07-22 (canvas 1080x1920,
+      Web Share API + download fallback, share button on the recap card).
 
 ### Blocked on the user
 - **Stripe**: user asked to wire the live `rk_live_` restricted key (recovered

@@ -55,6 +55,10 @@ export async function insertNotification(
   // push outage can never fail the action that triggered the notification.
   const msg = pushCopyFor(type, payload);
   if (msg) await sendPush(db, userId, msg);
+
+  // Realtime fast-path: nudge the recipient's notification surfaces to refresh.
+  // Best-effort; the bell/feed polling covers delivery otherwise.
+  await pokeRoom(`notif:${userId}`);
 }
 
 /**

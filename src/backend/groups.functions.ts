@@ -9,7 +9,7 @@ import { requireAuth } from "./auth-middleware";
 import { insertNotification } from "./crush.functions";
 import type { GroupChatRow, GroupMessageRow } from "./rows";
 import { nowIso, uuid } from "./rows";
-import type { D1Database } from "./bindings";
+import { pokeRoom, type D1Database } from "./bindings";
 import { BLOCKED_MESSAGE, containsBlocked, isSuspended } from "./moderation";
 
 export async function assertGroupMember(db: D1Database, groupId: string, userId: string): Promise<void> {
@@ -204,6 +204,9 @@ export const sendGroupMessageFn = createServerFn({ method: "POST" })
     for (const o of others) {
       await insertNotification(db, o.user_id, "group_message_received", { group_id: data.groupId });
     }
+
+    // Realtime fast-path: nudge everyone in the group chat to refresh now.
+    await pokeRoom(`group:${data.groupId}`);
 
     return { ok: true, message };
   });

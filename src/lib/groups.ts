@@ -16,6 +16,7 @@ import {
   sendGroupMessageFn,
 } from "@/backend/groups.functions";
 import { getSessionUserId, type MatchProfile } from "./store";
+import { useRealtime } from "./use-realtime";
 
 export type Group = {
   id: string;
@@ -172,6 +173,9 @@ export function useGroupMessages(groupId: string) {
     }, GROUP_POLL_MS);
     return () => { b.listeners.delete(l); clearInterval(iv); };
   }, [groupId, refresh]);
+
+  // Realtime fast-path; polling above remains the fallback.
+  useRealtime(groupId ? `group:${groupId}` : null, refresh);
 
   return { data, loading, error, refresh };
 }

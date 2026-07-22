@@ -5,6 +5,8 @@ import {
   getSchoolStats,
   touchStreak,
 } from "./phase1.functions";
+import { useSession } from "./store";
+import { useRealtime } from "./use-realtime";
 
 type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
 
@@ -36,15 +38,20 @@ export function useMyNotifications() {
     }
   }, []);
 
+  const { session } = useSession();
+
   useEffect(() => {
     refresh();
-    // Poll while mounted (replaces the Supabase realtime channel).
+    // Poll while mounted. Stays the fallback under the realtime poke below.
     const iv = setInterval(() => {
       if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
       refresh();
     }, 10000);
     return () => clearInterval(iv);
   }, [refresh]);
+
+  // Realtime fast-path for the notification bell / feed.
+  useRealtime(session ? `notif:${session.user.id}` : null, refresh);
 
   const markRead = useCallback(async (ids: string[]) => {
     if (!ids.length) return { ok: false as const };

@@ -11,6 +11,12 @@
       "database_id": "d73cf571-16e6-4edf-8ea3-5eab4142c181"
     }
   ],
+  "services": [
+    {
+      "binding": "REALTIME",
+      "service": "crush-realtime"
+    }
+  ],
   "r2_buckets": [
     {
       "binding": "AVATARS",

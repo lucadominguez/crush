@@ -43,9 +43,15 @@ export interface R2Bucket {
   delete(key: string): Promise<void>;
 }
 
+/** Service-binding fetcher (the realtime Worker). Shape we use only. */
+export interface Fetcher {
+  fetch(input: string | Request, init?: RequestInit): Promise<Response>;
+}
+
 export type WorkerEnv = {
   CRUSH_DB: D1Database;
   AVATARS: R2Bucket;
+  REALTIME?: Fetcher;
 } & Record<string, unknown>;
 
 let workerEnv: WorkerEnv | undefined;
@@ -88,4 +94,20 @@ export function getAvatarsBucket(): R2Bucket {
   const bucket = getWorkerEnv().AVATARS;
   if (!bucket) throw new Error("AVATARS binding missing — check wrangler.jsonc r2_buckets");
   return bucket;
+}
+
+/**
+ * Poke every client subscribed to a room to refresh. Best-effort and never
+ * throws: the realtime binding may be absent (not yet deployed/bound) and the
+ * client's polling covers delivery regardless. Fire without blocking the
+ * caller's own work for long.
+ */
+export async function pokeRoom(room: string): Promise<void> {
+  try {
+    const rt = getWorkerEnv().REALTIME;
+    if (!rt) return;
+    await rt.fetch(`https://realtime/broadcast?room=${encodeURIComponent(room)}`, { method: "POST" });
+  } catch {
+    /* best-effort: polling delivers anyway */
+  }
 }

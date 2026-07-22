@@ -1,0 +1,19 @@
+name = "crush-realtime"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# Durable Object holding one room's WebSockets.
+[[durable_objects.bindings]]
+name = "ROOM"
+class_name = "Room"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]
+
+# Same D1 as the app, so realtime tickets can be validated without a shared
+# secret. Binding id must match the app's crush-db.
+[[d1_databases]]
+binding = "CRUSH_DB"
+database_name = "crush-db"
+database_id = "d73cf571-16e6-4edf-8ea3-5eab4142c181"

@@ -15,7 +15,7 @@ import { nowIso, uuid } from "./rows";
 import { pushCopyFor, sendPush } from "./push";
 import { sendCrushNotice } from "./outreach";
 import { BLOCKED_MESSAGE, containsBlocked, isSuspended } from "./moderation";
-import { getSecret, type D1Database } from "./bindings";
+import { getSecret, pokeRoom, type D1Database } from "./bindings";
 
 const MATCH_TTL_MS = 7 * 86_400_000;
 
@@ -404,6 +404,10 @@ export const sendMessageFn = createServerFn({ method: "POST" })
     // notify_on_message: other participant, IDs only (never message text)
     const other = match.user_a_id === userId ? match.user_b_id : match.user_a_id;
     await insertNotification(db, other, "message_received", { match_id: data.matchId });
+
+    // Realtime fast-path: nudge everyone watching this chat to refresh now.
+    // Best-effort; polling delivers regardless.
+    await pokeRoom(`match:${data.matchId}`);
 
     return { ok: true, message };
   });

@@ -1,0 +1,14 @@
+{
+  "name": "crush-realtime",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Durable Object WebSocket Worker. Pokes room subscribers to refresh; the app's polling remains the source of truth and fallback.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250101.0",
+    "wrangler": "^4.0.0"
+  }
+}

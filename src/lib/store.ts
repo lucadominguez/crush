@@ -14,6 +14,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { useRealtime } from "@/lib/use-realtime";
+
 import { getMeFn, signInFn, signOutFn, signUpFn } from "@/backend/auth.functions";
 import {
   addCrushFn,
@@ -631,13 +633,19 @@ export function useMessages(matchId: string): Query<ChatMessage[]> & { data: Cha
     const entry = getEntry(ck);
     const l = () => setData(((entry.data as ChatMessage[] | undefined) ?? []).slice());
     entry.listeners.add(l);
-    // Poll while the chat is open (replaces the Supabase realtime channel).
+    // Poll while the chat is open. This stays the source of truth and the
+    // fallback; the realtime poke below just makes delivery instant when it
+    // connects (see useRealtime).
     const iv = setInterval(() => {
       if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
       refresh();
     }, CHAT_POLL_MS);
     return () => { entry.listeners.delete(l); clearInterval(iv); };
   }, [matchId, refresh, ck]);
+
+  // Realtime fast-path: refresh the instant the other side sends. No-op until
+  // the WS connects; polling covers everything otherwise.
+  useRealtime(matchId ? `match:${matchId}` : null, refresh);
 
   return { data, loading, error, refresh };
 }

@@ -393,3 +393,17 @@ CREATE TABLE IF NOT EXISTS moderation_actions (
 );
 
 -- Suspension flag consulted by the auth middleware.
+
+-- ============ REALTIME (Phase B websockets) ============
+-- Short-lived tickets that authorize a WebSocket connect to the realtime
+-- Worker's Durable Object for one room. Issued by the app after an ownership
+-- check; validated + consumed by the realtime Worker (both bind CRUSH_DB, so
+-- no shared secret is needed). Rooms: "match:<matchId>", "group:<groupId>",
+-- "notif:<userId>".
+CREATE TABLE IF NOT EXISTS realtime_tickets (
+  ticket     TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL,
+  room       TEXT NOT NULL,
+  expires_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS realtime_tickets_exp_idx ON realtime_tickets(expires_at);

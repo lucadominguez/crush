@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Flame, Gift, Heart, Sparkles, Trophy } from "lucide-react";
+import { Flame, Gift, Heart, Loader2, Share2, Sparkles, Trophy } from "lucide-react";
+import { toast } from "sonner";
 
 import { getWeeklyRecap, type WeeklyRecap } from "@/lib/recap.functions";
+import { shareRecapStory } from "@/lib/recap-story";
 
 const DISMISS_KEY = "crush.recap.dismissed";
 
@@ -24,6 +26,7 @@ export function WeeklyRecapCard() {
   const fetchRecap = useServerFn(getWeeklyRecap);
   const [recap, setRecap] = useState<WeeklyRecap | null>(null);
   const [dismissed, setDismissed] = useState(true);
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -51,6 +54,19 @@ export function WeeklyRecapCard() {
     setDismissed(true);
   }
 
+  async function share() {
+    if (!recap || sharing) return;
+    setSharing(true);
+    try {
+      const how = await shareRecapStory(recap);
+      if (how === "downloaded") toast.success("saved your recap. share it to your story");
+    } catch {
+      toast.error("couldn't make your recap image");
+    } finally {
+      setSharing(false);
+    }
+  }
+
   return (
     <section className="surface-solid p-4 mb-3 relative overflow-hidden animate-rise">
       <div aria-hidden className="absolute inset-0 opacity-90" style={{ background: "var(--gradient-primary)" }} />
@@ -60,13 +76,24 @@ export function WeeklyRecapCard() {
             <p className="text-nano font-black uppercase tracking-wider opacity-80">your week</p>
             <p className="mt-1 font-black text-title lowercase leading-tight">{recap.headline}</p>
           </div>
-          <button
-            onClick={dismiss}
-            className="text-primary-foreground/80 text-caption font-bold shrink-0 min-h-11 px-2"
-            aria-label="Dismiss weekly recap"
-          >
-            done
-          </button>
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              onClick={share}
+              disabled={sharing}
+              className="inline-flex items-center gap-1.5 rounded-full px-3 min-h-11 text-caption font-bold bg-white/25 backdrop-blur-sm disabled:opacity-60"
+              aria-label="Share weekly recap to your story"
+            >
+              {sharing ? <Loader2 className="size-3.5 animate-spin" /> : <Share2 className="size-3.5" />}
+              share
+            </button>
+            <button
+              onClick={dismiss}
+              className="text-primary-foreground/80 text-caption font-bold min-h-11 px-2"
+              aria-label="Dismiss weekly recap"
+            >
+              done
+            </button>
+          </div>
         </div>
 
         {stats.length > 0 && (

@@ -167,8 +167,9 @@ Still to set:
       prefills the handle. Never leaks whether a handle has admirers pre-signup
       (no server call keyed to the handle); truth comes from the post-signup
       escrow backfill. Verified live.
-- [ ] School + individual standings. `/app/standings` is ALREADY the polls
-      page; use `/app/leaderboard`. Positive activity only, never admirer counts.
+- [x] School + individual standings DONE 2026-07-21 at `/app/leaderboard`
+      (positive activity only, never admirer counts). Reached from a trophy in
+      the home header.
 - [x] Weekly recap card + Sunday send DONE 2026-07-21. Personal recap card on
       home (once per ISO week, dismissable, hidden on an empty week); Sunday
       push fanned out via the weekly-superlative cron to push subscribers with
